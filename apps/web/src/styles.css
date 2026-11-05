@@ -91,6 +91,7 @@ button { cursor: pointer; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-quiet { border-color: var(--line-2); background: var(--paper); }
 .btn-quiet:hover { border-color: var(--ink-3); }
+.btn-quiet:disabled { opacity: 0.45; cursor: default; border-color: var(--line-2); }
 .btn-ai { border-radius: 0; border-left: 1px solid var(--line-2); color: var(--u-ai); }
 .btn-ai[aria-busy='true'] { color: var(--ink-2); }
 .btn-block { width: 100%; margin-top: 12px; }
@@ -227,7 +228,8 @@ button { cursor: pointer; }
   .topbar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
   .modes { order: 3; width: 100%; margin: 0; justify-content: space-between; }
   .mode { flex: 1; padding: 5px 4px; }
-  .topbar-actions { margin-left: auto; }
+  .topbar-actions { margin-left: auto; gap: 6px; }
+  .topbar-actions .btn { padding: 6px 10px; }
   .editor-backdrop, .editor-input { font-size: 17px; }
 }
 
@@ -240,8 +242,8 @@ button { cursor: pointer; }
    linked cards lift 2px. Fine pointers only; nothing moves under reduced motion. */
 @media (hover: hover) and (pointer: fine) {
   .btn, .fix, .filter, .mode, .card-summary { transition: transform 140ms cubic-bezier(.2,.8,.2,1), background-color 140ms, border-color 140ms; }
-  .btn:hover, .fix:hover { transform: translateY(-1px); }
-  .btn:active, .fix:active { transform: translateY(1px) scale(.985); transition-duration: 90ms; }
+  .btn:not(:disabled):hover, .fix:hover { transform: translateY(-1px); }
+  .btn:not(:disabled):active, .fix:active { transform: translateY(1px) scale(.985); transition-duration: 90ms; }
   .card { transition: transform 180ms cubic-bezier(.2,.8,.2,1), border-color 140ms, box-shadow 180ms; }
   .card:not(.is-open):hover { transform: translateY(-2px); border-color: var(--line-2); }
 }

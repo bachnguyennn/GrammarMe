@@ -104,6 +104,20 @@ export function App() {
     showToast({ message: `Fixed ${n} spelling mistake${n === 1 ? '' : 's'}`, undo: n > 0 });
   }, [visible, showToast]);
 
+  /** Swap the whole text (Clear / Example) through the textarea so Cmd/Ctrl+Z brings the old text back. */
+  const replaceAllText = useCallback(
+    (next: string, message: string) => {
+      const ta = editor.current?.textarea;
+      if (!ta) return;
+      replaceRange(ta, 0, ta.value.length, next);
+      ta.setSelectionRange(next === '' ? 0 : next.length, next === '' ? 0 : next.length);
+      ta.scrollTop = 0;
+      setActiveId(null);
+      showToast({ message, undo: true });
+    },
+    [showToast],
+  );
+
   const undo = () => {
     const ta = editor.current?.textarea;
     if (!ta) return;
@@ -248,6 +262,24 @@ export function App() {
               </button>
             </div>
           )}
+          <button
+            type="button"
+            className="btn btn-quiet"
+            title="Empty the editor so you can type or paste your own text"
+            disabled={doc.text === ''}
+            onClick={() => replaceAllText('', 'Editor cleared. Type or paste your own text.')}
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            className="btn btn-quiet"
+            title="Put back the example paragraph with a few mistakes"
+            disabled={doc.text === SAMPLE}
+            onClick={() => replaceAllText(SAMPLE, 'Example text restored.')}
+          >
+            Example
+          </button>
           <button type="button" className="btn btn-quiet" onClick={() => setSettingsOpen(true)}>
             Settings
           </button>
