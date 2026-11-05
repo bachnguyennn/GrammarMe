@@ -3,6 +3,7 @@
  * and a small CLI for installing and managing it.
  */
 import { homedir } from 'node:os';
+import { isSea } from 'node:sea';
 import { fileURLToPath } from 'node:url';
 import { COMPANION_ERROR_TEXT } from '@grammarme/core/companion';
 import { Companion, openInBrowser } from './companion.ts';
@@ -30,7 +31,19 @@ Usage:
 Chrome starts the companion itself (with the extension's origin as the argument) when GrammarMe
 needs it, and it exits when the extension disconnects.`;
 
-const HOST_SCRIPT = fileURLToPath(import.meta.url);
+/**
+ * A standalone build (a Node single executable application, published for people without Node)
+ * is its own host: install copies the executable itself. Otherwise this is the .mjs bundle run by
+ * a Node 22.6+ binary.
+ */
+const STANDALONE = (() => {
+  try {
+    return isSea();
+  } catch {
+    return false;
+  }
+})();
+const HOST_SCRIPT = STANDALONE ? process.execPath : fileURLToPath(import.meta.url);
 
 function platform(): Platform {
   return { os: process.platform, homeDir: homedir(), env: process.env };
@@ -94,6 +107,7 @@ async function main(argv: string[]): Promise<number> {
         platform: platform(),
         hostScript: HOST_SCRIPT,
         nodePath: process.execPath,
+        standalone: STANDALONE,
         extensionIds: flags.ids,
         ...(flags.browsers.length ? { browsers: flags.browsers } : {}),
         ...(flags.dirs.length ? { manifestDirs: flags.dirs } : {}),

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.2 (2026-11-05)
+
+**Easier ChatGPT setup**
+- **One-line install** for the companion: `curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh`.
+  No Node.js, Git or source code needed. It checks every download against the release's checksums.
+- **Standalone companion** with Node built in, for macOS (Apple silicon and Intel) and Linux (x64
+  and arm64). People who already have Node.js 22.6+ get the small version instead.
+- **Guided setup** in the extension's toolbar menu: step 1 shows the install line with a Copy
+  button and moves on by itself once the companion is installed; step 2 is the ChatGPT sign-in.
+- **GitHub Releases** now carry the extension zip, the companion builds and `SHA256SUMS`, all
+  built in public by GitHub's build service from the tagged source.
+- The install page has a three-step "Connect your ChatGPT plan" section.
+
 ## 0.1.1 (2026-11-05)
 
 **Extension**

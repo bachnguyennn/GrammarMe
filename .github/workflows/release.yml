@@ -1,0 +1,111 @@
+# Publishes a GitHub Release when a version tag (v*) is pushed. Everything is built here, in public,
+# from the tagged source:
+#   grammarme-companion.mjs                    companion for people with Node.js 22.6+ (~90 KB)
+#   grammarme-companion-<os>-<arch>.tar.gz     standalone companion with Node built in (~40 MB)
+#   GrammarMe-extension.zip                    the Chrome extension, ready for "Load unpacked"
+#   install.sh                                 the one-line installer (also served by GitHub Pages)
+#   SHA256SUMS                                 checksums; install.sh refuses anything that doesn't match
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build and publish (e.g. v0.1.2)
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build:site
+      - run: npm run build -w apps/companion
+      - name: Collect files
+        run: |
+          mkdir -p out
+          cp apps/companion/dist/grammarme-companion.mjs out/
+          cp apps/site/dist/GrammarMe-extension.zip out/
+          cp apps/companion/install.sh out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle
+          path: out/*
+
+  standalone:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: macos-14, target: darwin-arm64 }
+          - { runner: macos-13, target: darwin-x64 }
+          - { runner: ubuntu-latest, target: linux-x64 }
+          - { runner: ubuntu-24.04-arm, target: linux-arm64 }
+    runs-on: ${{ matrix.runner }}
+    # A missing runner type must not block the release; install.sh falls back to the Node build.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:sea -w apps/companion
+      - name: Check the target
+        run: test -f "apps/companion/dist/grammarme-companion-${{ matrix.target }}.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: standalone-${{ matrix.target }}
+          path: apps/companion/dist/grammarme-companion-${{ matrix.target }}.tar.gz
+
+  publish:
+    needs: [bundle, standalone]
+    if: always() && needs.bundle.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Checksums
+        working-directory: assets
+        run: |
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+      - name: Create or update the release
+        run: |
+          notes="Install or update the ChatGPT companion (macOS, Linux):
+
+          \`\`\`
+          curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh
+          \`\`\`
+
+          Extension: download GrammarMe-extension.zip and follow https://bachnguyennn.github.io/GrammarMe/install.html
+          What's new: https://github.com/${{ github.repository }}/blob/${TAG}/CHANGELOG.md"
+          if ! gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "${{ github.repository }}" --title "GrammarMe ${TAG#v}" --notes "$notes"
+          fi
+          gh release upload "$TAG" assets/* --repo "${{ github.repository }}" --clobber

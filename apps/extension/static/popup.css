@@ -64,3 +64,10 @@ footer a:hover { text-decoration: underline; }
 .modal-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); }
 .modal-card h2 { margin: 0 0 6px; font-size: 14px; }
 .modal-card p { margin: 0 0 8px; }
+.step { margin: 2px 0 0; font-weight: 600; font-size: 12px; }
+.cmd { display: flex; gap: 6px; align-items: stretch; }
+.cmd code {
+  flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: color-mix(in oklab, var(--fg) 5%, var(--bg));
+  font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace; overflow-wrap: anywhere; user-select: all;
+}
+.btn.copy { flex: none; }

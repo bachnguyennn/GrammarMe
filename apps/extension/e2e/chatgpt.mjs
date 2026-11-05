@@ -150,11 +150,13 @@ writeFileSync(
   `#!/bin/sh\n${Object.entries(env).map(([k, v]) => `export ${k}='${v}'`).join('\n')}\nexec '${process.execPath}' '${hostCopy}' "$@"\n`,
 );
 chmodSync(launcher, 0o755);
-// Chrome looks for user-level hosts inside the profile it was started with.
-writeFileSync(
-  join(profile, 'NativeMessagingHosts', 'com.grammarme.chatgpt.json'),
-  JSON.stringify({ name: 'com.grammarme.chatgpt', description: 'GrammarMe e2e', path: launcher, type: 'stdio', allowed_origins: [`chrome-extension://${EXT_ID}/`] }),
-);
+// Chrome looks for user-level hosts inside the profile it was started with. Registered later,
+// while the popup is open, to test the guided setup.
+const registerHost = () =>
+  writeFileSync(
+    join(profile, 'NativeMessagingHosts', 'com.grammarme.chatgpt.json'),
+    JSON.stringify({ name: 'com.grammarme.chatgpt', description: 'GrammarMe e2e', path: launcher, type: 'stdio', allowed_origins: [`chrome-extension://${EXT_ID}/`] }),
+  );
 
 /** Talk to the companion over native-messaging framing, as Chrome would. */
 function hostSession() {
@@ -263,8 +265,16 @@ try {
   const { id } = await send('Extensions.loadUnpacked', { path: extCopy });
   report.extensionId = id;
 
-  // 1. Popup: status, models, test.
+  // 0. Guided setup: no companion yet → step 1 with the install command; installing it while the
+  //    popup is open moves it on by itself.
   let popup = await tab(`chrome-extension://${id}/popup.html`, 310, 620, 2);
+  report.guidedStep1 = await until(async () => { const t = await popupText(popup); return /Step 1 of 2/.test(t) ? t : null; });
+  report.guidedCommand = await js(popup, `document.querySelector('.cmd code')?.textContent ?? null`);
+  await shot(popup, 'popup-step1.png');
+  registerHost();
+  report.guidedAdvanced = Boolean(await until(async () => /Connected as you@example.com/.test(await popupText(popup)), 12000));
+
+  // 1. Popup: status, models, test.
   report.popupConnected = await until(async () => /Connected as you@example.com/.test(await popupText(popup)) && (await popupText(popup)));
   if (!report.popupConnected) report.popupShows = await popupText(popup);
   if (!report.popupConnected) report.popupDebug = await js(popup, `(async () => ({ perms: chrome.runtime.getManifest().permissions, has: await chrome.permissions.contains({ permissions: ['nativeMessaging'] }), status: await chrome.runtime.sendMessage({ target: 'background', type: 'aiStatus' }) }))()`);

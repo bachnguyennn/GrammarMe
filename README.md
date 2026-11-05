@@ -11,8 +11,9 @@ editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
   dictionary, or turn a rule off.
 - **Writing modes** (Standard, Academic, Professional, Casual) and five English dialects.
 - **Optional ChatGPT check in the extension**: grammar, clarity and tone edits using **your own
-  ChatGPT Plus/Pro plan**, with no API key. It needs a small local companion program, and text is
-  sent only when you preview and confirm it ([guide](docs/chatgpt.md)).
+  ChatGPT Plus/Pro plan**, with no API key. It needs a small local companion program, installed
+  with one pasted line. Text is sent only when you preview and confirm it
+  ([guide](docs/chatgpt.md)).
 - **Optional AI check** for clarity, fluency and tone. It is off by default, runs only when you press
   the button, and uses your own free Cloudflare Worker. Edits are kept small and must preserve your
   meaning and voice.
@@ -59,12 +60,14 @@ Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**,
 
 ### Optional: ChatGPT in the extension
 
-Install the local companion (macOS or Linux, Node 22.6+), then choose **Continue with ChatGPT** in
-the extension's toolbar menu:
+Choose **Continue with ChatGPT** in the extension's toolbar menu. It walks you through two
+steps: pasting one line into Terminal (macOS or Linux, no Node needed), then signing in to ChatGPT:
 
 ```bash
-npm run install-host -w apps/companion
+curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh
 ```
+
+From source: `npm run install-host -w apps/companion`.
 
 Full steps, eligibility, what is sent, and troubleshooting: [docs/chatgpt.md](docs/chatgpt.md).
 

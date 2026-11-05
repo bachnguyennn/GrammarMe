@@ -24,4 +24,9 @@ const stage = mkdtempSync(join(tmpdir(), 'grammarme-ext-'));
 cpSync(join(ext, 'build'), join(stage, 'GrammarMe-extension'), { recursive: true });
 execSync(`zip -r -X -q "${join(out, 'GrammarMe-extension.zip')}" GrammarMe-extension`, { cwd: stage, stdio: 'inherit' });
 rmSync(stage, { recursive: true, force: true });
+
+// The companion's one-line installer, served at /companion/install.sh. It downloads the companion
+// from the latest GitHub Release (built by .github/workflows/release.yml) and checks its checksum.
+mkdirSync(join(out, 'companion'), { recursive: true });
+cpSync(join(here, '..', 'companion', 'install.sh'), join(out, 'companion', 'install.sh'));
 console.log('Site ready in', out);

@@ -10,9 +10,9 @@
  * bundle has no dependencies, so the copy runs on its own. Windows needs registry keys and isn't
  * supported yet.
  */
-import { access, chmod, copyFile, mkdir, readFile, rm, rmdir, stat, writeFile } from 'node:fs/promises';
+import { access, chmod, copyFile, mkdir, readFile, rename, rm, rmdir, stat, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { isAbsolute, join } from 'node:path';
+import { isAbsolute, join, resolve } from 'node:path';
 import { COMPANION_HOST } from '@grammarme/core/companion';
 import { DEFAULT_EXTENSION_ID } from './config.ts';
 import { ALLOWED_ORIGINS_FILE, extensionOrigin, isValidExtensionId, saveAllowedExtensionIds } from './origin.ts';
@@ -21,6 +21,8 @@ export const BROWSERS = ['chrome', 'chromium', 'edge', 'brave'] as const;
 export type Browser = (typeof BROWSERS)[number];
 export const LAUNCHER_NAME = 'grammarme-companion-host.sh';
 export const INSTALLED_HOST_NAME = 'grammarme-companion.mjs';
+/** The standalone executable's name once installed (it is its own launcher). */
+export const INSTALLED_BINARY_NAME = 'grammarme-companion';
 
 /** Where install puts the launcher and its copy of the host. */
 export function installDir(companionHome: string): string {
@@ -98,6 +100,11 @@ export interface InstallOptions {
   hostScript: string;
   /** Absolute Node binary (process.execPath). */
   nodePath: string;
+  /**
+   * `hostScript` is a standalone executable (Node single executable application). It is copied as
+   * is and Chrome runs it directly; no Node or launcher script is involved.
+   */
+  standalone?: boolean;
   extensionIds: readonly string[];
   /** Explicit browsers ('all' = every known one). Default: those whose data directory exists. */
   browsers?: readonly Browser[];
@@ -153,12 +160,28 @@ export async function install(o: InstallOptions): Promise<InstallResult> {
 
   const bin = installDir(o.companionHome);
   await mkdir(bin, { recursive: true, mode: 0o700 });
-  const hostCopy = join(bin, INSTALLED_HOST_NAME);
-  await copyFile(o.hostScript, hostCopy);
-  await chmod(hostCopy, 0o644);
-  const launcher = join(bin, LAUNCHER_NAME);
-  await writeFile(launcher, launcherScript(o.nodePath, hostCopy), { mode: 0o755 });
-  await chmod(launcher, 0o755);
+  let launcher: string;
+  if (o.standalone) {
+    launcher = join(bin, INSTALLED_BINARY_NAME);
+    if (resolve(o.hostScript) !== resolve(launcher)) {
+      // Copy to a temporary name first: replacing a running executable in place can crash it.
+      const tmp = `${launcher}.new`;
+      await copyFile(o.hostScript, tmp);
+      await chmod(tmp, 0o755);
+      await rename(tmp, launcher);
+    }
+    // A Node-mode install from before would otherwise linger and confuse doctor.
+    await rm(join(bin, LAUNCHER_NAME), { force: true });
+    await rm(join(bin, INSTALLED_HOST_NAME), { force: true });
+  } else {
+    const hostCopy = join(bin, INSTALLED_HOST_NAME);
+    await copyFile(o.hostScript, hostCopy);
+    await chmod(hostCopy, 0o644);
+    launcher = join(bin, LAUNCHER_NAME);
+    await writeFile(launcher, launcherScript(o.nodePath, hostCopy), { mode: 0o755 });
+    await chmod(launcher, 0o755);
+    await rm(join(bin, INSTALLED_BINARY_NAME), { force: true });
+  }
 
   const manifests: string[] = [];
   const body = `${JSON.stringify(hostManifest(launcher, manifestIds), null, 2)}\n`;
@@ -201,7 +224,7 @@ export async function uninstall(o: UninstallOptions): Promise<string[]> {
   }
   if (scoped) return removed;
   const bin = installDir(o.companionHome);
-  for (const f of [join(bin, LAUNCHER_NAME), join(bin, INSTALLED_HOST_NAME)]) {
+  for (const f of [join(bin, LAUNCHER_NAME), join(bin, INSTALLED_HOST_NAME), join(bin, INSTALLED_BINARY_NAME)]) {
     if (await exists(f)) {
       await rm(f);
       removed.push(f);

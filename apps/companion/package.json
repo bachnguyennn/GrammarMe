@@ -1,6 +1,6 @@
 {
   "name": "@grammarme/companion",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Local native-messaging companion that connects GrammarMe to a ChatGPT plan (Sign in with ChatGPT).",
   "type": "module",
@@ -14,12 +14,14 @@
     "build": "node build.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "install-host": "node build.mjs && node dist/grammarme-companion.mjs install"
+    "install-host": "node build.mjs && node dist/grammarme-companion.mjs install",
+    "build:sea": "node build.mjs && node scripts/build-sea.mjs"
   },
   "devDependencies": {
     "@grammarme/core": "*",
     "@types/node": "22.20.5",
     "esbuild": "0.28.2",
+    "postject": "^1.0.0-alpha.6",
     "typescript": "5.9.3",
     "vitest": "4.0.18"
   }

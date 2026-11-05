@@ -14,7 +14,11 @@ import {
   type SignInState,
 } from './ai-protocol.ts';
 
-export const AI_SETUP_URL = 'https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md';
+export const AI_SETUP_URL = 'https://bachnguyennn.github.io/GrammarMe/install.html#chatgpt';
+/** The one-line installer (apps/companion/install.sh, served by the website). */
+export const INSTALL_COMMAND = 'curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh';
+/** How often the popup re-checks for the companion while the user installs it. */
+const COMPANION_POLL_MS = 3000;
 
 function send<T>(req: PopupAiRequest): Promise<T> {
   return chrome.runtime.sendMessage(req) as Promise<T>;
@@ -43,6 +47,30 @@ function statusRow(text: string, dot: '' | 'off' | 'bad' = ''): HTMLElement {
   const row = el('div', 'status');
   row.append(el('span', `dot ${dot}`.trim()), el('span', undefined, text));
   return row;
+}
+
+let pollTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** The install command with a Copy button. */
+function commandBox(): HTMLElement {
+  const box = el('div', 'cmd');
+  const code = el('code', undefined, INSTALL_COMMAND);
+  const copy = button('Copy', 'btn copy');
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(INSTALL_COMMAND);
+      copy.textContent = 'Copied';
+    } catch {
+      const r = document.createRange();
+      r.selectNodeContents(code);
+      getSelection()?.removeAllRanges();
+      getSelection()?.addRange(r);
+      copy.textContent = 'Press ⌘C';
+    }
+    setTimeout(() => (copy.textContent = 'Copy'), 2000);
+  });
+  box.append(code, copy);
+  return box;
 }
 
 export async function mountAi(): Promise<void> {
@@ -85,6 +113,7 @@ export async function mountAi(): Promise<void> {
   };
 
   const render = async (extra: { error?: string; note?: string } = {}): Promise<void> => {
+    clearTimeout(pollTimer);
     const st = await send<AiStatusResponse>(ask('aiStatus')).catch(() => null);
     const sign = ((await chrome.storage.session.get(AI_SIGNIN_KEY))[AI_SIGNIN_KEY] ?? null) as SignInState | null;
     const errorNode = extra.error ? [el('p', 'err', extra.error)] : [];
@@ -104,20 +133,36 @@ export async function mountAi(): Promise<void> {
 
     if (!st.permission) {
       return show(
-        el('p', 'note', 'Not connected. You’ll need the companion installed first.'),
+        el('p', 'note', 'Two steps: install a small helper program, then sign in to ChatGPT. Works with ChatGPT Plus or Pro.'),
         continueButton(),
         ...errorNode,
       );
     }
 
     if (!st.companion) {
-      const retry = button('Check again');
-      retry.addEventListener('click', () => void render());
+      if (/Windows/i.test(navigator.userAgent)) {
+        return show(
+          statusRow('Not available on Windows yet', 'off'),
+          el('p', 'note', 'The GrammarMe companion runs on macOS and Linux for now. Local spelling and grammar checks work everywhere.'),
+          link('Details ↗', AI_SETUP_URL),
+        );
+      }
+      const forbidden = st.error === 'companion_forbidden';
+      // Keep checking while the popup is open, so the next step appears as soon as it's installed.
+      pollTimer = setTimeout(() => void render(), COMPANION_POLL_MS);
       return show(
-        statusRow('Companion not found', 'bad'),
-        el('p', 'note', st.message ?? 'Install the GrammarMe companion, then check again.'),
-        link('How to install the companion ↗', AI_SETUP_URL),
-        retry,
+        el('p', 'step', 'Step 1 of 2 · Install the GrammarMe companion'),
+        el(
+          'p',
+          'note',
+          forbidden
+            ? 'A companion is installed, but for a different extension ID. Run this again to fix it:'
+            : 'Open Terminal (on a Mac: Applications → Utilities → Terminal), paste this line and press Return:',
+        ),
+        commandBox(),
+        el('p', 'note', 'No admin password is needed. It installs only in your home folder, and only answers this extension.'),
+        statusRow('Waiting for the companion…', 'off'),
+        link('What does this do? ↗', AI_SETUP_URL),
       );
     }
 
@@ -125,7 +170,15 @@ export async function mountAi(): Promise<void> {
     const status = st.status;
 
     if (!status?.connected) {
-      return show(statusRow('Not connected', 'off'), ...noteNode, continueButton(), ...lastError, ...errorNode);
+      return show(
+        el('p', 'step', 'Step 2 of 2 · Sign in to ChatGPT'),
+        statusRow('Companion installed'),
+        ...noteNode,
+        continueButton(),
+        el('p', 'note', 'A tab opens on openai.com. Sign in and allow GrammarMe to use your ChatGPT plan.'),
+        ...lastError,
+        ...errorNode,
+      );
     }
 
     if (!status.account?.planUsage) {

@@ -31,7 +31,24 @@ only when GrammarMe needs it.
 
 ## Install
 
-From the repository root:
+**For users (no Node needed):**
+
+```sh
+curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh
+```
+
+[`install.sh`](install.sh) downloads the companion from the latest GitHub release and checks it
+against `SHA256SUMS`. It uses `grammarme-companion.mjs` if Node.js 22.6+ is installed, otherwise a
+standalone executable with Node built in, `grammarme-companion-<os>-<arch>.tar.gz`. It then runs
+its `install` command, which is described below. Releases are built by
+[`.github/workflows/release.yml`](../../.github/workflows/release.yml) when a `v*` tag is pushed.
+A standalone install is its own launcher: the browser manifest points straight at
+`~/.config/grammarme/bin/grammarme-companion`.
+
+To build the standalone version locally: `npm run build:sea -w apps/companion`. This uses Node's
+single executable application support and `postject`, and ad-hoc signs the result on macOS.
+
+**From source** (Node 22.6+), from the repository root:
 
 ```sh
 npm install

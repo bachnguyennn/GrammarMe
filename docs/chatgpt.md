@@ -11,7 +11,8 @@ through OpenAI's official
 > finishes on a web address on your own computer (`http://127.0.0.1:…`). A browser extension
 > can't receive that address, so GrammarMe uses a companion program for the sign-in. The
 > companion also keeps your ChatGPT credentials on your disk, never in the browser. Chrome
-> starts it only when needed. Installing it takes one terminal command.
+> starts it only when needed. Installing it means pasting one line into Terminal. GrammarMe's
+> menu shows you the line.
 
 ## Who can use it
 
@@ -35,14 +36,46 @@ From OpenAI's documentation, checked on **2026-11-05**:
 ## What you need
 
 - macOS or Linux. Windows isn't supported by the companion yet.
-- [Node.js](https://nodejs.org) 22.6 or newer.
 - Google Chrome, Chromium, Microsoft Edge or Brave, with the GrammarMe extension installed, either
   from the [download](https://bachnguyennn.github.io/GrammarMe/install.html) or from source.
   The extension's ID is fixed (`cflaepodgccnfddlhomomhbmhgkgikhf`), and the companion only
   answers that ID.
 - A ChatGPT Plus or Pro account.
 
+You don't need Node.js, Git or the source code.
+
 ## 1. Install the companion
+
+The easiest way: click **Continue with ChatGPT** in GrammarMe's toolbar menu. It shows this line
+with a Copy button. Paste it into Terminal and press Return:
+
+```sh
+curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh
+```
+
+What [the installer](../apps/companion/install.sh) does (it's short, so you can read it first):
+
+1. It downloads the companion from the latest
+   [GitHub release](https://github.com/bachnguyennn/GrammarMe/releases/latest). GitHub's build
+   service builds every release in public from the tagged source
+   ([`release.yml`](../.github/workflows/release.yml)). It picks:
+   - **If you have Node.js 22.6+:** the small version, `grammarme-companion.mjs` (about 90 KB).
+   - **Otherwise:** a standalone version with Node built in, about 40 MB to download. It's made
+     with Node's official
+     [single executable](https://nodejs.org/api/single-executable-applications.html) support.
+2. It checks the download against the release's `SHA256SUMS`, and stops if anything doesn't match.
+3. It runs the companion's `install` command. That copies the companion to
+   `~/.config/grammarme/bin/` and registers it with each installed Chromium browser as the native
+   messaging host `com.grammarme.chatgpt`, for GrammarMe's extension ID only. No `sudo`, nothing
+   outside your home folder, and nothing running in the background.
+
+GrammarMe's menu notices the companion within a few seconds and moves on to signing in. Run the
+same line again to update it.
+
+There's nothing to start or keep running. Chrome launches the companion when the extension needs
+it, and it exits when the extension disconnects, usually within seconds.
+
+**From source instead** (needs Node.js 22.6+):
 
 ```sh
 git clone https://github.com/bachnguyennn/GrammarMe.git
@@ -51,17 +84,8 @@ npm install
 npm run install-host -w apps/companion
 ```
 
-This builds the companion and copies it to `~/.config/grammarme/bin/`, outside the checkout, so
-macOS doesn't ask Chrome for folder access. It then registers it with each installed Chromium
-browser as the native messaging host `com.grammarme.chatgpt`, allowed for GrammarMe's extension ID
-only. Run the same command again after you update GrammarMe. To check the setup:
-
-```sh
-node apps/companion/dist/grammarme-companion.mjs doctor
-```
-
-There's nothing to start or keep running. Chrome launches the companion when the extension
-needs it, and it exits when the extension disconnects, usually within seconds.
+**Check the setup** with `~/.config/grammarme/bin/grammarme-companion doctor`, or for the small
+version `node ~/.config/grammarme/bin/grammarme-companion.mjs doctor`.
 
 ## 2. Connect
 
@@ -111,10 +135,12 @@ choose model, test and check. It won't fetch other URLs or forward arbitrary req
 - **Extension:** toolbar menu → **Disconnect**. The companion asks OpenAI to revoke the session,
   then deletes the access, refresh and ID tokens from disk. If OpenAI can't be reached, it still
   deletes them locally and tells you.
-- **Terminal:** `node apps/companion/dist/grammarme-companion.mjs sign-out`.
+- **Terminal:** `~/.config/grammarme/bin/grammarme-companion sign-out` (small version:
+  `node ~/.config/grammarme/bin/grammarme-companion.mjs sign-out`).
 - **ChatGPT:** you can also remove GrammarMe in your ChatGPT settings. OpenAI doesn't notify apps
   about this, so GrammarMe finds out at the next check and asks you to connect again.
-- **Remove the companion:** `node apps/companion/dist/grammarme-companion.mjs uninstall`, which
+- **Remove the companion:** `~/.config/grammarme/bin/grammarme-companion uninstall` (small
+  version: `node ~/.config/grammarme/bin/grammarme-companion.mjs uninstall`), which
   removes the browser registrations and `~/.config/grammarme/bin`. Then
   delete `~/.config/grammarme/` if you want the install ID gone too.
 
@@ -122,9 +148,9 @@ choose model, test and check. It won't fetch other URLs or forward arbitrary req
 
 | You see | Cause and fix |
 | --- | --- |
-| "Companion not found" | The companion isn't registered. Run `npm run install-host -w apps/companion`, then press **Check again**. |
+| GrammarMe stays on "Step 1 · Install the companion" | The installer hasn't finished or failed. Run the line again and read its last message. If it says there's no published release yet, the project hasn't published one; install from source instead. |
 | "installed for a different extension ID" | The companion only allows `cflaepodgccnfddlhomomhbmhgkgikhf`. Check the ID on `chrome://extensions`. If you changed `manifest.json`'s `key`, re-run the installer with `--extension-id <id>`. |
-| "The connection … was interrupted" | The companion exited, often because Node moved after an upgrade. Re-run the installer, then `doctor`. |
+| "The connection … was interrupted" | The companion exited. With the small version, this often means Node moved after an upgrade. Run the install line again, then `doctor`. |
 | Sign-in tab shows an error or never finishes | Something may block `127.0.0.1` callbacks (a firewall or VPN). Retry, or cancel and try again. Sign-in expires after 10 minutes. |
 | "plan usage wasn't allowed" | You declined the plan-usage permission. Connect again and allow it. |
 | "isn't eligible" | OpenAI says this account or region can't use its plan in other apps. Plus or Pro is required. |
@@ -137,7 +163,9 @@ permissions (it never prints tokens) and whether `auth.openai.com` is reachable.
 
 ## Limitations
 
-- **Companion:** macOS and Linux only for now. Windows needs a registry-based install that isn't
+- **Companion:** macOS and Linux only for now. The standalone version isn't signed by Apple, so
+  it's ad-hoc signed. That's fine when the install line downloads it, because `curl` doesn't
+  mark files for Gatekeeper. Windows needs a registry-based install that isn't
   written yet.
 - **Not on the hosted web editor:** it doesn't offer ChatGPT. Its optional AI still works through
   your own server ([AI setup](ai-setup.md)).

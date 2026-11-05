@@ -37,7 +37,7 @@
 .step > div > p { margin: 0 0 var(--s-3); }
 .step .btn { margin-top: var(--s-2); }
 .addr { display: inline-flex; align-items: center; gap: 8px; margin: var(--s-2) 0 var(--s-3); flex-wrap: wrap; }
-.addr code { font: 500 15px/1 var(--font-mono); background: #fff; border: 1px solid color-mix(in oklab, var(--p-ink) 18%, transparent); border-radius: 10px; padding: 10px 12px; user-select: all; }
+.addr code { max-width: 100%; overflow-wrap: anywhere; font: 500 15px/1.4 var(--font-mono); background: #fff; border: 1px solid color-mix(in oklab, var(--p-ink) 18%, transparent); border-radius: 10px; padding: 10px 12px; user-select: all; }
 .copy { font: inherit; font-size: 14px; border: 1px solid color-mix(in oklab, var(--p-ink) 25%, transparent); background: transparent; color: var(--p-ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
 .copy:hover { background: color-mix(in oklab, var(--p-ink) 6%, transparent); }
 
@@ -130,11 +130,30 @@
     <h2>Try it</h2>
     <p>Reload any tab that was already open, then type in a comment box or a form on any website. Mistakes get a red underline; click one to see the fix. To keep the GrammarMe button in view, click the puzzle-piece icon next to the address bar and pin it.</p>
 
+    <h2 id="chatgpt">Optional: connect your ChatGPT plan</h2>
+    <p>Get grammar, clarity and tone suggestions from ChatGPT, using your own ChatGPT Plus or Pro plan. No API key is needed. It works on macOS and Linux and takes about two minutes.</p>
+    <ol class="steps">
+      <li class="step"><div>
+        <h3>Click Continue with ChatGPT</h3>
+        <p>Click GrammarMe in Chrome's toolbar, then <b>Continue with ChatGPT</b>. Allow the permission Chrome asks for. It lets GrammarMe talk to a small helper program on your computer.</p>
+      </div></li>
+      <li class="step"><div>
+        <h3>Paste one line into Terminal</h3>
+        <p>GrammarMe shows this line with a Copy button. Open Terminal (Applications → Utilities → Terminal), paste it and press Return:</p>
+        <div class="addr"><code id="cmd">curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh</code><button class="copy" type="button" data-copy="cmd">Copy command</button></div>
+        <p>It downloads the GrammarMe companion from this project's GitHub releases and checks it against the published checksums. It installs it in your home folder (no admin password) and lets only GrammarMe's extension use it. GrammarMe moves on by itself once it's installed.</p>
+      </div></li>
+      <li class="step"><div>
+        <h3>Sign in to ChatGPT</h3>
+        <p>Click <b>Continue with ChatGPT</b> again. In the tab that opens on openai.com, sign in and allow GrammarMe to use your ChatGPT plan. Then type in any text box and press the teal <b>AI</b> button.</p>
+      </div></li>
+    </ol>
+    <p>Text is sent to OpenAI only when you preview it and press Send, and each check uses your plan's allowance. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">How it works, privacy and troubleshooting</a></p>
+
     <div class="note">
       <p><b>"Disable developer mode extensions"?</b> Chrome sometimes shows this for any extension that isn't from the Chrome Web Store. It's expected. Click the X to keep GrammarMe on.</p>
-      <p><b>Is it safe?</b> GrammarMe reads text boxes on the pages you visit so it can check them, and it checks them on your computer. It skips password and payment fields and sends nothing anywhere. Read the <a class="link" href="privacy.html">privacy page</a> or the <a class="link" href="https://github.com/bachnguyennn/GrammarMe">source code</a>.</p>
+      <p><b>Is it safe?</b> GrammarMe reads text boxes on the pages you visit so it can check them, and it checks them on your computer. It skips password and payment fields. Its spelling and grammar checks send nothing anywhere; the optional ChatGPT check sends only text you preview and send. Read the <a class="link" href="privacy.html">privacy page</a> or the <a class="link" href="https://github.com/bachnguyennn/GrammarMe">source code</a>.</p>
       <p><b>Getting a newer version:</b> download the zip again, replace the old folder with the new one, then click the round reload arrow on GrammarMe's card in the extensions page.</p>
-      <p><b>Optional ChatGPT check:</b> if you have ChatGPT Plus or Pro, the extension can suggest grammar, clarity and tone edits using your plan. It needs the free GrammarMe companion on your computer (macOS or Linux, with Node.js). Text is sent only when you preview it and press Send. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">ChatGPT setup guide</a></p>
       <p><b>Where it works:</b> comment boxes, forms, and rich-text editors such as Gmail and Outlook on the web. Google Docs isn't supported by GrammarMe yet; paste your text into the <a class="link" href="editor/">editor</a> instead.</p>
     </div>
 
@@ -150,7 +169,7 @@ document.addEventListener('click', async (e) => {
   const text = document.getElementById(b.dataset.copy).textContent;
   try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
   catch { getSelection().selectAllChildren(document.getElementById(b.dataset.copy)); b.textContent = 'Press Cmd/Ctrl+C'; }
-  setTimeout(() => { b.textContent = 'Copy address'; }, 2000);
+  setTimeout(() => { b.textContent = b.dataset.copy === 'cmd' ? 'Copy command' : 'Copy address'; }, 2000);
 });
 </script>
 </body>

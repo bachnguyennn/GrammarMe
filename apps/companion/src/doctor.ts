@@ -5,7 +5,7 @@ import { COMPANION_HOST } from '@grammarme/core/companion';
 import { companionHome, resolveEndpoints } from './config.ts';
 import { getJson } from './http.ts';
 import type { FetchFn } from './http.ts';
-import { BROWSERS, browserDataDirs, installDir, isExecutable, LAUNCHER_NAME, MANIFEST_FILE, nodePathFromLauncher } from './install.ts';
+import { BROWSERS, browserDataDirs, INSTALLED_BINARY_NAME, installDir, isExecutable, LAUNCHER_NAME, MANIFEST_FILE, nodePathFromLauncher } from './install.ts';
 import type { Platform } from './install.ts';
 import { loadAllowedExtensionIds } from './origin.ts';
 import { CREDENTIALS_FILE, CredentialStore } from './store.ts';
@@ -37,7 +37,10 @@ export async function doctor(o: DoctorOptions): Promise<string[]> {
 
   lines.push('Launcher');
   const launcher = join(installDir(o.companionHome ?? companionHome()), LAUNCHER_NAME);
-  if (await isExecutable(launcher)) {
+  const standalone = join(installDir(o.companionHome ?? companionHome()), INSTALLED_BINARY_NAME);
+  if (await isExecutable(standalone)) {
+    ok(`${standalone} (standalone; no Node needed)`);
+  } else if (await isExecutable(launcher)) {
     ok(launcher);
     const nodePath = nodePathFromLauncher(await readFile(launcher, 'utf8'));
     if (nodePath && (await isExecutable(nodePath))) ok(`runs Node at ${nodePath}`);
