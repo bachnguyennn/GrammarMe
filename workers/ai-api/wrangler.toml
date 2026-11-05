@@ -1,0 +1,53 @@
+# GrammarMe AI API — Cloudflare Worker (Workers Free plan).
+# No account_id here on purpose: wrangler uses the account you are logged into.
+# Secrets are NOT in this file. Set them with:
+#   npx wrangler secret put GRAMMARME_CLIENT_TOKEN   # long random string shared with your client
+#   npx wrangler secret put GROQ_API_KEY             # optional
+#   npx wrangler secret put GEMINI_API_KEY           # optional — read docs/llm-research.md first (free-tier data terms)
+name = "grammarme-ai-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# Metadata-only logs (the code never logs request text). Leave disabled unless debugging.
+[observability]
+enabled = false
+
+[vars]
+# Priority order; providers without a key/binding are skipped. Add "gemini" only after accepting its
+# free-tier data terms (prompts may be used to improve Google products and seen by human reviewers).
+AI_PROVIDERS = "groq,workers-ai"
+# Exact origins, comma-separated. Replace <extension-id> with your unpacked/published extension id.
+ALLOWED_ORIGINS = "chrome-extension://<extension-id>,http://localhost:*,http://127.0.0.1:*"
+GEMINI_MODEL = "gemini-3.5-flash-lite"
+GROQ_MODEL = "openai/gpt-oss-20b"
+GROQ_REASONING_EFFORT = "low"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+MAX_INPUT_CHARS = "4000"
+MAX_EDITS = "25"
+# Hard daily cap across all clients (UTC day). Keep it below the smallest free quota in your chain.
+DAILY_REQUEST_CAP = "200"
+# Only used if the RATE_LIMITER binding below is removed (in-memory, per isolate, best-effort).
+RATE_LIMIT_PER_MINUTE = "10"
+PROVIDER_TIMEOUT_MS = "20000"
+
+# Workers AI binding (10,000 Neurons/day free; on the Free plan requests fail once used up — no billing).
+[ai]
+binding = "AI"
+
+# Per-client rate limit. Cloudflare's docs do not state whether this binding is included on Workers
+# Free (unverified 2026-11-04). If `wrangler deploy` rejects it, delete this block: the Worker falls
+# back to an in-memory limiter automatically.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "4101"
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+# Optional: make DAILY_REQUEST_CAP survive isolate restarts by storing ONE integer per UTC day in KV
+# (never any text). Create with `npx wrangler kv namespace create USAGE_KV` and paste the id.
+# Free plan KV allows 1,000 writes/day, so keep DAILY_REQUEST_CAP below ~900 if you enable this.
+# [[kv_namespaces]]
+# binding = "USAGE_KV"
+# id = "<kv-namespace-id>"
