@@ -7,3 +7,4 @@ dist/
 coverage/
 apps/extension/build/
 *.zip
+apps/site/dist/

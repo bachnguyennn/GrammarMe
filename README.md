@@ -26,6 +26,14 @@ npm test             # all unit tests
 npm run eval         # grammar accuracy + latency evaluation (tests/eval)
 ```
 
+### Product website
+
+```bash
+npm run build:site   # apps/site/dist: the product page at /, the editor at /editor/
+```
+
+`apps/site/dist` is a static folder you can host for free (GitHub Pages, Cloudflare Pages).
+
 ### Chrome extension
 
 ```bash
@@ -54,6 +62,7 @@ and press **AI check**.
 ```
 packages/core     shared Suggestion contract, offset-safe edit helpers, Harper adapter
 apps/web          React + Vite editor
+apps/site         product website (static HTML on the taste-skill design system)
 apps/extension    Chrome MV3 extension
 workers/ai-api    optional Cloudflare Worker for AI suggestions
 tests/eval        labelled dataset + accuracy/latency runner

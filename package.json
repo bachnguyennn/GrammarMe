@@ -11,10 +11,11 @@
   ],
   "scripts": {
     "dev": "npm run dev -w apps/web",
-    "build": "npm run build -w packages/core && npm run build -w apps/web && npm run build -w apps/extension",
+    "build": "npm run build -w apps/extension && npm run build -w apps/site",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "eval": "node --experimental-strip-types tests/eval/run-eval.ts"
+    "eval": "node --experimental-strip-types tests/eval/run-eval.ts",
+    "build:site": "npm run build -w apps/site"
   },
   "engines": {
     "node": ">=22.6"

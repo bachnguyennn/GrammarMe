@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="round" data-buttons="arrow" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GrammarMe: privacy</title>
+<meta name="description" content="What GrammarMe does with your writing: grammar checks run in your browser and nothing is uploaded unless you use the optional AI check.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<style>
+:root {
+  --p-bg: #eeecea; --p-surface: #e4e1dd; --p-ink: #333231; --p-muted: #625f5b;
+  --p-accent: #5c6b54; --p-accent-ink: #ffffff; --p-action: #5c6b54; --p-action-ink: #ffffff;
+  --font-display: "Reddit Sans", system-ui, sans-serif;
+  --font-text: "Reddit Sans", system-ui, sans-serif;
+  --display-weight: 500;
+  --display-tracking: -0.03em;
+}
+.doc-page { padding: calc(var(--nav) + var(--s-8)) 0 var(--s-9); }
+.doc-page h2 { font-size: var(--t-h3); margin-top: var(--s-8); }
+.doc-page p, .doc-page li { max-width: 62ch; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="nav__logo" href="index.html"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
+    <div class="nav__actions"><a class="btn btn--primary" href="editor/">Try the editor</a></div>
+  </div>
+</header>
+<main class="doc-page">
+  <div class="wrap measure">
+    <h1>Privacy</h1>
+    <p class="t-lead">GrammarMe checks your writing inside your browser. We do not run accounts, analytics or ads, and we never see what you write.</p>
+    <h2>Grammar and spelling checks</h2>
+    <p>The checker runs on your computer. Your text is not uploaded, logged or stored anywhere except your own browser.</p>
+    <h2>What is kept in your browser</h2>
+    <ul>
+      <li>Your settings, personal dictionary and turned-off rules.</li>
+      <li>Your current draft, if “Keep my draft in this browser” is on. You can delete it in Settings at any time.</li>
+    </ul>
+    <h2>The optional AI check</h2>
+    <p>It is off until you turn it on and add your own server in Settings. Text is sent only when you press <b>AI check</b>, up to 4,000 characters at a time, to that server and then to the AI provider it is set up with. Each provider has its own terms; the project notes compare them.</p>
+    <h2>The Chrome extension</h2>
+    <p>The extension checks text boxes on the pages you visit, on your computer. It skips password, one-time-code and payment fields and sends nothing anywhere.</p>
+    <h2>Fonts</h2>
+    <p>This website loads its fonts from Google Fonts, which receives your IP address when the page loads. The editor itself loads no third-party fonts.</p>
+    <p><a class="link" href="index.html">Back to GrammarMe</a></p>
+  </div>
+</main>
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+</body>
+</html>

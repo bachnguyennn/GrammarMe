@@ -88,3 +88,24 @@ actually ran it; anything else is labelled as reasoning or documentation.
 - Modes change local behaviour only where that is honest. *Casual* hides style-level suggestions;
   the others show everything.
 - The real tone and register differences come from the AI prompts, which receive the mode.
+
+## D10. Design system — **taste-skill, dealt not chosen**
+
+- The owner asked for the [taste-skill](https://github.com/leonxlnx/taste-skill) design method. Its
+  rules target marketing sites, so it was applied in full to the new product site (`apps/site`)
+  and its tokens were carried into the editor and extension so all three share one look.
+- **Dealt by the skill's scripts (not picked by taste):**
+  - Hero: `centred`. Palette: "three stones" (#eeecea ground, #333231 ink, #5c6b54 sage accent).
+  - Type: Reddit Sans with JetBrains Mono. Radius: `round`.
+  - Nav: `nav-mega`. Close: `close-type`. Footer: `footer-dark`. Rhythm: `dark-band`. Buttons: `arrow`.
+  - Effect: `gradient-mesh` in the hero window. Card ground: `painterly-landscape`.
+- **Consequences in the editor:**
+  - The violet AI colour was replaced (the skill bans violet), so AI suggestions are teal.
+  - Labels are sentence case and weights are 400/500 only.
+  - Buttons step 1 px and cards lift 2 px on hover.
+- **Privacy exception:** the editor bundles Reddit Sans locally (`@fontsource-variable`) instead
+  of loading Google Fonts, so the app makes no third-party requests. The marketing site does load
+  Google Fonts, and its privacy page says so.
+- **Honesty rule applied to the mock-ups:** every mistake shown on the site was run through the
+  real engine first, and only ones Harper actually flags are shown. "you're time" and "The results
+  was" were dropped because Harper misses them.
