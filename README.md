@@ -2,6 +2,9 @@
 
 A free, private, Grammarly-style writing assistant.
 
+**Try it:** [bachnguyennn.github.io/GrammarMe](https://bachnguyennn.github.io/GrammarMe/) (the
+editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
+
 - **Real-time spelling, grammar and punctuation checks** that run entirely on your device. Nothing
   you type is sent anywhere.
 - **Underlines with explanations and one-click fixes**: accept, dismiss, undo (Cmd/Ctrl+Z), add to
@@ -32,7 +35,9 @@ npm run eval         # grammar accuracy + latency evaluation (tests/eval)
 npm run build:site   # apps/site/dist: the product page at /, the editor at /editor/
 ```
 
-`apps/site/dist` is a static folder you can host for free (GitHub Pages, Cloudflare Pages).
+`apps/site/dist` is a static folder you can host for free anywhere. Every push to `main` runs the
+tests and deploys it to GitHub Pages (`.github/workflows/pages.yml`). No server or secrets are
+involved; the optional AI Worker is not part of the site.
 
 ### Chrome extension
 
