@@ -131,6 +131,13 @@ export class HarperEngine implements SuggestionEngine {
     await this.linter.importWords(words);
   }
 
+  /** Replace the whole personal dictionary (so removed words get flagged again). */
+  async setDictionary(words: string[]): Promise<void> {
+    await this.ready;
+    await this.linter.clearWords();
+    if (words.length) await this.linter.importWords(words);
+  }
+
   async ruleDescriptions(): Promise<Record<string, string>> {
     await this.ready;
     return this.linter.getLintDescriptions();
