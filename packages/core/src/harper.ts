@@ -38,6 +38,27 @@ const DIALECTS: Record<Dialect, HarperDialect> = {
   indian: HarperDialect.Indian,
 };
 
+/**
+ * Rules off by default, from tests/eval (docs/evaluation.md):
+ * - LongSentences: flags a whole 40+ word sentence and hides every other error inside it.
+ * - SplitWords: 3/3 suggestions wrong in the dataset ("adress" → "a dress", "wether" → "wet her").
+ * - ExpandTimeShorthands: rewrites "ms" → "milliseconds" in technical text.
+ */
+export const DEFAULT_DISABLED_RULES = ['LongSentences', 'SplitWords', 'ExpandTimeShorthands'];
+
+/**
+ * Tokens that are almost certainly code, identifiers or acronyms, not misspelled English:
+ * camelCase, snake_case, dotted/slashed paths, letters mixed with digits, ALL-CAPS.
+ */
+export function looksLikeCode(token: string): boolean {
+  return (
+    /\p{Ll}\p{Lu}/u.test(token) ||
+    /[_./\\@#$<>{}()[\]=]/.test(token) ||
+    (/\p{L}/u.test(token) && /\d/.test(token)) ||
+    /^\p{Lu}{2,}s?$/u.test(token)
+  );
+}
+
 /** Convert a code-point index into a UTF-16 index (only used if Harper ever reports code points). */
 export function codePointToUtf16(text: string, cp: number): number {
   let units = 0;
@@ -105,6 +126,7 @@ export class HarperEngine implements SuggestionEngine {
   private dialect: Dialect | undefined;
   private disabled = new Set<string>();
   private words: string[] = [];
+  private queue: Promise<void> = Promise.resolve();
   private ready: Promise<void>;
   private linter: Linter;
 
@@ -113,7 +135,18 @@ export class HarperEngine implements SuggestionEngine {
     this.ready = linter.setup();
   }
 
-  async check(doc: DocumentSnapshot, options: CheckOptions = {}): Promise<Suggestion[]> {
+  check(doc: DocumentSnapshot, options: CheckOptions = {}): Promise<Suggestion[]> {
+    // Serialize: configure() + lint must not interleave between concurrent callers
+    // (different dialects in parallel crash the WASM linter).
+    const run = this.queue.then(() => this.checkNow(doc, options));
+    this.queue = run.then(
+      () => undefined,
+      () => undefined,
+    );
+    return run;
+  }
+
+  private async checkNow(doc: DocumentSnapshot, options: CheckOptions): Promise<Suggestion[]> {
     await this.ready;
     await this.configure(options);
     const grouped = await this.linter.organizedLints(doc.text, { language: 'plaintext' });
@@ -121,7 +154,7 @@ export class HarperEngine implements SuggestionEngine {
     for (const [rule, lints] of Object.entries(grouped)) {
       for (const lint of lints) {
         const s = lintToSuggestion(doc.text, lint, rule, doc.version);
-        if (s) out.push(s);
+        if (s && !(s.category === 'spelling' && looksLikeCode(s.original))) out.push(s);
         lint.free();
       }
     }
@@ -161,7 +194,7 @@ export class HarperEngine implements SuggestionEngine {
       if (this.words.length) await this.linter.importWords(this.words);
       rebuilt = true;
     }
-    const next = new Set(options.disabledRules ?? []);
+    const next = new Set([...DEFAULT_DISABLED_RULES, ...(options.disabledRules ?? [])]);
     if (rebuilt) this.disabled = new Set(); // config is back to defaults; re-apply everything
     if (!sameSet(next, this.disabled)) {
       const config = await this.linter.getLintConfig();

@@ -1,7 +1,7 @@
 /** Pure unit tests for the Harper adapter — no WASM, Harper lints are faked. */
 import { SuggestionKind, type Lint } from 'harper.js';
 import { describe, expect, it } from 'vitest';
-import { categoryForLintKind, codePointToUtf16, lintToSuggestion, resolveSpan } from '../src/harper.ts';
+import { categoryForLintKind, codePointToUtf16, lintToSuggestion, looksLikeCode, resolveSpan } from '../src/harper.ts';
 import { suggestionId } from '../src/suggestions.ts';
 
 interface FakeSug {
@@ -130,5 +130,14 @@ describe('lintToSuggestion', () => {
 
   it('returns null (never a misplaced suggestion) when the span cannot be resolved', () => {
     expect(lintToSuggestion('abc', fakeLint(0, 3, 'xyz', [R('q')]), 'X', 1)).toBeNull();
+  });
+});
+
+describe('looksLikeCode', () => {
+  it('matches identifiers, paths and acronyms', () => {
+    for (const t of ['getUserById', 'S3', 'p95', 'ETL', 'ENV', 'APIs', 'user_id', 'index.ts', 'a/b']) expect(looksLikeCode(t)).toBe(true);
+  });
+  it('does not match ordinary or misspelled words', () => {
+    for (const t of ['recieve', 'Teh', 'Paris', 'I', 'A', 'definately', 'Nguyễn']) expect(looksLikeCode(t)).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "date": "2026-11-05T03:42:08.780Z",
+    "date": "2026-11-05T03:44:39.794Z",
     "engine": "harper",
     "harperJs": "3.0.0",
     "wasmLoader": "tmp-copy",
@@ -21,30 +21,30 @@
     "deterministicAcrossPasses": true
   },
   "setup": {
-    "msToFirstResult": 564.665417
+    "msToFirstResult": 597.046792
   },
   "memory": {
     "processStart": {
-      "rssMB": 78.2,
+      "rssMB": 78.1,
       "heapUsedMB": 8.3,
       "externalMB": 10.5,
       "arrayBuffersMB": 2.4
     },
     "beforeEngineLoad": {
-      "rssMB": 79.6,
+      "rssMB": 79.5,
       "heapUsedMB": 8.1,
       "externalMB": 10.5,
       "arrayBuffersMB": 0
     },
     "afterSetup": {
-      "rssMB": 371.1,
-      "heapUsedMB": 12.7,
+      "rssMB": 373.3,
+      "heapUsedMB": 13.5,
       "externalMB": 176,
       "arrayBuffersMB": 0.2
     },
     "afterEval": {
-      "rssMB": 597,
-      "heapUsedMB": 44.6,
+      "rssMB": 600.3,
+      "heapUsedMB": 40.1,
       "externalMB": 296.3,
       "arrayBuffersMB": 0.2
     }
@@ -52,48 +52,48 @@
   "latency": {
     "perSentenceMs": {
       "samples": 855,
-      "p50": 1.215958000000228,
-      "p95": 1.5072500000001128,
-      "p99": 1.6880000000001019,
-      "mean": 1.258696885380119,
-      "max": 2.29491599999983
+      "p50": 1.2201249999998254,
+      "p95": 1.5129579999997986,
+      "p99": 1.7445410000000265,
+      "mean": 1.2583123508771896,
+      "max": 2.308875000000171
     },
     "longDocument": {
       "words": 1196,
       "chars": 6560,
       "samples": 5,
-      "p50": 43.73720899999989,
-      "p95": 235.65862500000003,
-      "p99": 235.65862500000003,
-      "mean": 81.87595839999986,
-      "max": 235.65862500000003,
+      "p50": 48.6450420000001,
+      "p95": 241.82424999999967,
+      "p99": 241.82424999999967,
+      "mean": 87.69625820000002,
+      "max": 241.82424999999967,
       "rawMsInRunOrder": [
-        235.65862500000003,
-        44.373541999999816,
-        43.41895799999975,
-        42.191457999999784,
-        43.73720899999989
+        241.82424999999967,
+        44.16983300000038,
+        43.55524999999989,
+        60.28691600000002,
+        48.6450420000001
       ]
     }
   },
   "overall": {
     "sentences": 171,
-    "flags": 113,
+    "flags": 106,
     "tpFlags": 89,
-    "fpFlags": 24,
+    "fpFlags": 17,
     "expectedErrors": 128,
     "detected": 89,
-    "correctFix": 81,
-    "sentencesWithFlag": 101,
+    "correctFix": 83,
+    "sentencesWithFlag": 97,
     "errorSentences": 125,
-    "exactSentenceFix": 79,
-    "precision": 0.7876106194690266,
+    "exactSentenceFix": 81,
+    "precision": 0.839622641509434,
     "recall": 0.6953125,
-    "f1": 0.7385892116182572,
-    "correctFixRate": 0.9101123595505618,
-    "autoFixRecall": 0.6328125,
-    "sentenceFlagRate": 0.5906432748538012,
-    "exactSentenceFixRate": 0.632
+    "f1": 0.7606837606837608,
+    "correctFixRate": 0.9325842696629213,
+    "autoFixRecall": 0.6484375,
+    "sentenceFlagRate": 0.5672514619883041,
+    "exactSentenceFixRate": 0.648
   },
   "perCategory": {
     "spelling": {
@@ -103,17 +103,17 @@
       "fpFlags": 0,
       "expectedErrors": 30,
       "detected": 30,
-      "correctFix": 24,
+      "correctFix": 27,
       "sentencesWithFlag": 28,
       "errorSentences": 28,
-      "exactSentenceFix": 22,
+      "exactSentenceFix": 25,
       "precision": 1,
       "recall": 1,
       "f1": 1,
-      "correctFixRate": 0.8,
-      "autoFixRecall": 0.8,
+      "correctFixRate": 0.9,
+      "autoFixRecall": 0.9,
       "sentenceFlagRate": 1,
-      "exactSentenceFixRate": 0.7857142857142857
+      "exactSentenceFixRate": 0.8928571428571429
     },
     "punctuation": {
       "sentences": 16,
@@ -160,17 +160,17 @@
       "fpFlags": 0,
       "expectedErrors": 14,
       "detected": 8,
-      "correctFix": 8,
+      "correctFix": 7,
       "sentencesWithFlag": 8,
       "errorSentences": 13,
-      "exactSentenceFix": 8,
+      "exactSentenceFix": 7,
       "precision": 1,
       "recall": 0.5714285714285714,
       "f1": 0.7272727272727273,
-      "correctFixRate": 1,
-      "autoFixRecall": 0.5714285714285714,
+      "correctFixRate": 0.875,
+      "autoFixRecall": 0.5,
       "sentenceFlagRate": 0.6153846153846154,
-      "exactSentenceFixRate": 0.6153846153846154
+      "exactSentenceFixRate": 0.5384615384615384
     },
     "article": {
       "sentences": 15,
@@ -231,13 +231,13 @@
     },
     "correct": {
       "sentences": 46,
-      "flags": 24,
+      "flags": 17,
       "tpFlags": 0,
-      "fpFlags": 24,
+      "fpFlags": 17,
       "expectedErrors": 0,
       "detected": 0,
       "correctFix": 0,
-      "sentencesWithFlag": 14,
+      "sentencesWithFlag": 10,
       "errorSentences": 0,
       "exactSentenceFix": 0,
       "precision": 0,
@@ -245,7 +245,7 @@
       "f1": null,
       "correctFixRate": null,
       "autoFixRecall": null,
-      "sentenceFlagRate": 0.30434782608695654,
+      "sentenceFlagRate": 0.21739130434782608,
       "exactSentenceFixRate": null
     }
   },
@@ -262,8 +262,8 @@
     },
     "jargon": {
       "sentences": 11,
-      "flagged": 5,
-      "rate": 0.45454545454545453
+      "flagged": 1,
+      "rate": 0.09090909090909091
     },
     "names": {
       "sentences": 6,
@@ -283,11 +283,11 @@
   },
   "perRule": {
     "SpellCheck": {
-      "flags": 50,
-      "tp": 30,
-      "fp": 20,
-      "fpOnCorrect": 20,
-      "correctFix": 28
+      "flags": 48,
+      "tp": 33,
+      "fp": 15,
+      "fpOnCorrect": 15,
+      "correctFix": 31
     },
     "AnA": {
       "flags": 16,
@@ -309,13 +309,6 @@
       "fp": 0,
       "fpOnCorrect": 0,
       "correctFix": 5
-    },
-    "SplitWords": {
-      "flags": 3,
-      "tp": 3,
-      "fp": 0,
-      "fpOnCorrect": 0,
-      "correctFix": 0
     },
     "PronounInflectionBe": {
       "flags": 3,
@@ -373,13 +366,6 @@
       "fpOnCorrect": 0,
       "correctFix": 2
     },
-    "ExpandTimeShorthands": {
-      "flags": 2,
-      "tp": 0,
-      "fp": 2,
-      "fpOnCorrect": 2,
-      "correctFix": 0
-    },
     "WrongNegative": {
       "flags": 1,
       "tp": 1,
@@ -427,7 +413,7 @@
       "tp": 1,
       "fp": 0,
       "fpOnCorrect": 0,
-      "correctFix": 1
+      "correctFix": 0
     },
     "TheirToTheyre": {
       "flags": 1,
@@ -480,96 +466,6 @@
     }
   },
   "falsePositives": [
-    {
-      "id": "ok-jargon-24",
-      "category": "correct",
-      "input": "The function getUserById returns null when the user is missing.",
-      "flagged": "getUserById",
-      "rule": "SpellCheck",
-      "category_": "spelling",
-      "replacements": [],
-      "message": "Did you mean to spell `getUserById` this way?"
-    },
-    {
-      "id": "ok-jargon-27",
-      "category": "correct",
-      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
-      "flagged": "p95",
-      "rule": "SpellCheck",
-      "category_": "spelling",
-      "replacements": [
-        "pa",
-        "pad",
-        "pah"
-      ],
-      "message": "Did you mean to spell `p95` this way?"
-    },
-    {
-      "id": "ok-jargon-27",
-      "category": "correct",
-      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
-      "flagged": "ms",
-      "rule": "ExpandTimeShorthands",
-      "category_": "clarity",
-      "replacements": [
-        "milliseconds"
-      ],
-      "message": "Did you mean `milliseconds`?"
-    },
-    {
-      "id": "ok-jargon-27",
-      "category": "correct",
-      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
-      "flagged": "ms",
-      "rule": "ExpandTimeShorthands",
-      "category_": "clarity",
-      "replacements": [
-        "milliseconds"
-      ],
-      "message": "Did you mean `milliseconds`?"
-    },
-    {
-      "id": "ok-jargon-28",
-      "category": "correct",
-      "input": "Set the environment variable NODE_ENV to production.",
-      "flagged": "ENV",
-      "rule": "SpellCheck",
-      "category_": "spelling",
-      "replacements": [
-        "End",
-        "Envy",
-        "ENE"
-      ],
-      "message": "Did you mean to spell `ENV` this way?"
-    },
-    {
-      "id": "ok-jargon-30",
-      "category": "correct",
-      "input": "Our ETL job loads data from S3 into Snowflake every hour.",
-      "flagged": "ETL",
-      "rule": "SpellCheck",
-      "category_": "spelling",
-      "replacements": [
-        "Eel",
-        "Ell",
-        "Eta"
-      ],
-      "message": "Did you mean to spell `ETL` this way?"
-    },
-    {
-      "id": "ok-jargon-30",
-      "category": "correct",
-      "input": "Our ETL job loads data from S3 into Snowflake every hour.",
-      "flagged": "S3",
-      "rule": "SpellCheck",
-      "category_": "spelling",
-      "replacements": [
-        "So",
-        "SA",
-        "SE"
-      ],
-      "message": "Did you mean to spell `S3` this way?"
-    },
     {
       "id": "ok-jargon-32",
       "category": "correct",
@@ -1088,19 +984,6 @@
       ]
     },
     {
-      "id": "spell-21",
-      "input": "It is important to mantain regular backups.",
-      "original": "mantain",
-      "expected": "maintain",
-      "got": [
-        {
-          "flagged": "mantain",
-          "rule": "SplitWords",
-          "top": "manta in"
-        }
-      ]
-    },
-    {
       "id": "spell-23",
       "input": "I am writting a report about our sales.",
       "original": "writting",
@@ -1110,32 +993,6 @@
           "flagged": "writting",
           "rule": "SpellCheck",
           "top": "writhing"
-        }
-      ]
-    },
-    {
-      "id": "spell-25",
-      "input": "The flight was postponed because of the wether.",
-      "original": "wether",
-      "expected": "weather",
-      "got": [
-        {
-          "flagged": "wether",
-          "rule": "SplitWords",
-          "top": "wet her"
-        }
-      ]
-    },
-    {
-      "id": "spell-26",
-      "input": "The adress on the reciept was wrong.",
-      "original": "adress",
-      "expected": "address",
-      "got": [
-        {
-          "flagged": "adress",
-          "rule": "SplitWords",
-          "top": "a dress"
         }
       ]
     },
@@ -1175,6 +1032,19 @@
           "flagged": "wont",
           "rule": "NominalWants",
           "top": "want"
+        }
+      ]
+    },
+    {
+      "id": "tense-13",
+      "input": "He drived to work this morning.",
+      "original": "drived",
+      "expected": "drove",
+      "got": [
+        {
+          "flagged": "drived",
+          "rule": "RegularIrregulars",
+          "top": "driven"
         }
       ]
     }
@@ -1468,8 +1338,8 @@
           "s": 19,
           "e": 26,
           "o": "mantain",
-          "rule": "SplitWords",
-          "top": "manta in"
+          "rule": "SpellCheck",
+          "top": "maintain"
         }
       ],
       "missed": []
@@ -1524,8 +1394,8 @@
           "s": 40,
           "e": 46,
           "o": "wether",
-          "rule": "SplitWords",
-          "top": "wet her"
+          "rule": "SpellCheck",
+          "top": "weather"
         }
       ],
       "missed": []
@@ -1538,8 +1408,8 @@
           "s": 4,
           "e": 10,
           "o": "adress",
-          "rule": "SplitWords",
-          "top": "a dress"
+          "rule": "SpellCheck",
+          "top": "address"
         },
         {
           "s": 18,
@@ -2134,7 +2004,7 @@
           "e": 9,
           "o": "drived",
           "rule": "RegularIrregulars",
-          "top": "drove"
+          "top": "driven"
         }
       ],
       "missed": []
@@ -2858,15 +2728,7 @@
     {
       "id": "ok-jargon-24",
       "category": "correct",
-      "flags": [
-        {
-          "s": 13,
-          "e": 24,
-          "o": "getUserById",
-          "rule": "SpellCheck",
-          "top": null
-        }
-      ],
+      "flags": [],
       "missed": []
     },
     {
@@ -2884,43 +2746,13 @@
     {
       "id": "ok-jargon-27",
       "category": "correct",
-      "flags": [
-        {
-          "s": 4,
-          "e": 7,
-          "o": "p95",
-          "rule": "SpellCheck",
-          "top": "pa"
-        },
-        {
-          "s": 33,
-          "e": 35,
-          "o": "ms",
-          "rule": "ExpandTimeShorthands",
-          "top": "milliseconds"
-        },
-        {
-          "s": 43,
-          "e": 45,
-          "o": "ms",
-          "rule": "ExpandTimeShorthands",
-          "top": "milliseconds"
-        }
-      ],
+      "flags": [],
       "missed": []
     },
     {
       "id": "ok-jargon-28",
       "category": "correct",
-      "flags": [
-        {
-          "s": 34,
-          "e": 37,
-          "o": "ENV",
-          "rule": "SpellCheck",
-          "top": "End"
-        }
-      ],
+      "flags": [],
       "missed": []
     },
     {
@@ -2932,22 +2764,7 @@
     {
       "id": "ok-jargon-30",
       "category": "correct",
-      "flags": [
-        {
-          "s": 4,
-          "e": 7,
-          "o": "ETL",
-          "rule": "SpellCheck",
-          "top": "Eel"
-        },
-        {
-          "s": 28,
-          "e": 30,
-          "o": "S3",
-          "rule": "SpellCheck",
-          "top": "So"
-        }
-      ],
+      "flags": [],
       "missed": []
     },
     {

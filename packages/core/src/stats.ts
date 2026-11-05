@@ -8,7 +8,7 @@ export interface TextStats {
   readability: number | null;
 }
 
-const WORD = /[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu;
+const WORD = /[\p{L}\p{N}][\p{L}\p{N}\p{M}]*(?:['’-][\p{L}\p{N}\p{M}]+)*/gu;
 
 export function countSyllables(word: string): number {
   const w = word.toLowerCase().replace(/[^a-z]/g, '');
@@ -21,7 +21,7 @@ export function countSyllables(word: string): number {
 
 export function textStats(text: string): TextStats {
   const words = text.match(WORD) ?? [];
-  const sentences = Math.max(words.length ? 1 : 0, (text.match(/[.!?]+(?=\s|$)/g) ?? []).length);
+  const sentences = Math.max(words.length ? 1 : 0, (text.match(/[.!?]+["'”’)\]]*(?=\s|$)/g) ?? []).length);
   const syllables = words.reduce((n, w) => n + countSyllables(w), 0);
   const readability =
     words.length >= 30 && sentences > 0

@@ -102,9 +102,14 @@ export function rebaseSuggestions(
   return out;
 }
 
+/** Is the code point covering UTF-16 `index` part of a word? (letters, digits, combining marks, apostrophes) */
 function isWordChar(text: string, index: number): boolean {
-  const ch = text[index];
-  return ch !== undefined && /[\p{L}\p{N}'’_-]/u.test(ch);
+  if (index < 0 || index >= text.length) return false;
+  let i = index;
+  const c = text.charCodeAt(i);
+  if (isLowSurrogate(c) && i > 0 && isHighSurrogate(text.charCodeAt(i - 1))) i--;
+  const cp = text.codePointAt(i);
+  return cp !== undefined && /[\p{L}\p{N}\p{M}'’_-]/u.test(String.fromCodePoint(cp));
 }
 
 /**
@@ -143,8 +148,8 @@ export function locateAiEdit(doc: DocumentSnapshot, edit: AiEdit, searchFrom = 0
     const first = doc.text.indexOf(edit.original, searchFrom);
     if (first === -1) return null;
     const second = doc.text.indexOf(edit.original, first + 1);
-    // Ambiguous short quotes ("a", "the") without context are unsafe to place.
-    if (second !== -1 && edit.original.length < 12 && !edit.contextBefore) return null;
+    // Ambiguous short quotes ("a", "the") are unsafe to place unless context matched above.
+    if (second !== -1 && edit.original.length < 12) return null;
     start = first;
   }
   const end = start + edit.original.length;

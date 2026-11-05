@@ -353,7 +353,7 @@ describe('rebaseSuggestions', () => {
   // characters, so typing a combining accent directly after a flagged word keeps the old underline.
   // Applying it then produces a different word than the user sees ("teh" + U+0301 -> "the" + U+0301 = "thé").
   // Matters for input methods that emit combining marks separately (Vietnamese, Hindi/Devanagari, some dead keys).
-  it.fails('drops a word when a combining mark is typed directly after it', () => {
+  it('drops a word when a combining mark is typed directly after it', () => {
     const prev = 'teh';
     const out = rebaseSuggestions(prev, doc('teh́', 2), [sugAt(prev, 'teh', 'the')]);
     expect(out).toEqual([]);
@@ -535,7 +535,7 @@ describe('locateAiEdit', () => {
   // ambiguous quote is placed at its FIRST occurrence, i.e. probably the wrong word.
   // Input: text "I saw a dog and a apple.", edit {original:"a", replacement:"an", contextBefore:"with "}.
   // Expected: null. Actual: suggestion at 3..4 — the "a" INSIDE "saw" — which applies as "I sanw a dog ...".
-  it.fails('rejects an ambiguous short quote when contextBefore is given but not found', () => {
+  it('rejects an ambiguous short quote when contextBefore is given but not found', () => {
     const d = doc('I saw a dog and a apple.');
     expect(locateAiEdit(d, edit('a', 'an', 'with '))).toBeNull();
   });

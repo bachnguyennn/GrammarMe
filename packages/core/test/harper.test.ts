@@ -157,14 +157,20 @@ describe('HarperEngine (real WASM)', { timeout: TIMEOUT }, () => {
   // explain-only LongSentences lint spans the WHOLE sentence — so once a sentence is long enough (~40+ words)
   // every spelling/grammar lint inside it disappears. Disabling LongSentences brings them back.
   // Recommendation: disable LongSentences in Harper and compute sentence length from stats.ts instead.
-  it('LongSentences masks other lints inside a run-on sentence; disabling it restores them', async () => {
+  it('LongSentences is off by default, so typos inside a run-on sentence are still flagged', async () => {
     const e = await freshEngine();
     const doc = d(`I recieve mail${' and more'.repeat(24)}.`);
-    const masked = await e.check(doc);
-    expect(masked.map((s) => s.rule)).toEqual(['LongSentences']);
-    expect(masked[0]!.replacements).toEqual([]);
-    const unmasked = await e.check(doc, { disabledRules: ['LongSentences'] });
-    expect(find(unmasked, 'recieve')?.rule).toBe('SpellCheck');
+    const result = await e.check(doc);
+    expect(result.map((s) => s.rule)).not.toContain('LongSentences');
+    expect(find(result, 'recieve')?.rule).toBe('SpellCheck');
+  });
+
+  it('never flags code-like tokens or acronyms as misspellings', async () => {
+    const doc = d('Call getUserById then deploy to S3 with the ETL job via user_service.py today.');
+    const result = await engine.check(doc);
+    for (const word of ['getUserById', 'S3', 'ETL', 'user_service.py']) {
+      expect(result.find((s) => s.original.includes(word) && s.category === 'spelling')).toBeUndefined();
+    }
   });
 
   it('checks a ~1,000-word document in well under a second (smoke perf bound, generous)', async () => {
@@ -218,7 +224,7 @@ describe('HarperEngine (real WASM)', { timeout: TIMEOUT }, () => {
   // promise rejects with "Error: null pointer passed to rust". (Same-options concurrency is fine — see above.)
   // Repro: Promise.all([check(t,{dialect:'british'}), check(t,{dialect:'american'})]) -> rejects.
   // Fix: run configure+lint through a single promise queue/mutex inside HarperEngine.
-  it.fails('concurrent checks with different dialects both resolve with the right dialect', async () => {
+  it('concurrent checks with different dialects both resolve with the right dialect', async () => {
     const e = await freshEngine();
     const doc = d('The colour is nice.');
     const [br, am] = await Promise.all([e.check(doc, { dialect: 'british' }), e.check(doc, { dialect: 'american' })]);

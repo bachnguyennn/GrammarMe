@@ -232,7 +232,7 @@ describe('rebase edge cases found while writing the race model', () => {
   // flagged word is seen as a lone surrogate => "not a word char" => the old underline is kept, although the
   // word is now "teh𠀋". Expected: [] (dropped). Actual: the "teh" suggestion at 0..3 is kept.
   // Low real-world impact; fix by reading the code point (codePointAt / /\p{L}/u on text.slice).
-  it.fails('drops a word when an astral-plane letter is typed directly after it', () => {
+  it('drops a word when an astral-plane letter is typed directly after it', () => {
     const prev = 'teh';
     const out = rebaseSuggestions(prev, { text: 'teh\u{2000B}', version: 1 }, [sugAt(prev, 'teh', 'the')]);
     expect(out).toEqual([]);

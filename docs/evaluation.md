@@ -237,3 +237,28 @@ Shared helpers: `test/support/harper-node.ts` loads Harper in Node: `GRAMMARME_H
 - **American-centric.** British/American coverage is thin (4 British sentences, almost no American-only spellings), so the British run can't show regressions on American text.
 - **Latency is for single sentences on an M1 Pro in Node.** Browser `WorkerLinter` latency, and older or low-end devices, are not measured.
 - **Run-to-run noise.** Accuracy was identical across three repeated default runs, but `RegularIrregulars` ordering can move one example. RSS after the eval varies by up to about 280 MB between runs.
+
+## Update — shipped defaults (2026-11-04)
+
+Following the recommendations above, `HarperEngine` now ships with LongSentences, SplitWords and
+ExpandTimeShorthands off (`DEFAULT_DISABLED_RULES`) and skips spelling flags on code-like tokens and
+acronyms (`looksLikeCode`: camelCase, snake_case, paths, letter+digit mixes, ALL-CAPS). Re-running
+`npm run eval` (American dialect, same dataset, same machine) measured:
+
+| Metric | Before (Harper defaults) | After (GrammarMe defaults) |
+| --- | --- | --- |
+| Precision | 89/113 = 78.8% | 89/106 = 84.0% |
+| Recall | 89/128 = 69.5% | 89/128 = 69.5% |
+| F1 | 73.9% | 76.1% |
+| Top replacement correct | 91.0% | 93.3% |
+| Correct sentences flagged | 14/46 = 30.4% | 10/46 = 21.7% |
+
+Remaining false positives on correct sentences are names (4/6, e.g. Siobhan, São Paulo) and British
+spellings under the American dialect (4/4). Names are best handled by "Add to dictionary"; British
+spellings by choosing the right dialect. Recall gaps (wordiness 0/12, agreement with noun subjects,
+tense from time words) are what the optional AI check is for — its quality has **not** been measured yet.
+
+Also fixed from the QA bug list: concurrent checks are now serialized (no WASM crash with mixed
+dialects), `locateAiEdit` rejects ambiguous quotes when `contextBefore` doesn't match, rebasing treats
+combining marks and astral letters as part of a word, and word/sentence counts handle NFD accents and
+closing quotes. All previously pinned `it.fails` tests now pass as regular tests.

@@ -109,7 +109,7 @@ describe('textStats', () => {
   // decomposed (NFD) text — common when pasting from macOS file names/PDFs, and the norm for Vietnamese and
   // Devanagari input — splits words at every accent. Input: "résumé writers" ("résumé writers").
   // Expected words: 2. Actual: 3 ("re", "sume", "writers"). Fix: add \p{M} to the WORD character class.
-  it.fails('counts a word with combining accents (NFD) as one word', () => {
+  it('counts a word with combining accents (NFD) as one word', () => {
     expect(textStats('résumé writers').words).toBe(2);
   });
 
@@ -117,7 +117,7 @@ describe('textStats', () => {
   // quote or bracket is not counted. Input: 'He said "Stop." Then he left.'  Expected sentences: 2. Actual: 1.
   // Dialogue-heavy text therefore gets longer average sentences and a lower (harder) readability score.
   // Fix: allow closing punctuation in the lookahead, e.g. /[.!?]+["'”’)\]]*(?=\s|$)/.
-  it.fails('ends a sentence on a terminator followed by a closing quote or bracket', () => {
+  it('ends a sentence on a terminator followed by a closing quote or bracket', () => {
     expect(textStats('He said "Stop." Then he left.').sentences).toBe(2);
     expect(textStats('(This is an aside.) It ends here.').sentences).toBe(2);
   });
