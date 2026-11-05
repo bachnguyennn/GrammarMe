@@ -1,0 +1,22 @@
+{
+  "name": "grammarme",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A free, private, Grammarly-style writing assistant. Local grammar checking with Harper, optional AI suggestions.",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "workers/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w packages/core && npm run build -w apps/web && npm run build -w apps/extension",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "eval": "node --experimental-strip-types tests/eval/run-eval.ts"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
