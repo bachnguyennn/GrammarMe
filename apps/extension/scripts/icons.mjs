@@ -2,7 +2,7 @@
 // using only node:zlib — no image dependencies, nothing binary committed to the repo.
 import { deflateSync } from 'node:zlib';
 
-const BRAND = [0x1f, 0x7a, 0x5c];
+const BRAND = [0x5c, 0x6b, 0x54]; // #5c6b54, the site palette's accent
 const SAMPLES = 4; // 4×4 supersampling for anti-aliasing
 
 /** Coverage of the icon at normalised point (x, y) in [0,1]²: 0 = transparent, 1 = bg, 2 = glyph. */
