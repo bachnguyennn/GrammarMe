@@ -1,0 +1,3179 @@
+{
+  "meta": {
+    "date": "2026-11-05T03:42:08.780Z",
+    "engine": "harper",
+    "harperJs": "3.0.0",
+    "wasmLoader": "tmp-copy",
+    "options": {
+      "dialect": "american",
+      "disabledRules": []
+    },
+    "node": "v24.15.0",
+    "platform": "darwin-arm64",
+    "cpu": "Apple M1 Pro",
+    "totalMemGB": 16,
+    "dataset": {
+      "path": "tests/eval/dataset.jsonl",
+      "examples": 171,
+      "expectedErrors": 128
+    },
+    "latencyPasses": 5,
+    "deterministicAcrossPasses": true
+  },
+  "setup": {
+    "msToFirstResult": 564.665417
+  },
+  "memory": {
+    "processStart": {
+      "rssMB": 78.2,
+      "heapUsedMB": 8.3,
+      "externalMB": 10.5,
+      "arrayBuffersMB": 2.4
+    },
+    "beforeEngineLoad": {
+      "rssMB": 79.6,
+      "heapUsedMB": 8.1,
+      "externalMB": 10.5,
+      "arrayBuffersMB": 0
+    },
+    "afterSetup": {
+      "rssMB": 371.1,
+      "heapUsedMB": 12.7,
+      "externalMB": 176,
+      "arrayBuffersMB": 0.2
+    },
+    "afterEval": {
+      "rssMB": 597,
+      "heapUsedMB": 44.6,
+      "externalMB": 296.3,
+      "arrayBuffersMB": 0.2
+    }
+  },
+  "latency": {
+    "perSentenceMs": {
+      "samples": 855,
+      "p50": 1.215958000000228,
+      "p95": 1.5072500000001128,
+      "p99": 1.6880000000001019,
+      "mean": 1.258696885380119,
+      "max": 2.29491599999983
+    },
+    "longDocument": {
+      "words": 1196,
+      "chars": 6560,
+      "samples": 5,
+      "p50": 43.73720899999989,
+      "p95": 235.65862500000003,
+      "p99": 235.65862500000003,
+      "mean": 81.87595839999986,
+      "max": 235.65862500000003,
+      "rawMsInRunOrder": [
+        235.65862500000003,
+        44.373541999999816,
+        43.41895799999975,
+        42.191457999999784,
+        43.73720899999989
+      ]
+    }
+  },
+  "overall": {
+    "sentences": 171,
+    "flags": 113,
+    "tpFlags": 89,
+    "fpFlags": 24,
+    "expectedErrors": 128,
+    "detected": 89,
+    "correctFix": 81,
+    "sentencesWithFlag": 101,
+    "errorSentences": 125,
+    "exactSentenceFix": 79,
+    "precision": 0.7876106194690266,
+    "recall": 0.6953125,
+    "f1": 0.7385892116182572,
+    "correctFixRate": 0.9101123595505618,
+    "autoFixRecall": 0.6328125,
+    "sentenceFlagRate": 0.5906432748538012,
+    "exactSentenceFixRate": 0.632
+  },
+  "perCategory": {
+    "spelling": {
+      "sentences": 28,
+      "flags": 30,
+      "tpFlags": 30,
+      "fpFlags": 0,
+      "expectedErrors": 30,
+      "detected": 30,
+      "correctFix": 24,
+      "sentencesWithFlag": 28,
+      "errorSentences": 28,
+      "exactSentenceFix": 22,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "correctFixRate": 0.8,
+      "autoFixRecall": 0.8,
+      "sentenceFlagRate": 1,
+      "exactSentenceFixRate": 0.7857142857142857
+    },
+    "punctuation": {
+      "sentences": 16,
+      "flags": 10,
+      "tpFlags": 10,
+      "fpFlags": 0,
+      "expectedErrors": 16,
+      "detected": 10,
+      "correctFix": 8,
+      "sentencesWithFlag": 10,
+      "errorSentences": 16,
+      "exactSentenceFix": 8,
+      "precision": 1,
+      "recall": 0.625,
+      "f1": 0.7692307692307693,
+      "correctFixRate": 0.8,
+      "autoFixRecall": 0.5,
+      "sentenceFlagRate": 0.625,
+      "exactSentenceFixRate": 0.5
+    },
+    "agreement": {
+      "sentences": 19,
+      "flags": 10,
+      "tpFlags": 10,
+      "fpFlags": 0,
+      "expectedErrors": 19,
+      "detected": 10,
+      "correctFix": 10,
+      "sentencesWithFlag": 10,
+      "errorSentences": 19,
+      "exactSentenceFix": 10,
+      "precision": 1,
+      "recall": 0.5263157894736842,
+      "f1": 0.6896551724137931,
+      "correctFixRate": 1,
+      "autoFixRecall": 0.5263157894736842,
+      "sentenceFlagRate": 0.5263157894736842,
+      "exactSentenceFixRate": 0.5263157894736842
+    },
+    "tense": {
+      "sentences": 13,
+      "flags": 8,
+      "tpFlags": 8,
+      "fpFlags": 0,
+      "expectedErrors": 14,
+      "detected": 8,
+      "correctFix": 8,
+      "sentencesWithFlag": 8,
+      "errorSentences": 13,
+      "exactSentenceFix": 8,
+      "precision": 1,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273,
+      "correctFixRate": 1,
+      "autoFixRecall": 0.5714285714285714,
+      "sentenceFlagRate": 0.6153846153846154,
+      "exactSentenceFixRate": 0.6153846153846154
+    },
+    "article": {
+      "sentences": 15,
+      "flags": 15,
+      "tpFlags": 15,
+      "fpFlags": 0,
+      "expectedErrors": 15,
+      "detected": 15,
+      "correctFix": 15,
+      "sentencesWithFlag": 15,
+      "errorSentences": 15,
+      "exactSentenceFix": 15,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "correctFixRate": 1,
+      "autoFixRecall": 1,
+      "sentenceFlagRate": 1,
+      "exactSentenceFixRate": 1
+    },
+    "word-choice": {
+      "sentences": 22,
+      "flags": 16,
+      "tpFlags": 16,
+      "fpFlags": 0,
+      "expectedErrors": 22,
+      "detected": 16,
+      "correctFix": 16,
+      "sentencesWithFlag": 16,
+      "errorSentences": 22,
+      "exactSentenceFix": 16,
+      "precision": 1,
+      "recall": 0.7272727272727273,
+      "f1": 0.8421052631578948,
+      "correctFixRate": 1,
+      "autoFixRecall": 0.7272727272727273,
+      "sentenceFlagRate": 0.7272727272727273,
+      "exactSentenceFixRate": 0.7272727272727273
+    },
+    "awkward": {
+      "sentences": 12,
+      "flags": 0,
+      "tpFlags": 0,
+      "fpFlags": 0,
+      "expectedErrors": 12,
+      "detected": 0,
+      "correctFix": 0,
+      "sentencesWithFlag": 0,
+      "errorSentences": 12,
+      "exactSentenceFix": 0,
+      "precision": null,
+      "recall": 0,
+      "f1": null,
+      "correctFixRate": null,
+      "autoFixRecall": 0,
+      "sentenceFlagRate": 0,
+      "exactSentenceFixRate": 0
+    },
+    "correct": {
+      "sentences": 46,
+      "flags": 24,
+      "tpFlags": 0,
+      "fpFlags": 24,
+      "expectedErrors": 0,
+      "detected": 0,
+      "correctFix": 0,
+      "sentencesWithFlag": 14,
+      "errorSentences": 0,
+      "exactSentenceFix": 0,
+      "precision": 0,
+      "recall": null,
+      "f1": null,
+      "correctFixRate": null,
+      "autoFixRecall": null,
+      "sentenceFlagRate": 0.30434782608695654,
+      "exactSentenceFixRate": null
+    }
+  },
+  "correctSubsets": {
+    "plain": {
+      "sentences": 10,
+      "flagged": 0,
+      "rate": 0
+    },
+    "tricky": {
+      "sentences": 11,
+      "flagged": 0,
+      "rate": 0
+    },
+    "jargon": {
+      "sentences": 11,
+      "flagged": 5,
+      "rate": 0.45454545454545453
+    },
+    "names": {
+      "sentences": 6,
+      "flagged": 4,
+      "rate": 0.6666666666666666
+    },
+    "british": {
+      "sentences": 4,
+      "flagged": 4,
+      "rate": 1
+    },
+    "quotes": {
+      "sentences": 4,
+      "flagged": 1,
+      "rate": 0.25
+    }
+  },
+  "perRule": {
+    "SpellCheck": {
+      "flags": 50,
+      "tp": 30,
+      "fp": 20,
+      "fpOnCorrect": 20,
+      "correctFix": 28
+    },
+    "AnA": {
+      "flags": 16,
+      "tp": 15,
+      "fp": 1,
+      "fpOnCorrect": 1,
+      "correctFix": 15
+    },
+    "PronounVerbAgreement": {
+      "flags": 6,
+      "tp": 6,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 6
+    },
+    "SimplePastToPastParticiple": {
+      "flags": 5,
+      "tp": 5,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 5
+    },
+    "SplitWords": {
+      "flags": 3,
+      "tp": 3,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 0
+    },
+    "PronounInflectionBe": {
+      "flags": 3,
+      "tp": 3,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 3
+    },
+    "CommaFixes": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "DidPast": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "ItsPossessive": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "ItsContraction": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "TheirToThere": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "NounVerbConfusion": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "ModalOf": {
+      "flags": 2,
+      "tp": 2,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 2
+    },
+    "ExpandTimeShorthands": {
+      "flags": 2,
+      "tp": 0,
+      "fp": 2,
+      "fpOnCorrect": 2,
+      "correctFix": 0
+    },
+    "WrongNegative": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 0
+    },
+    "EllipsisLength": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 0
+    },
+    "Cant": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "Spaces": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "NominalWants": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 0
+    },
+    "ThisTypeOfThing": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "RegularIrregulars": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "TheirToTheyre": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "ThenThan": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "ToLoseTooLoose": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "ThereToTheir": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "ToTwoToo": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "PrincipleToPrincipalRoleNoun": {
+      "flags": 1,
+      "tp": 1,
+      "fp": 0,
+      "fpOnCorrect": 0,
+      "correctFix": 1
+    },
+    "SentenceCapitalization": {
+      "flags": 1,
+      "tp": 0,
+      "fp": 1,
+      "fpOnCorrect": 1,
+      "correctFix": 0
+    }
+  },
+  "falsePositives": [
+    {
+      "id": "ok-jargon-24",
+      "category": "correct",
+      "input": "The function getUserById returns null when the user is missing.",
+      "flagged": "getUserById",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [],
+      "message": "Did you mean to spell `getUserById` this way?"
+    },
+    {
+      "id": "ok-jargon-27",
+      "category": "correct",
+      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
+      "flagged": "p95",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "pa",
+        "pad",
+        "pah"
+      ],
+      "message": "Did you mean to spell `p95` this way?"
+    },
+    {
+      "id": "ok-jargon-27",
+      "category": "correct",
+      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
+      "flagged": "ms",
+      "rule": "ExpandTimeShorthands",
+      "category_": "clarity",
+      "replacements": [
+        "milliseconds"
+      ],
+      "message": "Did you mean `milliseconds`?"
+    },
+    {
+      "id": "ok-jargon-27",
+      "category": "correct",
+      "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.",
+      "flagged": "ms",
+      "rule": "ExpandTimeShorthands",
+      "category_": "clarity",
+      "replacements": [
+        "milliseconds"
+      ],
+      "message": "Did you mean `milliseconds`?"
+    },
+    {
+      "id": "ok-jargon-28",
+      "category": "correct",
+      "input": "Set the environment variable NODE_ENV to production.",
+      "flagged": "ENV",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "End",
+        "Envy",
+        "ENE"
+      ],
+      "message": "Did you mean to spell `ENV` this way?"
+    },
+    {
+      "id": "ok-jargon-30",
+      "category": "correct",
+      "input": "Our ETL job loads data from S3 into Snowflake every hour.",
+      "flagged": "ETL",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Eel",
+        "Ell",
+        "Eta"
+      ],
+      "message": "Did you mean to spell `ETL` this way?"
+    },
+    {
+      "id": "ok-jargon-30",
+      "category": "correct",
+      "input": "Our ETL job loads data from S3 into Snowflake every hour.",
+      "flagged": "S3",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "So",
+        "SA",
+        "SE"
+      ],
+      "message": "Did you mean to spell `S3` this way?"
+    },
+    {
+      "id": "ok-jargon-32",
+      "category": "correct",
+      "input": "Call kubectl get pods to list the running containers.",
+      "flagged": "kubectl",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "puberty",
+        "subject",
+        "Hubert"
+      ],
+      "message": "Did you mean to spell `kubectl` this way?"
+    },
+    {
+      "id": "ok-names-33",
+      "category": "correct",
+      "input": "The CEO of Acme Corp. met with investors in São Paulo.",
+      "flagged": "met",
+      "rule": "SentenceCapitalization",
+      "category_": "grammar",
+      "replacements": [
+        "Met"
+      ],
+      "message": "This sentence does not start with a capital letter"
+    },
+    {
+      "id": "ok-names-33",
+      "category": "correct",
+      "input": "The CEO of Acme Corp. met with investors in São Paulo.",
+      "flagged": "São",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "So",
+        "Sac",
+        "Sad"
+      ],
+      "message": "Did you mean to spell `São` this way?"
+    },
+    {
+      "id": "ok-names-33",
+      "category": "correct",
+      "input": "The CEO of Acme Corp. met with investors in São Paulo.",
+      "flagged": "Paulo",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Pablo",
+        "Paul",
+        "Paula"
+      ],
+      "message": "Did you mean to spell `Paulo` this way?"
+    },
+    {
+      "id": "ok-names-34",
+      "category": "correct",
+      "input": "Nguyễn Văn An presented the findings to the board.",
+      "flagged": "Nguyễn",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Nguyen"
+      ],
+      "message": "Did you mean `Nguyen`?"
+    },
+    {
+      "id": "ok-names-34",
+      "category": "correct",
+      "input": "Nguyễn Văn An presented the findings to the board.",
+      "flagged": "Văn",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Van",
+        "Vain",
+        "Val"
+      ],
+      "message": "Did you mean to spell `Văn` this way?"
+    },
+    {
+      "id": "ok-names-34",
+      "category": "correct",
+      "input": "Nguyễn Văn An presented the findings to the board.",
+      "flagged": "An",
+      "rule": "AnA",
+      "category_": "grammar",
+      "replacements": [
+        "A"
+      ],
+      "message": "Incorrect indefinite article."
+    },
+    {
+      "id": "ok-names-37",
+      "category": "correct",
+      "input": "The café on Rue de Rivoli serves excellent croissants.",
+      "flagged": "Rivoli",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Rival",
+        "Ravioli",
+        "Revolt"
+      ],
+      "message": "Did you mean to spell `Rivoli` this way?"
+    },
+    {
+      "id": "ok-names-38",
+      "category": "correct",
+      "input": "Siobhan and Joaquín flew from Dublin to Reykjavík.",
+      "flagged": "Siobhan",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Sideman",
+        "Siphon",
+        "Slogan"
+      ],
+      "message": "Did you mean to spell `Siobhan` this way?"
+    },
+    {
+      "id": "ok-names-38",
+      "category": "correct",
+      "input": "Siobhan and Joaquín flew from Dublin to Reykjavík.",
+      "flagged": "Joaquín",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "Joaquin"
+      ],
+      "message": "Did you mean `Joaquin`?"
+    },
+    {
+      "id": "ok-british-39",
+      "category": "correct",
+      "input": "The colour of the sky changes at sunset.",
+      "flagged": "colour",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "color",
+        "cloud",
+        "collar"
+      ],
+      "message": "Did you mean to spell `colour` this way?"
+    },
+    {
+      "id": "ok-british-40",
+      "category": "correct",
+      "input": "I apologise for the delay in responding.",
+      "flagged": "apologise",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "apologize",
+        "apologist",
+        "apologies"
+      ],
+      "message": "Did you mean to spell `apologise` this way?"
+    },
+    {
+      "id": "ok-british-41",
+      "category": "correct",
+      "input": "The organisation will analyse the results next week.",
+      "flagged": "organisation",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "organization",
+        "organizations"
+      ],
+      "message": "Did you mean to spell `organisation` this way?"
+    },
+    {
+      "id": "ok-british-41",
+      "category": "correct",
+      "input": "The organisation will analyse the results next week.",
+      "flagged": "analyse",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "analyze",
+        "analyst",
+        "analyte"
+      ],
+      "message": "Did you mean to spell `analyse` this way?"
+    },
+    {
+      "id": "ok-british-42",
+      "category": "correct",
+      "input": "The theatre in the city centre reopened last autumn.",
+      "flagged": "theatre",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "theater",
+        "they're",
+        "there"
+      ],
+      "message": "Did you mean to spell `theatre` this way?"
+    },
+    {
+      "id": "ok-british-42",
+      "category": "correct",
+      "input": "The theatre in the city centre reopened last autumn.",
+      "flagged": "centre",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "center",
+        "cent's",
+        "censure"
+      ],
+      "message": "Did you mean to spell `centre` this way?"
+    },
+    {
+      "id": "ok-quotes-45",
+      "category": "correct",
+      "input": "The word \"irregardless\" appears in some dictionaries.",
+      "flagged": "irregardless",
+      "rule": "SpellCheck",
+      "category_": "spelling",
+      "replacements": [
+        "regardless"
+      ],
+      "message": "Did you mean `regardless`?"
+    }
+  ],
+  "misses": [
+    {
+      "id": "punct-02",
+      "category": "punctuation",
+      "input": "Wait,, I forgot my keys.",
+      "original": ",,",
+      "expected": ","
+    },
+    {
+      "id": "punct-04",
+      "category": "punctuation",
+      "input": "Lets go to the park after lunch.",
+      "original": "Lets",
+      "expected": "Let's"
+    },
+    {
+      "id": "punct-09",
+      "category": "punctuation",
+      "input": "This is a test.This is another test.",
+      "original": "test.This",
+      "expected": "test. This"
+    },
+    {
+      "id": "punct-13",
+      "category": "punctuation",
+      "input": "We need milk eggs and bread.",
+      "original": "milk eggs",
+      "expected": "milk, eggs"
+    },
+    {
+      "id": "punct-14",
+      "category": "punctuation",
+      "input": "Is this the right place.",
+      "original": "place.",
+      "expected": "place?"
+    },
+    {
+      "id": "punct-16",
+      "category": "punctuation",
+      "input": "My sisters car is parked outside.",
+      "original": "sisters",
+      "expected": "sister's"
+    },
+    {
+      "id": "agree-03",
+      "category": "agreement",
+      "input": "The list of items are on the table.",
+      "original": "are",
+      "expected": "is"
+    },
+    {
+      "id": "agree-05",
+      "category": "agreement",
+      "input": "My brother have two cats.",
+      "original": "have",
+      "expected": "has"
+    },
+    {
+      "id": "agree-06",
+      "category": "agreement",
+      "input": "The dogs barks at night.",
+      "original": "barks",
+      "expected": "bark"
+    },
+    {
+      "id": "agree-07",
+      "category": "agreement",
+      "input": "Everyone have finished their work.",
+      "original": "have",
+      "expected": "has"
+    },
+    {
+      "id": "agree-08",
+      "category": "agreement",
+      "input": "The results of the survey was surprising.",
+      "original": "was",
+      "expected": "were"
+    },
+    {
+      "id": "agree-12",
+      "category": "agreement",
+      "input": "There is many reasons to stay.",
+      "original": "is",
+      "expected": "are"
+    },
+    {
+      "id": "agree-16",
+      "category": "agreement",
+      "input": "Each of the students have a laptop.",
+      "original": "have",
+      "expected": "has"
+    },
+    {
+      "id": "agree-18",
+      "category": "agreement",
+      "input": "My parents lives in Hanoi.",
+      "original": "lives",
+      "expected": "live"
+    },
+    {
+      "id": "agree-19",
+      "category": "agreement",
+      "input": "The server crash every time we deploy.",
+      "original": "crash",
+      "expected": "crashes"
+    },
+    {
+      "id": "tense-01",
+      "category": "tense",
+      "input": "Yesterday I go to the store and buy milk.",
+      "original": "go",
+      "expected": "went"
+    },
+    {
+      "id": "tense-01",
+      "category": "tense",
+      "input": "Yesterday I go to the store and buy milk.",
+      "original": "buy",
+      "expected": "bought"
+    },
+    {
+      "id": "tense-02",
+      "category": "tense",
+      "input": "I seen that movie last week.",
+      "original": "seen",
+      "expected": "saw"
+    },
+    {
+      "id": "tense-04",
+      "category": "tense",
+      "input": "Last year we visit Japan for two weeks.",
+      "original": "visit",
+      "expected": "visited"
+    },
+    {
+      "id": "tense-08",
+      "category": "tense",
+      "input": "When I was young, I play the piano every day.",
+      "original": "play",
+      "expected": "played"
+    },
+    {
+      "id": "tense-10",
+      "category": "tense",
+      "input": "She had already leave when I arrived.",
+      "original": "leave",
+      "expected": "left"
+    },
+    {
+      "id": "wc-05",
+      "category": "word-choice",
+      "input": "Your welcome to join us.",
+      "original": "Your",
+      "expected": "You're"
+    },
+    {
+      "id": "wc-06",
+      "category": "word-choice",
+      "input": "I think your right about that.",
+      "original": "your",
+      "expected": "you're"
+    },
+    {
+      "id": "wc-12",
+      "category": "word-choice",
+      "input": "Who's car is parked outside?",
+      "original": "Who's",
+      "expected": "Whose"
+    },
+    {
+      "id": "wc-14",
+      "category": "word-choice",
+      "input": "Please except my apology.",
+      "original": "except",
+      "expected": "accept"
+    },
+    {
+      "id": "wc-18",
+      "category": "word-choice",
+      "input": "I have to much work today.",
+      "original": "to",
+      "expected": "too"
+    },
+    {
+      "id": "wc-22",
+      "category": "word-choice",
+      "input": "I'm sure there coming later.",
+      "original": "there",
+      "expected": "they're"
+    },
+    {
+      "id": "awk-01",
+      "category": "awkward",
+      "input": "In order to succeed, you need to practice.",
+      "original": "In order to",
+      "expected": "To"
+    },
+    {
+      "id": "awk-02",
+      "category": "awkward",
+      "input": "Due to the fact that it rained, the game was postponed.",
+      "original": "Due to the fact that",
+      "expected": "Because"
+    },
+    {
+      "id": "awk-03",
+      "category": "awkward",
+      "input": "At this point in time, we are not hiring.",
+      "original": "At this point in time",
+      "expected": "Currently"
+    },
+    {
+      "id": "awk-04",
+      "category": "awkward",
+      "input": "He made a decision to leave the company.",
+      "original": "made a decision",
+      "expected": "decided"
+    },
+    {
+      "id": "awk-05",
+      "category": "awkward",
+      "input": "The reason why is because the server crashed.",
+      "original": "The reason why is because",
+      "expected": "The reason is that"
+    },
+    {
+      "id": "awk-06",
+      "category": "awkward",
+      "input": "We are in the process of reviewing your application.",
+      "original": "are in the process of reviewing",
+      "expected": "are reviewing"
+    },
+    {
+      "id": "awk-07",
+      "category": "awkward",
+      "input": "Each and every member must sign the form.",
+      "original": "Each and every",
+      "expected": "Every"
+    },
+    {
+      "id": "awk-08",
+      "category": "awkward",
+      "input": "In spite of the fact that he was tired, he kept working.",
+      "original": "In spite of the fact that",
+      "expected": "Although"
+    },
+    {
+      "id": "awk-09",
+      "category": "awkward",
+      "input": "Please revert back to me with your feedback.",
+      "original": "revert back to me",
+      "expected": "get back to me"
+    },
+    {
+      "id": "awk-10",
+      "category": "awkward",
+      "input": "The end result was better than expected.",
+      "original": "end result",
+      "expected": "result"
+    },
+    {
+      "id": "awk-11",
+      "category": "awkward",
+      "input": "We need to plan ahead for the launch.",
+      "original": "plan ahead",
+      "expected": "plan"
+    },
+    {
+      "id": "awk-12",
+      "category": "awkward",
+      "input": "The two companies will merge together next year.",
+      "original": "merge together",
+      "expected": "merge"
+    }
+  ],
+  "wrongFixes": [
+    {
+      "id": "spell-12",
+      "input": "We have untill Friday to submit the report.",
+      "original": "untill",
+      "expected": "until",
+      "got": [
+        {
+          "flagged": "untill",
+          "rule": "WrongNegative",
+          "top": "distill"
+        }
+      ]
+    },
+    {
+      "id": "spell-21",
+      "input": "It is important to mantain regular backups.",
+      "original": "mantain",
+      "expected": "maintain",
+      "got": [
+        {
+          "flagged": "mantain",
+          "rule": "SplitWords",
+          "top": "manta in"
+        }
+      ]
+    },
+    {
+      "id": "spell-23",
+      "input": "I am writting a report about our sales.",
+      "original": "writting",
+      "expected": "writing",
+      "got": [
+        {
+          "flagged": "writting",
+          "rule": "SpellCheck",
+          "top": "writhing"
+        }
+      ]
+    },
+    {
+      "id": "spell-25",
+      "input": "The flight was postponed because of the wether.",
+      "original": "wether",
+      "expected": "weather",
+      "got": [
+        {
+          "flagged": "wether",
+          "rule": "SplitWords",
+          "top": "wet her"
+        }
+      ]
+    },
+    {
+      "id": "spell-26",
+      "input": "The adress on the reciept was wrong.",
+      "original": "adress",
+      "expected": "address",
+      "got": [
+        {
+          "flagged": "adress",
+          "rule": "SplitWords",
+          "top": "a dress"
+        }
+      ]
+    },
+    {
+      "id": "spell-27",
+      "input": "I relly appreciate your help with the migraton.",
+      "original": "relly",
+      "expected": "really",
+      "got": [
+        {
+          "flagged": "relly",
+          "rule": "SpellCheck",
+          "top": "rely"
+        }
+      ]
+    },
+    {
+      "id": "punct-03",
+      "input": "The report is due on Friday..",
+      "original": "..",
+      "expected": ".",
+      "got": [
+        {
+          "flagged": "..",
+          "rule": "EllipsisLength",
+          "top": "..."
+        }
+      ]
+    },
+    {
+      "id": "punct-11",
+      "input": "I wont be able to attend the meeting.",
+      "original": "wont",
+      "expected": "won't",
+      "got": [
+        {
+          "flagged": "wont",
+          "rule": "NominalWants",
+          "top": "want"
+        }
+      ]
+    }
+  ],
+  "perExample": [
+    {
+      "id": "spell-01",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 7,
+          "e": 14,
+          "o": "recieve",
+          "rule": "SpellCheck",
+          "top": "receive"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-02",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 11,
+          "e": 19,
+          "o": "seperate",
+          "rule": "SpellCheck",
+          "top": "separate"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-03",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 7,
+          "e": 17,
+          "o": "definately",
+          "rule": "SpellCheck",
+          "top": "definitely"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-04",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 13,
+          "o": "goverment",
+          "rule": "SpellCheck",
+          "top": "government"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-05",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 35,
+          "e": 43,
+          "o": "questons",
+          "rule": "SpellCheck",
+          "top": "questions"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-06",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 14,
+          "e": 24,
+          "o": "acommodate",
+          "rule": "SpellCheck",
+          "top": "accommodate"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-07",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 34,
+          "e": 42,
+          "o": "Wenesday",
+          "rule": "SpellCheck",
+          "top": "Wednesday"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-08",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 2,
+          "e": 9,
+          "o": "beleive",
+          "rule": "SpellCheck",
+          "top": "believe"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-09",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 17,
+          "e": 26,
+          "o": "occurence",
+          "rule": "SpellCheck",
+          "top": "occurrence"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-10",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 7,
+          "e": 17,
+          "o": "embarassed",
+          "rule": "SpellCheck",
+          "top": "embarrassed"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-11",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 19,
+          "e": 28,
+          "o": "completly",
+          "rule": "SpellCheck",
+          "top": "completely"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-12",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 8,
+          "e": 14,
+          "o": "untill",
+          "rule": "WrongNegative",
+          "top": "distill"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-13",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 19,
+          "e": 27,
+          "o": "patiance",
+          "rule": "SpellCheck",
+          "top": "patience"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-14",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 12,
+          "o": "begining",
+          "rule": "SpellCheck",
+          "top": "beginning"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-15",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 24,
+          "e": 37,
+          "o": "documantation",
+          "rule": "SpellCheck",
+          "top": "documentation"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-16",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 14,
+          "o": "enviroment",
+          "rule": "SpellCheck",
+          "top": "environment"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-17",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 11,
+          "e": 17,
+          "o": "truely",
+          "rule": "SpellCheck",
+          "top": "truly"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-18",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 12,
+          "o": "commitee",
+          "rule": "SpellCheck",
+          "top": "committee"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-19",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 9,
+          "e": 14,
+          "o": "wierd",
+          "rule": "SpellCheck",
+          "top": "weird"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-20",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 12,
+          "o": "calender",
+          "rule": "SpellCheck",
+          "top": "calendar"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-21",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 19,
+          "e": 26,
+          "o": "mantain",
+          "rule": "SplitWords",
+          "top": "manta in"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-22",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 13,
+          "o": "resturant",
+          "rule": "SpellCheck",
+          "top": "restaurant"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-23",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 5,
+          "e": 13,
+          "o": "writting",
+          "rule": "SpellCheck",
+          "top": "writhing"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-24",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 0,
+          "e": 7,
+          "o": "Tomorow",
+          "rule": "SpellCheck",
+          "top": "Tomorrow"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-25",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 40,
+          "e": 46,
+          "o": "wether",
+          "rule": "SplitWords",
+          "top": "wet her"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-26",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 4,
+          "e": 10,
+          "o": "adress",
+          "rule": "SplitWords",
+          "top": "a dress"
+        },
+        {
+          "s": 18,
+          "e": 25,
+          "o": "reciept",
+          "rule": "SpellCheck",
+          "top": "receipt"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-27",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 2,
+          "e": 7,
+          "o": "relly",
+          "rule": "SpellCheck",
+          "top": "rely"
+        },
+        {
+          "s": 38,
+          "e": 46,
+          "o": "migraton",
+          "rule": "SpellCheck",
+          "top": "migration"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "spell-28",
+      "category": "spelling",
+      "flags": [
+        {
+          "s": 21,
+          "e": 33,
+          "o": "knowledgable",
+          "rule": "SpellCheck",
+          "top": "knowledgeable"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-01",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 5,
+          "e": 6,
+          "o": " ",
+          "rule": "CommaFixes",
+          "top": ""
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-02",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        ",,"
+      ]
+    },
+    {
+      "id": "punct-03",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 27,
+          "e": 29,
+          "o": "..",
+          "rule": "EllipsisLength",
+          "top": "..."
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-04",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        "Lets"
+      ]
+    },
+    {
+      "id": "punct-05",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 2,
+          "e": 6,
+          "o": "cant",
+          "rule": "Cant",
+          "top": "can't"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-06",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 4,
+          "e": 10,
+          "o": "doesnt",
+          "rule": "SpellCheck",
+          "top": "doesn't"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-07",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 4,
+          "e": 13,
+          "o": "childrens",
+          "rule": "SpellCheck",
+          "top": "children's"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-08",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 16,
+          "e": 17,
+          "o": " ",
+          "rule": "CommaFixes",
+          "top": ""
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-09",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        "test.This"
+      ]
+    },
+    {
+      "id": "punct-10",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 22,
+          "e": 23,
+          "o": " ",
+          "rule": "Spaces",
+          "top": ""
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-11",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 2,
+          "e": 6,
+          "o": "wont",
+          "rule": "NominalWants",
+          "top": "want"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-12",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 0,
+          "e": 5,
+          "o": "Thats",
+          "rule": "SpellCheck",
+          "top": "That's"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-13",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        "milk eggs"
+      ]
+    },
+    {
+      "id": "punct-14",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        "place."
+      ]
+    },
+    {
+      "id": "punct-15",
+      "category": "punctuation",
+      "flags": [
+        {
+          "s": 5,
+          "e": 10,
+          "o": "didnt",
+          "rule": "SpellCheck",
+          "top": "didn't"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "punct-16",
+      "category": "punctuation",
+      "flags": [],
+      "missed": [
+        "sisters"
+      ]
+    },
+    {
+      "id": "agree-01",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 3,
+          "e": 5,
+          "o": "go",
+          "rule": "PronounVerbAgreement",
+          "top": "goes"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-02",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 4,
+          "e": 9,
+          "o": "don't",
+          "rule": "PronounVerbAgreement",
+          "top": "doesn't"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-03",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "are"
+      ]
+    },
+    {
+      "id": "agree-04",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 5,
+          "e": 8,
+          "o": "was",
+          "rule": "PronounInflectionBe",
+          "top": "were"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-05",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "have"
+      ]
+    },
+    {
+      "id": "agree-06",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "barks"
+      ]
+    },
+    {
+      "id": "agree-07",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "have"
+      ]
+    },
+    {
+      "id": "agree-08",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "was"
+      ]
+    },
+    {
+      "id": "agree-09",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 3,
+          "e": 8,
+          "o": "don't",
+          "rule": "PronounVerbAgreement",
+          "top": "doesn't"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-10",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 3,
+          "e": 6,
+          "o": "was",
+          "rule": "PronounInflectionBe",
+          "top": "were"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-11",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 4,
+          "e": 8,
+          "o": "have",
+          "rule": "PronounVerbAgreement",
+          "top": "has"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-12",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "is"
+      ]
+    },
+    {
+      "id": "agree-13",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 3,
+          "e": 7,
+          "o": "walk",
+          "rule": "PronounVerbAgreement",
+          "top": "walks"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-14",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 2,
+          "e": 5,
+          "o": "has",
+          "rule": "PronounVerbAgreement",
+          "top": "have"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-15",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 4,
+          "e": 7,
+          "o": "was",
+          "rule": "PronounInflectionBe",
+          "top": "were"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-16",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "have"
+      ]
+    },
+    {
+      "id": "agree-17",
+      "category": "agreement",
+      "flags": [
+        {
+          "s": 6,
+          "e": 10,
+          "o": "kind",
+          "rule": "ThisTypeOfThing",
+          "top": "kinds"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "agree-18",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "lives"
+      ]
+    },
+    {
+      "id": "agree-19",
+      "category": "agreement",
+      "flags": [],
+      "missed": [
+        "crash"
+      ]
+    },
+    {
+      "id": "tense-01",
+      "category": "tense",
+      "flags": [],
+      "missed": [
+        "go",
+        "buy"
+      ]
+    },
+    {
+      "id": "tense-02",
+      "category": "tense",
+      "flags": [],
+      "missed": [
+        "seen"
+      ]
+    },
+    {
+      "id": "tense-03",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 8,
+          "e": 12,
+          "o": "went",
+          "rule": "SimplePastToPastParticiple",
+          "top": "gone"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-04",
+      "category": "tense",
+      "flags": [],
+      "missed": [
+        "visit"
+      ]
+    },
+    {
+      "id": "tense-05",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 7,
+          "e": 12,
+          "o": "wrote",
+          "rule": "SimplePastToPastParticiple",
+          "top": "written"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-06",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 9,
+          "e": 13,
+          "o": "knew",
+          "rule": "DidPast",
+          "top": "know"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-07",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 10,
+          "e": 15,
+          "o": "broke",
+          "rule": "SimplePastToPastParticiple",
+          "top": "broken"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-08",
+      "category": "tense",
+      "flags": [],
+      "missed": [
+        "play"
+      ]
+    },
+    {
+      "id": "tense-09",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 8,
+          "e": 11,
+          "o": "saw",
+          "rule": "DidPast",
+          "top": "see"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-10",
+      "category": "tense",
+      "flags": [],
+      "missed": [
+        "leave"
+      ]
+    },
+    {
+      "id": "tense-11",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 7,
+          "e": 10,
+          "o": "ate",
+          "rule": "SimplePastToPastParticiple",
+          "top": "eaten"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-12",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 15,
+          "e": 19,
+          "o": "went",
+          "rule": "SimplePastToPastParticiple",
+          "top": "gone"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "tense-13",
+      "category": "tense",
+      "flags": [
+        {
+          "s": 3,
+          "e": 9,
+          "o": "drived",
+          "rule": "RegularIrregulars",
+          "top": "drove"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-01",
+      "category": "article",
+      "flags": [
+        {
+          "s": 11,
+          "e": 12,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-02",
+      "category": "article",
+      "flags": [
+        {
+          "s": 7,
+          "e": 9,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-03",
+      "category": "article",
+      "flags": [
+        {
+          "s": 13,
+          "e": 14,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-04",
+      "category": "article",
+      "flags": [
+        {
+          "s": 6,
+          "e": 8,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-05",
+      "category": "article",
+      "flags": [
+        {
+          "s": 8,
+          "e": 9,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-06",
+      "category": "article",
+      "flags": [
+        {
+          "s": 8,
+          "e": 10,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-07",
+      "category": "article",
+      "flags": [
+        {
+          "s": 7,
+          "e": 8,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-08",
+      "category": "article",
+      "flags": [
+        {
+          "s": 7,
+          "e": 8,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-09",
+      "category": "article",
+      "flags": [
+        {
+          "s": 8,
+          "e": 10,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-10",
+      "category": "article",
+      "flags": [
+        {
+          "s": 16,
+          "e": 17,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-11",
+      "category": "article",
+      "flags": [
+        {
+          "s": 8,
+          "e": 9,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-12",
+      "category": "article",
+      "flags": [
+        {
+          "s": 9,
+          "e": 11,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-13",
+      "category": "article",
+      "flags": [
+        {
+          "s": 13,
+          "e": 14,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-14",
+      "category": "article",
+      "flags": [
+        {
+          "s": 8,
+          "e": 9,
+          "o": "a",
+          "rule": "AnA",
+          "top": "an"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "art-15",
+      "category": "article",
+      "flags": [
+        {
+          "s": 6,
+          "e": 8,
+          "o": "an",
+          "rule": "AnA",
+          "top": "a"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-01",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 0,
+          "e": 5,
+          "o": "Their",
+          "rule": "TheirToTheyre",
+          "top": "They're"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-02",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 15,
+          "e": 19,
+          "o": "it's",
+          "rule": "ItsPossessive",
+          "top": "its"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-03",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 0,
+          "e": 3,
+          "o": "Its",
+          "rule": "ItsContraction",
+          "top": "It's"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-04",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 20,
+          "e": 25,
+          "o": "their",
+          "rule": "TheirToThere",
+          "top": "there"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-05",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "Your"
+      ]
+    },
+    {
+      "id": "wc-06",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "your"
+      ]
+    },
+    {
+      "id": "wc-07",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 20,
+          "e": 26,
+          "o": "effect",
+          "rule": "NounVerbConfusion",
+          "top": "affect"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-08",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 2,
+          "e": 10,
+          "o": "could of",
+          "rule": "ModalOf",
+          "top": "could have"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-09",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 14,
+          "e": 18,
+          "o": "then",
+          "rule": "ThenThan",
+          "top": "than"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-10",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 14,
+          "e": 22,
+          "o": "to loose",
+          "rule": "ToLoseTooLoose",
+          "top": "to lose"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-11",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 20,
+          "e": 24,
+          "o": "it's",
+          "rule": "ItsPossessive",
+          "top": "its"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-12",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "Who's"
+      ]
+    },
+    {
+      "id": "wc-13",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 2,
+          "e": 10,
+          "o": "would of",
+          "rule": "ModalOf",
+          "top": "would have"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-14",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "except"
+      ]
+    },
+    {
+      "id": "wc-15",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 0,
+          "e": 5,
+          "o": "There",
+          "rule": "ThereToTheir",
+          "top": "Their"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-16",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 21,
+          "e": 27,
+          "o": "advise",
+          "rule": "NounVerbConfusion",
+          "top": "advice"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-17",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 8,
+          "e": 11,
+          "o": "too",
+          "rule": "ToTwoToo",
+          "top": "to"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-18",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "to"
+      ]
+    },
+    {
+      "id": "wc-19",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 4,
+          "e": 13,
+          "o": "principle",
+          "rule": "PrincipleToPrincipalRoleNoun",
+          "top": "principal"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-20",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 0,
+          "e": 5,
+          "o": "Their",
+          "rule": "TheirToThere",
+          "top": "There"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-21",
+      "category": "word-choice",
+      "flags": [
+        {
+          "s": 0,
+          "e": 3,
+          "o": "Its",
+          "rule": "ItsContraction",
+          "top": "It's"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "wc-22",
+      "category": "word-choice",
+      "flags": [],
+      "missed": [
+        "there"
+      ]
+    },
+    {
+      "id": "awk-01",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "In order to"
+      ]
+    },
+    {
+      "id": "awk-02",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "Due to the fact that"
+      ]
+    },
+    {
+      "id": "awk-03",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "At this point in time"
+      ]
+    },
+    {
+      "id": "awk-04",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "made a decision"
+      ]
+    },
+    {
+      "id": "awk-05",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "The reason why is because"
+      ]
+    },
+    {
+      "id": "awk-06",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "are in the process of reviewing"
+      ]
+    },
+    {
+      "id": "awk-07",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "Each and every"
+      ]
+    },
+    {
+      "id": "awk-08",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "In spite of the fact that"
+      ]
+    },
+    {
+      "id": "awk-09",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "revert back to me"
+      ]
+    },
+    {
+      "id": "awk-10",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "end result"
+      ]
+    },
+    {
+      "id": "awk-11",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "plan ahead"
+      ]
+    },
+    {
+      "id": "awk-12",
+      "category": "awkward",
+      "flags": [],
+      "missed": [
+        "merge together"
+      ]
+    },
+    {
+      "id": "ok-plain-01",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-02",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-03",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-04",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-05",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-06",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-07",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-08",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-09",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-plain-10",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-11",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-12",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-13",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-14",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-15",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-16",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-17",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-18",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-19",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-20",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-tricky-21",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-22",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-23",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-24",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 13,
+          "e": 24,
+          "o": "getUserById",
+          "rule": "SpellCheck",
+          "top": null
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-25",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-26",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-27",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 4,
+          "e": 7,
+          "o": "p95",
+          "rule": "SpellCheck",
+          "top": "pa"
+        },
+        {
+          "s": 33,
+          "e": 35,
+          "o": "ms",
+          "rule": "ExpandTimeShorthands",
+          "top": "milliseconds"
+        },
+        {
+          "s": 43,
+          "e": 45,
+          "o": "ms",
+          "rule": "ExpandTimeShorthands",
+          "top": "milliseconds"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-28",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 34,
+          "e": 37,
+          "o": "ENV",
+          "rule": "SpellCheck",
+          "top": "End"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-29",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-30",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 4,
+          "e": 7,
+          "o": "ETL",
+          "rule": "SpellCheck",
+          "top": "Eel"
+        },
+        {
+          "s": 28,
+          "e": 30,
+          "o": "S3",
+          "rule": "SpellCheck",
+          "top": "So"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-31",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-jargon-32",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 5,
+          "e": 12,
+          "o": "kubectl",
+          "rule": "SpellCheck",
+          "top": "puberty"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-names-33",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 22,
+          "e": 25,
+          "o": "met",
+          "rule": "SentenceCapitalization",
+          "top": "Met"
+        },
+        {
+          "s": 44,
+          "e": 47,
+          "o": "São",
+          "rule": "SpellCheck",
+          "top": "So"
+        },
+        {
+          "s": 48,
+          "e": 53,
+          "o": "Paulo",
+          "rule": "SpellCheck",
+          "top": "Pablo"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-names-34",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 0,
+          "e": 6,
+          "o": "Nguyễn",
+          "rule": "SpellCheck",
+          "top": "Nguyen"
+        },
+        {
+          "s": 7,
+          "e": 10,
+          "o": "Văn",
+          "rule": "SpellCheck",
+          "top": "Van"
+        },
+        {
+          "s": 11,
+          "e": 13,
+          "o": "An",
+          "rule": "AnA",
+          "top": "A"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-names-35",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-names-36",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-names-37",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 19,
+          "e": 25,
+          "o": "Rivoli",
+          "rule": "SpellCheck",
+          "top": "Rival"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-names-38",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 0,
+          "e": 7,
+          "o": "Siobhan",
+          "rule": "SpellCheck",
+          "top": "Sideman"
+        },
+        {
+          "s": 12,
+          "e": 19,
+          "o": "Joaquín",
+          "rule": "SpellCheck",
+          "top": "Joaquin"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-british-39",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 4,
+          "e": 10,
+          "o": "colour",
+          "rule": "SpellCheck",
+          "top": "color"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-british-40",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 2,
+          "e": 11,
+          "o": "apologise",
+          "rule": "SpellCheck",
+          "top": "apologize"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-british-41",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 4,
+          "e": 16,
+          "o": "organisation",
+          "rule": "SpellCheck",
+          "top": "organization"
+        },
+        {
+          "s": 22,
+          "e": 29,
+          "o": "analyse",
+          "rule": "SpellCheck",
+          "top": "analyze"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-british-42",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 4,
+          "e": 11,
+          "o": "theatre",
+          "rule": "SpellCheck",
+          "top": "theater"
+        },
+        {
+          "s": 24,
+          "e": 30,
+          "o": "centre",
+          "rule": "SpellCheck",
+          "top": "center"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-quotes-43",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-quotes-44",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    },
+    {
+      "id": "ok-quotes-45",
+      "category": "correct",
+      "flags": [
+        {
+          "s": 10,
+          "e": 22,
+          "o": "irregardless",
+          "rule": "SpellCheck",
+          "top": "regardless"
+        }
+      ],
+      "missed": []
+    },
+    {
+      "id": "ok-quotes-46",
+      "category": "correct",
+      "flags": [],
+      "missed": []
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{"id": "spell-01", "category": "spelling", "input": "I will recieve the package on Monday.", "expected": "I will receive the package on Monday.", "errors": [{"original": "recieve", "replacement": "receive"}]}
+{"id": "spell-02", "category": "spelling", "input": "We need to seperate the dev and prod environments.", "expected": "We need to separate the dev and prod environments.", "errors": [{"original": "seperate", "replacement": "separate"}]}
+{"id": "spell-03", "category": "spelling", "input": "It was definately the best talk at the conference.", "expected": "It was definitely the best talk at the conference.", "errors": [{"original": "definately", "replacement": "definitely"}]}
+{"id": "spell-04", "category": "spelling", "input": "The goverment announced new rules for data privacy.", "expected": "The government announced new rules for data privacy.", "errors": [{"original": "goverment", "replacement": "government"}]}
+{"id": "spell-05", "category": "spelling", "input": "Please let me know if you have any questons.", "expected": "Please let me know if you have any questions.", "errors": [{"original": "questons", "replacement": "questions"}]}
+{"id": "spell-06", "category": "spelling", "input": "Our hotel can acommodate the extra guests.", "expected": "Our hotel can accommodate the extra guests.", "errors": [{"original": "acommodate", "replacement": "accommodate"}]}
+{"id": "spell-07", "category": "spelling", "input": "The meeting is scheduled for next Wenesday.", "expected": "The meeting is scheduled for next Wednesday.", "errors": [{"original": "Wenesday", "replacement": "Wednesday"}]}
+{"id": "spell-08", "category": "spelling", "input": "I beleive the results are accurate.", "expected": "I believe the results are accurate.", "errors": [{"original": "beleive", "replacement": "believe"}]}
+{"id": "spell-09", "category": "spelling", "input": "This is a common occurence in large codebases.", "expected": "This is a common occurrence in large codebases.", "errors": [{"original": "occurence", "replacement": "occurrence"}]}
+{"id": "spell-10", "category": "spelling", "input": "He was embarassed by the typo in his slides.", "expected": "He was embarrassed by the typo in his slides.", "errors": [{"original": "embarassed", "replacement": "embarrassed"}]}
+{"id": "spell-11", "category": "spelling", "input": "The new library is completly free to use.", "expected": "The new library is completely free to use.", "errors": [{"original": "completly", "replacement": "completely"}]}
+{"id": "spell-12", "category": "spelling", "input": "We have untill Friday to submit the report.", "expected": "We have until Friday to submit the report.", "errors": [{"original": "untill", "replacement": "until"}]}
+{"id": "spell-13", "category": "spelling", "input": "Thank you for your patiance while we fix the issue.", "expected": "Thank you for your patience while we fix the issue.", "errors": [{"original": "patiance", "replacement": "patience"}]}
+{"id": "spell-14", "category": "spelling", "input": "The begining of the book is slow.", "expected": "The beginning of the book is slow.", "errors": [{"original": "begining", "replacement": "beginning"}]}
+{"id": "spell-15", "category": "spelling", "input": "I recommend reading the documantation first.", "expected": "I recommend reading the documentation first.", "errors": [{"original": "documantation", "replacement": "documentation"}]}
+{"id": "spell-16", "category": "spelling", "input": "The enviroment variables are missing.", "expected": "The environment variables are missing.", "errors": [{"original": "enviroment", "replacement": "environment"}]}
+{"id": "spell-17", "category": "spelling", "input": "She gave a truely inspiring speech.", "expected": "She gave a truly inspiring speech.", "errors": [{"original": "truely", "replacement": "truly"}]}
+{"id": "spell-18", "category": "spelling", "input": "The commitee will review your application.", "expected": "The committee will review your application.", "errors": [{"original": "commitee", "replacement": "committee"}]}
+{"id": "spell-19", "category": "spelling", "input": "We had a wierd bug in production yesterday.", "expected": "We had a weird bug in production yesterday.", "errors": [{"original": "wierd", "replacement": "weird"}]}
+{"id": "spell-20", "category": "spelling", "input": "The calender invite was sent to everyone.", "expected": "The calendar invite was sent to everyone.", "errors": [{"original": "calender", "replacement": "calendar"}]}
+{"id": "spell-21", "category": "spelling", "input": "It is important to mantain regular backups.", "expected": "It is important to maintain regular backups.", "errors": [{"original": "mantain", "replacement": "maintain"}]}
+{"id": "spell-22", "category": "spelling", "input": "The resturant on the corner closes at nine.", "expected": "The restaurant on the corner closes at nine.", "errors": [{"original": "resturant", "replacement": "restaurant"}]}
+{"id": "spell-23", "category": "spelling", "input": "I am writting a report about our sales.", "expected": "I am writing a report about our sales.", "errors": [{"original": "writting", "replacement": "writing"}]}
+{"id": "spell-24", "category": "spelling", "input": "Tomorow we will publish the final version.", "expected": "Tomorrow we will publish the final version.", "errors": [{"original": "Tomorow", "replacement": "Tomorrow"}]}
+{"id": "spell-25", "category": "spelling", "input": "The flight was postponed because of the wether.", "expected": "The flight was postponed because of the weather.", "errors": [{"original": "wether", "replacement": "weather"}]}
+{"id": "spell-26", "category": "spelling", "input": "The adress on the reciept was wrong.", "expected": "The address on the receipt was wrong.", "errors": [{"original": "adress", "replacement": "address"}, {"original": "reciept", "replacement": "receipt"}]}
+{"id": "spell-27", "category": "spelling", "input": "I relly appreciate your help with the migraton.", "expected": "I really appreciate your help with the migration.", "errors": [{"original": "relly", "replacement": "really"}, {"original": "migraton", "replacement": "migration"}]}
+{"id": "spell-28", "category": "spelling", "input": "Our new hire is very knowledgable about security.", "expected": "Our new hire is very knowledgeable about security.", "errors": [{"original": "knowledgable", "replacement": "knowledgeable"}]}
+{"id": "punct-01", "category": "punctuation", "input": "Hello , how are you today?", "expected": "Hello, how are you today?", "errors": [{"original": " ,", "replacement": ","}]}
+{"id": "punct-02", "category": "punctuation", "input": "Wait,, I forgot my keys.", "expected": "Wait, I forgot my keys.", "errors": [{"original": ",,", "replacement": ","}]}
+{"id": "punct-03", "category": "punctuation", "input": "The report is due on Friday..", "expected": "The report is due on Friday.", "errors": [{"original": "..", "replacement": "."}]}
+{"id": "punct-04", "category": "punctuation", "input": "Lets go to the park after lunch.", "expected": "Let's go to the park after lunch.", "errors": [{"original": "Lets", "replacement": "Let's"}]}
+{"id": "punct-05", "category": "punctuation", "input": "I cant find the configuration file.", "expected": "I can't find the configuration file.", "errors": [{"original": "cant", "replacement": "can't"}]}
+{"id": "punct-06", "category": "punctuation", "input": "She doesnt like long meetings.", "expected": "She doesn't like long meetings.", "errors": [{"original": "doesnt", "replacement": "doesn't"}]}
+{"id": "punct-07", "category": "punctuation", "input": "The childrens toys were everywhere.", "expected": "The children's toys were everywhere.", "errors": [{"original": "childrens", "replacement": "children's"}]}
+{"id": "punct-08", "category": "punctuation", "input": "We visited Paris , London and Rome.", "expected": "We visited Paris, London and Rome.", "errors": [{"original": " ,", "replacement": ","}]}
+{"id": "punct-09", "category": "punctuation", "input": "This is a test.This is another test.", "expected": "This is a test. This is another test.", "errors": [{"original": "test.This", "replacement": "test. This"}]}
+{"id": "punct-10", "category": "punctuation", "input": "Why did the build fail ?", "expected": "Why did the build fail?", "errors": [{"original": " ?", "replacement": "?"}]}
+{"id": "punct-11", "category": "punctuation", "input": "I wont be able to attend the meeting.", "expected": "I won't be able to attend the meeting.", "errors": [{"original": "wont", "replacement": "won't"}]}
+{"id": "punct-12", "category": "punctuation", "input": "Thats exactly what I meant.", "expected": "That's exactly what I meant.", "errors": [{"original": "Thats", "replacement": "That's"}]}
+{"id": "punct-13", "category": "punctuation", "input": "We need milk eggs and bread.", "expected": "We need milk, eggs and bread.", "errors": [{"original": "milk eggs", "replacement": "milk, eggs"}]}
+{"id": "punct-14", "category": "punctuation", "input": "Is this the right place.", "expected": "Is this the right place?", "errors": [{"original": "place.", "replacement": "place?"}]}
+{"id": "punct-15", "category": "punctuation", "input": "They didnt reply to my email.", "expected": "They didn't reply to my email.", "errors": [{"original": "didnt", "replacement": "didn't"}]}
+{"id": "punct-16", "category": "punctuation", "input": "My sisters car is parked outside.", "expected": "My sister's car is parked outside.", "errors": [{"original": "sisters", "replacement": "sister's"}]}
+{"id": "agree-01", "category": "agreement", "input": "He go to the gym every morning.", "expected": "He goes to the gym every morning.", "errors": [{"original": "go", "replacement": "goes"}]}
+{"id": "agree-02", "category": "agreement", "input": "She don't like coffee.", "expected": "She doesn't like coffee.", "errors": [{"original": "don't", "replacement": "doesn't"}]}
+{"id": "agree-03", "category": "agreement", "input": "The list of items are on the table.", "expected": "The list of items is on the table.", "errors": [{"original": "are", "replacement": "is"}]}
+{"id": "agree-04", "category": "agreement", "input": "They was late for the meeting.", "expected": "They were late for the meeting.", "errors": [{"original": "was", "replacement": "were"}]}
+{"id": "agree-05", "category": "agreement", "input": "My brother have two cats.", "expected": "My brother has two cats.", "errors": [{"original": "have", "replacement": "has"}]}
+{"id": "agree-06", "category": "agreement", "input": "The dogs barks at night.", "expected": "The dogs bark at night.", "errors": [{"original": "barks", "replacement": "bark"}]}
+{"id": "agree-07", "category": "agreement", "input": "Everyone have finished their work.", "expected": "Everyone has finished their work.", "errors": [{"original": "have", "replacement": "has"}]}
+{"id": "agree-08", "category": "agreement", "input": "The results of the survey was surprising.", "expected": "The results of the survey were surprising.", "errors": [{"original": "was", "replacement": "were"}]}
+{"id": "agree-09", "category": "agreement", "input": "It don't matter anymore.", "expected": "It doesn't matter anymore.", "errors": [{"original": "don't", "replacement": "doesn't"}]}
+{"id": "agree-10", "category": "agreement", "input": "We was planning to leave early.", "expected": "We were planning to leave early.", "errors": [{"original": "was", "replacement": "were"}]}
+{"id": "agree-11", "category": "agreement", "input": "She have already submitted the form.", "expected": "She has already submitted the form.", "errors": [{"original": "have", "replacement": "has"}]}
+{"id": "agree-12", "category": "agreement", "input": "There is many reasons to stay.", "expected": "There are many reasons to stay.", "errors": [{"original": "is", "replacement": "are"}]}
+{"id": "agree-13", "category": "agreement", "input": "He walk to work when it is sunny.", "expected": "He walks to work when it is sunny.", "errors": [{"original": "walk", "replacement": "walks"}]}
+{"id": "agree-14", "category": "agreement", "input": "I has a question about the invoice.", "expected": "I have a question about the invoice.", "errors": [{"original": "has", "replacement": "have"}]}
+{"id": "agree-15", "category": "agreement", "input": "You was right about the deadline.", "expected": "You were right about the deadline.", "errors": [{"original": "was", "replacement": "were"}]}
+{"id": "agree-16", "category": "agreement", "input": "Each of the students have a laptop.", "expected": "Each of the students has a laptop.", "errors": [{"original": "have", "replacement": "has"}]}
+{"id": "agree-17", "category": "agreement", "input": "These kind of problems are hard to debug.", "expected": "These kinds of problems are hard to debug.", "errors": [{"original": "kind", "replacement": "kinds"}]}
+{"id": "agree-18", "category": "agreement", "input": "My parents lives in Hanoi.", "expected": "My parents live in Hanoi.", "errors": [{"original": "lives", "replacement": "live"}]}
+{"id": "agree-19", "category": "agreement", "input": "The server crash every time we deploy.", "expected": "The server crashes every time we deploy.", "errors": [{"original": "crash", "replacement": "crashes"}]}
+{"id": "tense-01", "category": "tense", "input": "Yesterday I go to the store and buy milk.", "expected": "Yesterday I went to the store and bought milk.", "errors": [{"original": "go", "replacement": "went"}, {"original": "buy", "replacement": "bought"}]}
+{"id": "tense-02", "category": "tense", "input": "I seen that movie last week.", "expected": "I saw that movie last week.", "errors": [{"original": "seen", "replacement": "saw"}]}
+{"id": "tense-03", "category": "tense", "input": "She has went to the office already.", "expected": "She has gone to the office already.", "errors": [{"original": "went", "replacement": "gone"}]}
+{"id": "tense-04", "category": "tense", "input": "Last year we visit Japan for two weeks.", "expected": "Last year we visited Japan for two weeks.", "errors": [{"original": "visit", "replacement": "visited"}]}
+{"id": "tense-05", "category": "tense", "input": "He has wrote three books.", "expected": "He has written three books.", "errors": [{"original": "wrote", "replacement": "written"}]}
+{"id": "tense-06", "category": "tense", "input": "I didn't knew the answer.", "expected": "I didn't know the answer.", "errors": [{"original": "knew", "replacement": "know"}]}
+{"id": "tense-07", "category": "tense", "input": "They have broke the record again.", "expected": "They have broken the record again.", "errors": [{"original": "broke", "replacement": "broken"}]}
+{"id": "tense-08", "category": "tense", "input": "When I was young, I play the piano every day.", "expected": "When I was young, I played the piano every day.", "errors": [{"original": "play", "replacement": "played"}]}
+{"id": "tense-09", "category": "tense", "input": "Did you saw the email I sent?", "expected": "Did you see the email I sent?", "errors": [{"original": "saw", "replacement": "see"}]}
+{"id": "tense-10", "category": "tense", "input": "She had already leave when I arrived.", "expected": "She had already left when I arrived.", "errors": [{"original": "leave", "replacement": "left"}]}
+{"id": "tense-11", "category": "tense", "input": "I have ate breakfast already.", "expected": "I have eaten breakfast already.", "errors": [{"original": "ate", "replacement": "eaten"}]}
+{"id": "tense-12", "category": "tense", "input": "We should have went earlier.", "expected": "We should have gone earlier.", "errors": [{"original": "went", "replacement": "gone"}]}
+{"id": "tense-13", "category": "tense", "input": "He drived to work this morning.", "expected": "He drove to work this morning.", "errors": [{"original": "drived", "replacement": "drove"}]}
+{"id": "art-01", "category": "article", "input": "She bought a apple at the market.", "expected": "She bought an apple at the market.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-02", "category": "article", "input": "It was an useful discussion.", "expected": "It was a useful discussion.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "art-03", "category": "article", "input": "I waited for a hour.", "expected": "I waited for an hour.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-04", "category": "article", "input": "He is an university student.", "expected": "He is a university student.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "art-05", "category": "article", "input": "This is a interesting idea.", "expected": "This is an interesting idea.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-06", "category": "article", "input": "We need an new plan.", "expected": "We need a new plan.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "art-07", "category": "article", "input": "She is a honest person.", "expected": "She is an honest person.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-08", "category": "article", "input": "I have a idea for the logo.", "expected": "I have an idea for the logo.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-09", "category": "article", "input": "It took an year to finish.", "expected": "It took a year to finish.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "art-10", "category": "article", "input": "Can you give me a example?", "expected": "Can you give me an example?", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-11", "category": "article", "input": "He wore a orange jacket.", "expected": "He wore an orange jacket.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-12", "category": "article", "input": "That was an one-time offer.", "expected": "That was a one-time offer.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "art-13", "category": "article", "input": "I want to be a engineer.", "expected": "I want to be an engineer.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-14", "category": "article", "input": "He made a error in the report.", "expected": "He made an error in the report.", "errors": [{"original": "a", "replacement": "an"}]}
+{"id": "art-15", "category": "article", "input": "I saw an European car.", "expected": "I saw a European car.", "errors": [{"original": "an", "replacement": "a"}]}
+{"id": "wc-01", "category": "word-choice", "input": "Their going to the beach tomorrow.", "expected": "They're going to the beach tomorrow.", "errors": [{"original": "Their", "replacement": "They're"}]}
+{"id": "wc-02", "category": "word-choice", "input": "The dog wagged it's tail.", "expected": "The dog wagged its tail.", "errors": [{"original": "it's", "replacement": "its"}]}
+{"id": "wc-03", "category": "word-choice", "input": "Its raining again.", "expected": "It's raining again.", "errors": [{"original": "Its", "replacement": "It's"}]}
+{"id": "wc-04", "category": "word-choice", "input": "I put the keys over their on the table.", "expected": "I put the keys over there on the table.", "errors": [{"original": "their", "replacement": "there"}]}
+{"id": "wc-05", "category": "word-choice", "input": "Your welcome to join us.", "expected": "You're welcome to join us.", "errors": [{"original": "Your", "replacement": "You're"}]}
+{"id": "wc-06", "category": "word-choice", "input": "I think your right about that.", "expected": "I think you're right about that.", "errors": [{"original": "your", "replacement": "you're"}]}
+{"id": "wc-07", "category": "word-choice", "input": "The new policy will effect everyone.", "expected": "The new policy will affect everyone.", "errors": [{"original": "effect", "replacement": "affect"}]}
+{"id": "wc-08", "category": "word-choice", "input": "I could of finished earlier.", "expected": "I could have finished earlier.", "errors": [{"original": "of", "replacement": "have"}]}
+{"id": "wc-09", "category": "word-choice", "input": "She is taller then her brother.", "expected": "She is taller than her brother.", "errors": [{"original": "then", "replacement": "than"}]}
+{"id": "wc-10", "category": "word-choice", "input": "We don't want to loose the game.", "expected": "We don't want to lose the game.", "errors": [{"original": "loose", "replacement": "lose"}]}
+{"id": "wc-11", "category": "word-choice", "input": "The company lowered it's prices.", "expected": "The company lowered its prices.", "errors": [{"original": "it's", "replacement": "its"}]}
+{"id": "wc-12", "category": "word-choice", "input": "Who's car is parked outside?", "expected": "Whose car is parked outside?", "errors": [{"original": "Who's", "replacement": "Whose"}]}
+{"id": "wc-13", "category": "word-choice", "input": "I would of called you.", "expected": "I would have called you.", "errors": [{"original": "of", "replacement": "have"}]}
+{"id": "wc-14", "category": "word-choice", "input": "Please except my apology.", "expected": "Please accept my apology.", "errors": [{"original": "except", "replacement": "accept"}]}
+{"id": "wc-15", "category": "word-choice", "input": "There house is near the river.", "expected": "Their house is near the river.", "errors": [{"original": "There", "replacement": "Their"}]}
+{"id": "wc-16", "category": "word-choice", "input": "He gave me some good advise.", "expected": "He gave me some good advice.", "errors": [{"original": "advise", "replacement": "advice"}]}
+{"id": "wc-17", "category": "word-choice", "input": "We went too the store.", "expected": "We went to the store.", "errors": [{"original": "too", "replacement": "to"}]}
+{"id": "wc-18", "category": "word-choice", "input": "I have to much work today.", "expected": "I have too much work today.", "errors": [{"original": "to", "replacement": "too"}]}
+{"id": "wc-19", "category": "word-choice", "input": "The principle reason is cost.", "expected": "The principal reason is cost.", "errors": [{"original": "principle", "replacement": "principal"}]}
+{"id": "wc-20", "category": "word-choice", "input": "Their are three options on the table.", "expected": "There are three options on the table.", "errors": [{"original": "Their", "replacement": "There"}]}
+{"id": "wc-21", "category": "word-choice", "input": "Its a common mistake.", "expected": "It's a common mistake.", "errors": [{"original": "Its", "replacement": "It's"}]}
+{"id": "wc-22", "category": "word-choice", "input": "I'm sure there coming later.", "expected": "I'm sure they're coming later.", "errors": [{"original": "there", "replacement": "they're"}]}
+{"id": "awk-01", "category": "awkward", "input": "In order to succeed, you need to practice.", "expected": "To succeed, you need to practice.", "errors": [{"original": "In order to", "replacement": "To"}]}
+{"id": "awk-02", "category": "awkward", "input": "Due to the fact that it rained, the game was postponed.", "expected": "Because it rained, the game was postponed.", "errors": [{"original": "Due to the fact that", "replacement": "Because"}]}
+{"id": "awk-03", "category": "awkward", "input": "At this point in time, we are not hiring.", "expected": "Currently, we are not hiring.", "errors": [{"original": "At this point in time", "replacement": "Currently"}]}
+{"id": "awk-04", "category": "awkward", "input": "He made a decision to leave the company.", "expected": "He decided to leave the company.", "errors": [{"original": "made a decision", "replacement": "decided"}]}
+{"id": "awk-05", "category": "awkward", "input": "The reason why is because the server crashed.", "expected": "The reason is that the server crashed.", "errors": [{"original": "The reason why is because", "replacement": "The reason is that"}]}
+{"id": "awk-06", "category": "awkward", "input": "We are in the process of reviewing your application.", "expected": "We are reviewing your application.", "errors": [{"original": "are in the process of reviewing", "replacement": "are reviewing"}]}
+{"id": "awk-07", "category": "awkward", "input": "Each and every member must sign the form.", "expected": "Every member must sign the form.", "errors": [{"original": "Each and every", "replacement": "Every"}]}
+{"id": "awk-08", "category": "awkward", "input": "In spite of the fact that he was tired, he kept working.", "expected": "Although he was tired, he kept working.", "errors": [{"original": "In spite of the fact that", "replacement": "Although"}]}
+{"id": "awk-09", "category": "awkward", "input": "Please revert back to me with your feedback.", "expected": "Please get back to me with your feedback.", "errors": [{"original": "revert back to me", "replacement": "get back to me"}]}
+{"id": "awk-10", "category": "awkward", "input": "The end result was better than expected.", "expected": "The result was better than expected.", "errors": [{"original": "end result", "replacement": "result"}]}
+{"id": "awk-11", "category": "awkward", "input": "We need to plan ahead for the launch.", "expected": "We need to plan for the launch.", "errors": [{"original": "plan ahead", "replacement": "plan"}]}
+{"id": "awk-12", "category": "awkward", "input": "The two companies will merge together next year.", "expected": "The two companies will merge next year.", "errors": [{"original": "merge together", "replacement": "merge"}]}
+{"id": "ok-plain-01", "category": "correct", "input": "The quarterly report is ready for review.", "expected": "The quarterly report is ready for review.", "errors": []}
+{"id": "ok-plain-02", "category": "correct", "input": "Please send the invoice to the finance team by Friday.", "expected": "Please send the invoice to the finance team by Friday.", "errors": []}
+{"id": "ok-plain-03", "category": "correct", "input": "She has lived in Berlin since 2019.", "expected": "She has lived in Berlin since 2019.", "errors": []}
+{"id": "ok-plain-04", "category": "correct", "input": "If I were you, I would accept the offer.", "expected": "If I were you, I would accept the offer.", "errors": []}
+{"id": "ok-plain-05", "category": "correct", "input": "The committee has reached a decision.", "expected": "The committee has reached a decision.", "errors": []}
+{"id": "ok-plain-06", "category": "correct", "input": "She read the book that you recommended.", "expected": "She read the book that you recommended.", "errors": []}
+{"id": "ok-plain-07", "category": "correct", "input": "Less sugar means fewer calories.", "expected": "Less sugar means fewer calories.", "errors": []}
+{"id": "ok-plain-08", "category": "correct", "input": "I'd rather walk than take the bus.", "expected": "I'd rather walk than take the bus.", "errors": []}
+{"id": "ok-plain-09", "category": "correct", "input": "We grew revenue by 12% year over year.", "expected": "We grew revenue by 12% year over year.", "errors": []}
+{"id": "ok-plain-10", "category": "correct", "input": "I can't believe it's already November.", "expected": "I can't believe it's already November.", "errors": []}
+{"id": "ok-tricky-11", "category": "correct", "input": "Its handle is broken, so the door won't open.", "expected": "Its handle is broken, so the door won't open.", "errors": []}
+{"id": "ok-tricky-12", "category": "correct", "input": "It's been a long week, but we're almost done.", "expected": "It's been a long week, but we're almost done.", "errors": []}
+{"id": "ok-tricky-13", "category": "correct", "input": "Their team won the championship, and they're celebrating over there.", "expected": "Their team won the championship, and they're celebrating over there.", "errors": []}
+{"id": "ok-tricky-14", "category": "correct", "input": "The data were collected over a period of six months.", "expected": "The data were collected over a period of six months.", "errors": []}
+{"id": "ok-tricky-15", "category": "correct", "input": "Neither the manager nor the employees were informed.", "expected": "Neither the manager nor the employees were informed.", "errors": []}
+{"id": "ok-tricky-16", "category": "correct", "input": "Who's coming to dinner tonight?", "expected": "Who's coming to dinner tonight?", "errors": []}
+{"id": "ok-tricky-17", "category": "correct", "input": "Whose laptop is this?", "expected": "Whose laptop is this?", "errors": []}
+{"id": "ok-tricky-18", "category": "correct", "input": "The effect of the new policy was immediate.", "expected": "The effect of the new policy was immediate.", "errors": []}
+{"id": "ok-tricky-19", "category": "correct", "input": "A one-time password was sent to your phone.", "expected": "A one-time password was sent to your phone.", "errors": []}
+{"id": "ok-tricky-20", "category": "correct", "input": "An hour later, the server was back online.", "expected": "An hour later, the server was back online.", "errors": []}
+{"id": "ok-tricky-21", "category": "correct", "input": "A university in Europe offered her a scholarship.", "expected": "A university in Europe offered her a scholarship.", "errors": []}
+{"id": "ok-jargon-22", "category": "correct", "input": "We deployed the new version to Kubernetes last night.", "expected": "We deployed the new version to Kubernetes last night.", "errors": []}
+{"id": "ok-jargon-23", "category": "correct", "input": "Run npm install before starting the dev server.", "expected": "Run npm install before starting the dev server.", "errors": []}
+{"id": "ok-jargon-24", "category": "correct", "input": "The function getUserById returns null when the user is missing.", "expected": "The function getUserById returns null when the user is missing.", "errors": []}
+{"id": "ok-jargon-25", "category": "correct", "input": "Our API uses OAuth 2.0 and JSON Web Tokens.", "expected": "Our API uses OAuth 2.0 and JSON Web Tokens.", "errors": []}
+{"id": "ok-jargon-26", "category": "correct", "input": "We use PostgreSQL, Redis, and Kafka in our data pipeline.", "expected": "We use PostgreSQL, Redis, and Kafka in our data pipeline.", "errors": []}
+{"id": "ok-jargon-27", "category": "correct", "input": "The p95 latency dropped from 340 ms to 120 ms after the fix.", "expected": "The p95 latency dropped from 340 ms to 120 ms after the fix.", "errors": []}
+{"id": "ok-jargon-28", "category": "correct", "input": "Set the environment variable NODE_ENV to production.", "expected": "Set the environment variable NODE_ENV to production.", "errors": []}
+{"id": "ok-jargon-29", "category": "correct", "input": "Please review the pull request before merging it into main.", "expected": "Please review the pull request before merging it into main.", "errors": []}
+{"id": "ok-jargon-30", "category": "correct", "input": "Our ETL job loads data from S3 into Snowflake every hour.", "expected": "Our ETL job loads data from S3 into Snowflake every hour.", "errors": []}
+{"id": "ok-jargon-31", "category": "correct", "input": "The README explains how to configure ESLint and Prettier.", "expected": "The README explains how to configure ESLint and Prettier.", "errors": []}
+{"id": "ok-jargon-32", "category": "correct", "input": "Call kubectl get pods to list the running containers.", "expected": "Call kubectl get pods to list the running containers.", "errors": []}
+{"id": "ok-names-33", "category": "correct", "input": "The CEO of Acme Corp. met with investors in São Paulo.", "expected": "The CEO of Acme Corp. met with investors in São Paulo.", "errors": []}
+{"id": "ok-names-34", "category": "correct", "input": "Nguyễn Văn An presented the findings to the board.", "expected": "Nguyễn Văn An presented the findings to the board.", "errors": []}
+{"id": "ok-names-35", "category": "correct", "input": "Tokyo, Kyoto, and Osaka are popular destinations.", "expected": "Tokyo, Kyoto, and Osaka are popular destinations.", "errors": []}
+{"id": "ok-names-36", "category": "correct", "input": "Dr. Smith will see you at 10 a.m. on Thursday.", "expected": "Dr. Smith will see you at 10 a.m. on Thursday.", "errors": []}
+{"id": "ok-names-37", "category": "correct", "input": "The café on Rue de Rivoli serves excellent croissants.", "expected": "The café on Rue de Rivoli serves excellent croissants.", "errors": []}
+{"id": "ok-names-38", "category": "correct", "input": "Siobhan and Joaquín flew from Dublin to Reykjavík.", "expected": "Siobhan and Joaquín flew from Dublin to Reykjavík.", "errors": []}
+{"id": "ok-british-39", "category": "correct", "input": "The colour of the sky changes at sunset.", "expected": "The colour of the sky changes at sunset.", "errors": []}
+{"id": "ok-british-40", "category": "correct", "input": "I apologise for the delay in responding.", "expected": "I apologise for the delay in responding.", "errors": []}
+{"id": "ok-british-41", "category": "correct", "input": "The organisation will analyse the results next week.", "expected": "The organisation will analyse the results next week.", "errors": []}
+{"id": "ok-british-42", "category": "correct", "input": "The theatre in the city centre reopened last autumn.", "expected": "The theatre in the city centre reopened last autumn.", "errors": []}
+{"id": "ok-quotes-43", "category": "correct", "input": "He said, \"I'll be there at noon.\"", "expected": "He said, \"I'll be there at noon.\"", "errors": []}
+{"id": "ok-quotes-44", "category": "correct", "input": "She whispered, \"Don't wake the baby.\"", "expected": "She whispered, \"Don't wake the baby.\"", "errors": []}
+{"id": "ok-quotes-45", "category": "correct", "input": "The word \"irregardless\" appears in some dictionaries.", "expected": "The word \"irregardless\" appears in some dictionaries.", "errors": []}
+{"id": "ok-quotes-46", "category": "correct", "input": "“We ship on Friday,” the manager said.", "expected": "“We ship on Friday,” the manager said.", "errors": []}
