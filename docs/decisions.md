@@ -45,7 +45,22 @@ actually ran it; anything else is labelled as reasoning or documentation.
 - Revisit with incremental (changed-paragraph) linting if evaluation shows latency over ~50 ms on
   long documents.
 
-## D5. AI provider — *pending the LLM agent's research* (see `llm-research.md`)
+## D5. AI provider — **Groq → Workers AI by default; Gemini supported but opt-in** (see `llm-research.md`)
+
+- **The brief's starting point:** Gemini, for its generous free Flash / Flash-Lite models.
+- **LLM/security engineers:** keep Gemini out of the default chain.
+  - Its unpaid tier may use prompts and responses to improve Google products, and human reviewers
+    may read them (verified on Google's pricing page and terms, 2026-11-04).
+  - Its terms say not to send personal or confidential information to the free tier, and the free
+    tier is not allowed for apps offered in the EEA, UK or Switzerland.
+- **Groq:** its terms say it does not train on inputs or outputs, and it offers zero data retention.
+  Its free limits are not published on official pages (third-party figures are about 30 RPM and
+  1K RPD).
+- **Workers AI:** 10,000 Neurons/day free, no training, and no extra account beyond Cloudflare.
+- **Outcome:** default `AI_PROVIDERS=groq,workers-ai`. Gemini is implemented and can be enabled by
+  the owner after reading its terms.
+- **No quality claim yet:** this choice is based on privacy terms and structured-output support. A
+  side-by-side quality comparison on `tests/eval` is the next benchmark to run once keys exist.
 
 ## D6. Browser-only vs minimal backend — **browser-only by default, optional tiny backend for AI**
 
