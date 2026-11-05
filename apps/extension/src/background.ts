@@ -148,6 +148,19 @@ async function handleAddWord(word: string): Promise<void> {
 
 /* ------------------------------------------------------------------ optional ChatGPT (companion) */
 
+/**
+ * nativeMessaging is an optional permission. When the user grants it, a service worker that was
+ * already running may not get chrome.runtime.connectNative until it restarts, and an open popup
+ * polling every few seconds keeps it from ever going idle. Restart the extension once in that
+ * case; the popup closes and the next one finds the companion.
+ */
+function nativeApiMissing(): boolean {
+  return typeof chrome.runtime.connectNative !== 'function';
+}
+chrome.permissions.onAdded.addListener((p) => {
+  if (p.permissions?.includes('nativeMessaging') && nativeApiMissing()) chrome.runtime.reload();
+});
+
 const QUICK_TIMEOUT_MS = 20_000;
 let signIn: CallHandle | null = null;
 /** One AI check per tab at a time; keyed by tab id. */
@@ -180,6 +193,11 @@ async function aiStatus(): Promise<AiStatusResponse> {
   const permission = await hasNativePermission();
   const signingIn = signIn !== null;
   if (!permission) return { ok: true, permission, companion: false, signingIn };
+  if (nativeApiMissing()) {
+    // Granted, but this worker started before the grant (see above): restart to pick it up.
+    setTimeout(() => chrome.runtime.reload(), 200);
+    return { ok: true, permission, companion: false, signingIn, error: 'interrupted', message: 'Finishing setup: GrammarMe is restarting. Open this menu again.' };
+  }
   const r = await quick({ type: 'status' });
   if (!r.ok) {
     const companion = !['companion_missing', 'companion_forbidden', 'interrupted', 'permission_missing'].includes(r.error);

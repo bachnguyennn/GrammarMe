@@ -50,6 +50,8 @@ function statusRow(text: string, dot: '' | 'off' | 'bad' = ''): HTMLElement {
 }
 
 let pollTimer: ReturnType<typeof setTimeout> | undefined;
+/** When the popup started waiting for the companion, to show the real error if it takes long. */
+let waitingSince = 0;
 
 /** The install command with a Copy button. */
 function commandBox(): HTMLElement {
@@ -150,6 +152,12 @@ export async function mountAi(): Promise<void> {
       const forbidden = st.error === 'companion_forbidden';
       // Keep checking while the popup is open, so the next step appears as soon as it's installed.
       pollTimer = setTimeout(() => void render(), COMPANION_POLL_MS);
+      waitingSince ||= Date.now();
+      // Installed but still not reachable after a while: show what Chrome actually reports.
+      const detail =
+        Date.now() - waitingSince > 15_000 && st.message
+          ? [el('p', 'err', `Still not reachable: ${st.message}`), link('Troubleshooting ↗', 'https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md#troubleshooting')]
+          : [];
       return show(
         el('p', 'step', 'Step 1 of 2 · Install the GrammarMe companion'),
         el(
@@ -162,6 +170,7 @@ export async function mountAi(): Promise<void> {
         commandBox(),
         el('p', 'note', 'No admin password is needed. It installs only in your home folder, and only answers this extension.'),
         statusRow('Waiting for the companion…', 'off'),
+        ...detail,
         link('What does this do? ↗', AI_SETUP_URL),
       );
     }
