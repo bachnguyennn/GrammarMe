@@ -58,6 +58,7 @@
 .note { margin-top: var(--s-8); padding: var(--s-5) var(--s-6); border-radius: 16px; background: var(--p-surface); }
 .note p { margin: 0 0 var(--s-3); }
 .note p:last-child { margin: 0; }
+.note--first { margin-top: 0; }
 .skip { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip:focus { position: static; width: auto; height: auto; clip-path: none; }
 @media (max-width: 600px) {
@@ -74,13 +75,17 @@
 <header class="nav">
   <div class="wrap measure nav__bar">
     <a class="nav__logo" href="index.html"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
-    <div class="nav__actions"><a class="btn btn--primary" href="editor/">Try the editor</a></div>
+    <div class="nav__actions"><a class="btn btn--primary" href="editor/">Open the editor</a></div>
   </div>
 </header>
 <main class="doc-page" id="main">
   <div class="wrap measure">
     <h1>Install the Chrome extension</h1>
     <p class="t-lead">Five steps, about two minutes. No account, no coding. Works in Google Chrome, Microsoft Edge and Brave on a computer.</p>
+    <div class="note note--first">
+      <p><b>Before you start:</b> GrammarMe isn't in the Chrome Web Store yet, so it installs in Developer mode, and updates are manual: you download each new version yourself.</p>
+      <p>It checks supported text fields, including Gmail and Outlook. Google Docs isn't supported by GrammarMe yet.</p>
+    </div>
     <p>Only want to check a piece of writing? You don't need the extension: <a class="link" href="editor/">open the editor</a> and paste it in.</p>
 
     <ol class="steps">
@@ -129,7 +134,7 @@
       <p><b>"Disable developer mode extensions"?</b> Chrome sometimes shows this for any extension that isn't from the Chrome Web Store. It's expected. Click the X to keep GrammarMe on.</p>
       <p><b>Is it safe?</b> GrammarMe reads text boxes on the pages you visit so it can check them, and it checks them on your computer. It skips password and payment fields and sends nothing anywhere. Read the <a class="link" href="privacy.html">privacy page</a> or the <a class="link" href="https://github.com/bachnguyennn/GrammarMe">source code</a>.</p>
       <p><b>Getting a newer version:</b> download the zip again, replace the old folder with the new one, then click the round reload arrow on GrammarMe's card in the extensions page.</p>
-      <p><b>Where it works:</b> comment boxes, forms, and rich-text editors such as Gmail and Outlook on the web. <b>Not yet:</b> Google Docs, which draws its text in a way extensions can't read. Paste into the <a class="link" href="editor/">editor</a> for that.</p>
+      <p><b>Where it works:</b> comment boxes, forms, and rich-text editors such as Gmail and Outlook on the web. Google Docs isn't supported by GrammarMe yet; paste your text into the <a class="link" href="editor/">editor</a> instead.</p>
     </div>
 
     <p style="margin-top: var(--s-8)"><a class="link" href="index.html">Back to GrammarMe</a></p>

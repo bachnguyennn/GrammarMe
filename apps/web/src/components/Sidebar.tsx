@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Suggestion } from '@grammarme/core';
 import { CATEGORY_LABEL, groupOf, type Group } from '../segments.ts';
 import { SuggestionDetail } from './SuggestionDetail.tsx';
+import type { CheckStatus } from '../useChecker.ts';
 
 interface Props {
   suggestions: Suggestion[];
@@ -12,7 +13,7 @@ interface Props {
   onAddWord(s: Suggestion): void;
   onDisableRule(s: Suggestion): void;
   onAcceptAllSpelling(): void;
-  ready: boolean;
+  status: CheckStatus;
 }
 
 const FILTERS: { id: 'all' | Group; label: string }[] = [
@@ -33,11 +34,9 @@ export function Sidebar(props: Props) {
   ).length;
 
   return (
-    <aside className="sidebar" aria-label="Suggestions">
+    <aside className="sidebar" id="suggestions" aria-label="Suggestions">
       <div className="sidebar-head">
-        <h2>
-          {props.suggestions.length === 0 ? 'No issues' : `${props.suggestions.length} suggestion${props.suggestions.length === 1 ? '' : 's'}`}
-        </h2>
+        <h2 aria-live="polite">{heading(props.status, props.suggestions.length)}</h2>
         <div className="filters" role="tablist" aria-label="Filter suggestions">
           {FILTERS.filter((f) => f.id !== 'ai' || counts.ai > 0).map((f) => (
             <button
@@ -63,13 +62,23 @@ export function Sidebar(props: Props) {
 
       {shown.length === 0 ? (
         <div className="empty">
-          {props.ready ? (
+          {props.status === 'loading' ? (
+            <p className="empty-sub">The checker (about 9 MB) is downloading. This takes a few seconds the first time.</p>
+          ) : props.status === 'error' ? (
             <>
-              <p className="empty-title">{filter === 'all' ? 'Looking good.' : 'Nothing here.'}</p>
+              <p className="empty-title">The checker didn’t load.</p>
+              <p className="empty-sub">Check your internet connection, then try again. Your text is still here.</p>
+              <button type="button" className="btn btn-quiet" onClick={() => window.location.reload()}>
+                Try again
+              </button>
+            </>
+          ) : props.status === 'checking' && props.suggestions.length === 0 ? (
+            <p className="empty-sub">Checking…</p>
+          ) : (
+            <>
+              <p className="empty-title">{filter === 'all' ? 'No suggestions found.' : 'Nothing in this group.'}</p>
               <p className="empty-sub">Keep writing — suggestions show up as you type.</p>
             </>
-          ) : (
-            <p className="empty-sub">Loading the grammar engine…</p>
           )}
         </div>
       ) : (
@@ -116,4 +125,12 @@ export function Sidebar(props: Props) {
       )}
     </aside>
   );
+}
+
+function heading(status: CheckStatus, count: number): string {
+  if (count > 0) return `${count} suggestion${count === 1 ? '' : 's'}`;
+  if (status === 'loading') return 'Loading checker…';
+  if (status === 'error') return 'Couldn’t load the checker';
+  if (status === 'checking') return 'Checking…';
+  return 'No suggestions found';
 }

@@ -49,3 +49,50 @@ the skill's own scripts in headless Chrome.
   - A real Chrome Web Store listing: the extension is installed unpacked, and the copy says
     "Read the install steps".
   - How the site looks in Safari and Firefox.
+
+## Review fixes (2026-11-05)
+
+An outside review of the live site found claims the product didn't back up. What changed:
+
+- **Real screenshots instead of mock-ups.** The homepage showed a document list with search, nine
+  saved drafts, "Clean" folders, settings switches and an AI chat, none of which exist. Every
+  picture is now a screenshot of the real editor or extension, taken by
+  `apps/site/scripts/shots.mjs` from the built app (run it after `npm run build:site`). That
+  also fixed a bug it exposed: the extension card showed Harper's backticks literally.
+- **One privacy sentence everywhere:** "Spelling and grammar checks run on your device. Optional
+  cloud AI sends text only when you enable it and request a check." Used in the meta
+  description, a feature card, the FAQ, the footer, the privacy page, the README and Settings.
+- **No offline promise.** The editor has no service worker, so reloading offline fails. The site
+  now says "Once the checker has loaded, you can keep checking text without an internet
+  connection."
+- **AI is labelled "Optional cloud AI — requires your own server"**, links to the new
+  `docs/ai-setup.md`, and describes what is really sent (the whole draft up to 4,000 characters,
+  otherwise the paragraph around the cursor). The Worker's default `ALLOWED_ORIGINS` now includes
+  the GitHub Pages origin; before this, the hosted editor's AI requests would have been refused.
+- **Extension expectations** (desktop only, Developer mode, manual updates, no Google Docs) sit
+  beside the download on the homepage and at the top of the install page.
+- **Hero wording** is the reviewer's: "Check your writing. Keep control of your text." The
+  `gradient-mesh` effect was removed from the hero because it rendered with near-black corners
+  in real Chrome as well as headless; the window is now a flat sage gradient.
+- **Phones:** all FAQ answers show at every width; the hero shows one complete correction (a
+  cropped phone screenshot); feature screenshots fade instead of being cut; the bar's button hides
+  under 380px so the menu button fits at 320px; sections grow rather than overlap the next one.
+
+### Checker results after the fixes
+
+| Check | Result |
+| --- | --- |
+| `layout/check.mjs`, index at 1440, 1024, 820, 768, 390; install and privacy at 1440, 768, 390 | **no findings** |
+| `perf.mjs` | **0 FAIL**, 1 WARN (phone screenshots up to 2.8× their shown size). Images 180 KiB |
+| `consistency.mjs` | 59 FAIL, 29 WARN. Judged below |
+
+Remaining consistency FAILs, judged and kept:
+
+- **`copy-headline`, `copy-fact`:** the owner chose the reviewer's hero wording, which names no
+  product category and no number. Accuracy over the skill's copy formula.
+- **`container-edges` on the centred hero** (as before) and **`cut-text` in the kit diagram**
+  (as before).
+- **`section-height`, `one-section`, `section-air`, `section-gaps`, `hole` at 820, 768 and 390:**
+  page CSS lets phone sections grow past their screen count instead of overlapping the next
+  section. Before, the features and questions overflowed into their neighbours on phones; the
+  reviewer saw that as cropped content. Readable content beats the exact one-screen rhythm.

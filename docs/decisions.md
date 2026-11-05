@@ -98,7 +98,8 @@ actually ran it; anything else is labelled as reasoning or documentation.
   - Hero: `centred`. Palette: "three stones" (#eeecea ground, #333231 ink, #5c6b54 sage accent).
   - Type: Reddit Sans with JetBrains Mono. Radius: `round`.
   - Nav: `nav-mega`. Close: `close-type`. Footer: `footer-dark`. Rhythm: `dark-band`. Buttons: `arrow`.
-  - Effect: `gradient-mesh` in the hero window. Card ground: `painterly-landscape`.
+  - Effect: `gradient-mesh` in the hero window (removed 2026-11-05: dark corners in real Chrome).
+    Card ground: `painterly-landscape`.
 - **Consequences in the editor:**
   - The violet AI colour was replaced (the skill bans violet), so AI suggestions are teal.
   - Labels are sentence case and weights are 400/500 only.
@@ -106,6 +107,8 @@ actually ran it; anything else is labelled as reasoning or documentation.
 - **Privacy exception:** the editor bundles Reddit Sans locally (`@fontsource-variable`) instead
   of loading Google Fonts, so the app makes no third-party requests. The marketing site does load
   Google Fonts, and its privacy page says so.
-- **Honesty rule applied to the mock-ups:** every mistake shown on the site was run through the
-  real engine first, and only ones Harper actually flags are shown. "you're time" and "The results
-  was" were dropped because Harper misses them.
+- **Honesty rule:** the site shows only real screenshots of the editor and extension
+  (`apps/site/scripts/shots.mjs`), never drawn mock-ups. An outside review found that the first
+  mock-ups advertised features that didn't exist (document list, saved drafts, settings switches,
+  an AI chat), so they were replaced on 2026-11-05. The editor's example paragraph is pinned by a
+  test (`apps/web/test/sample.test.ts`) to mistakes Harper really flags in all five dialects.

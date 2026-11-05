@@ -65,6 +65,7 @@ export const OVERLAY_CSS = `
 }
 .close:hover { background: var(--btn); }
 .msg { margin: 0 0 8px; overflow-wrap: anywhere; }
+.kw { font: 500 0.95em/1 ui-monospace, "SF Mono", Menlo, monospace; background: var(--btn); border-radius: 4px; padding: 1px 4px; }
 .repls { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
 .repl {
   all: unset; box-sizing: border-box; cursor: pointer; padding: 3px 10px; border-radius: 6px;

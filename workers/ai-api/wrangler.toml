@@ -17,8 +17,9 @@ enabled = false
 # Priority order; providers without a key/binding are skipped. Add "gemini" only after accepting its
 # free-tier data terms (prompts may be used to improve Google products and seen by human reviewers).
 AI_PROVIDERS = "groq,workers-ai"
-# Exact origins, comma-separated. Replace <extension-id> with your unpacked/published extension id.
-ALLOWED_ORIGINS = "chrome-extension://<extension-id>,http://localhost:*,http://127.0.0.1:*"
+# Exact origins, comma-separated: the hosted editor (GitHub Pages), the extension (replace
+# <extension-id> with yours from chrome://extensions) and local development.
+ALLOWED_ORIGINS = "https://bachnguyennn.github.io,chrome-extension://<extension-id>,http://localhost:*,http://127.0.0.1:*"
 GEMINI_MODEL = "gemini-3.5-flash-lite"
 GROQ_MODEL = "openai/gpt-oss-20b"
 GROQ_REASONING_EFFORT = "low"

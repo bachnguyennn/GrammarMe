@@ -77,7 +77,7 @@ button { cursor: pointer; }
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--line);
 }
-.brand { display: flex; align-items: center; gap: 9px; font-weight: 500; font-size: 17px; letter-spacing: -0.02em; }
+.brand { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 9px; font-weight: 500; font-size: 17px; letter-spacing: -0.02em; }
 .modes { display: flex; gap: 2px; padding: 3px; margin: 0 auto; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; }
 .mode { border: 0; background: none; padding: 5px 13px; border-radius: 999px; color: var(--ink-2); font-size: 13px; }
 .mode:hover { color: var(--ink); }
@@ -231,6 +231,20 @@ button { cursor: pointer; }
   .topbar-actions { margin-left: auto; gap: 6px; }
   .topbar-actions .btn { padding: 6px 10px; }
   .editor-backdrop, .editor-input { font-size: 17px; }
+  /* Keep the suggestions close to the text: the writing area grows with the text instead of
+     reserving half the screen. */
+  .page { min-height: 0; }
+  .editor { margin-bottom: 16px; }
+  .editor-input { min-height: 7.5em; }
+  .sidebar { scroll-margin-top: 12px; }
+}
+.jump { display: none; }
+@media (max-width: 900px) {
+  .jump {
+    display: block; position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 15;
+    border: 0; border-radius: 999px; padding: 10px 18px; background: var(--brand); color: #fff;
+    font: 500 14px/1 var(--font-ui, inherit); box-shadow: var(--shadow);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

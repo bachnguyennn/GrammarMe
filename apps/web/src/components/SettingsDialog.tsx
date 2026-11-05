@@ -18,6 +18,9 @@ const DIALECTS: { id: Dialect; label: string }[] = [
   { id: 'indian', label: 'Indian English' },
 ];
 
+/** Plain-language setup guide for the optional AI server. */
+export const AI_SETUP_URL = 'https://github.com/bachnguyennn/GrammarMe/blob/main/docs/ai-setup.md';
+
 export function SettingsDialog({ open, settings, onClose, onChange, onClearDraft }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const [endpoint, setEndpoint] = useState(settings.aiEndpoint);
@@ -114,11 +117,22 @@ export function SettingsDialog({ open, settings, onClose, onChange, onClearDraft
         </section>
 
         <section className="field-group ai-group">
-          <h3>Cloud AI suggestions</h3>
+          <h3>Optional cloud AI — requires your own server</h3>
           <p className="hint">
-            Off by default. Grammar and spelling checks always run on this device. When you turn this on and press{' '}
-            <b>AI check</b>, the text is sent to <b>your</b> GrammarMe AI server, which forwards it to the model provider
-            you configured. Nothing is sent while you type.
+            Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and
+            request a check.
+          </p>
+          <p className="hint">
+            It needs a free server that you set up on your own Cloudflare account, by typing a few commands.{' '}
+            <a className="link link-invert" href={AI_SETUP_URL} target="_blank" rel="noopener noreferrer">
+              Read the setup guide
+            </a>
+            .
+          </p>
+          <p className="hint">
+            When you press <b>AI check</b>, GrammarMe sends your whole draft if it is 4,000 characters or less, otherwise
+            the paragraph around your cursor, to <b>your</b> server, which forwards it to the AI provider you chose.
+            Nothing is sent while you type.
           </p>
           <label className="check">
             <input
@@ -148,7 +162,7 @@ export function SettingsDialog({ open, settings, onClose, onChange, onClearDraft
               onChange={(e) => setToken(e.target.value)}
             />
           </label>
-          <p className="hint">Stored only in this browser. See workers/ai-api/README.md to set up the free server.</p>
+          <p className="hint">Stored only in this browser.</p>
         </section>
 
         <footer className="dialog-foot">

@@ -223,7 +223,7 @@ export class Overlay {
     const close = button('close', '×', 'Close suggestion');
     close.addEventListener('click', () => this.cb.onDismiss(true));
     head.append(dot, cat, close);
-    card.append(head, el('p', 'msg', s.message));
+    card.append(head, messageEl(s.message));
 
     const repls = replacementButtons(s);
     if (repls.length) {
@@ -480,6 +480,16 @@ function clippingAncestors(field: Element): Element[] {
     node = parentComposed(node);
   }
   return out;
+}
+
+/** Harper marks words with backticks (`there`); show them as code, built with textContent only. */
+function messageEl(message: string): HTMLParagraphElement {
+  const p = el('p', 'msg');
+  message.split('`').forEach((part, i) => {
+    if (!part) return;
+    p.append(i % 2 === 1 ? el('code', 'kw', part) : document.createTextNode(part));
+  });
+  return p;
 }
 
 function place(node: HTMLElement, left: number, top: number, width: number, height: number): void {

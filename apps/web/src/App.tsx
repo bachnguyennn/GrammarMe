@@ -6,10 +6,11 @@ import { SettingsDialog } from './components/SettingsDialog.tsx';
 import { useChecker } from './useChecker.ts';
 import { runAiCheck } from './ai.ts';
 import { loadDraft, loadSettings, saveDraft, saveSettings, type Settings } from './storage.ts';
+import { SAMPLE } from './sample.ts';
 
-const SAMPLE = `Welcome to GrammarMe! Its a free writing assistant that check your grammar right here in the browser.
 
-Nothing you type here leave your computer. Try fixing the underlined words, or start typing your own text. Their are a few mistake in this paragraph so you can see how it work.`;
+/** The product home page: the editor is served from /editor/, so home is one level up. */
+const HOME_URL = '../';
 
 const MODES: { id: WritingMode; label: string; hint: string }[] = [
   { id: 'standard', label: 'Standard', hint: 'All checks' },
@@ -54,6 +55,16 @@ export function App() {
     const t = window.setTimeout(() => saveDraft(doc.text), 500);
     return () => window.clearTimeout(t);
   }, [doc.text, settings.saveDraft]);
+
+  // Phones: the list sits below the text, so offer a jump button while it's out of view.
+  const [listInView, setListInView] = useState(true);
+  useEffect(() => {
+    const list = document.getElementById('suggestions');
+    if (!list || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => setListInView(!!e?.isIntersecting), { rootMargin: '0px 0px -80px 0px' });
+    io.observe(list);
+    return () => io.disconnect();
+  }, []);
 
   // Drop the active card if its suggestion disappeared.
   useEffect(() => {
@@ -210,9 +221,9 @@ export function App() {
   const stats = useMemo(() => textStats(doc.text), [doc.text]);
   const statusText =
     checker.status === 'loading'
-      ? 'Loading grammar engine…'
+      ? 'Loading checker…'
       : checker.status === 'error'
-        ? 'Grammar engine failed to load'
+        ? 'Couldn’t load the checker'
         : checker.status === 'checking'
           ? 'Checking…'
           : `Checked on this device${checker.lastCheckMs !== null ? ` · ${checker.lastCheckMs} ms` : ''}`;
@@ -220,13 +231,13 @@ export function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <div className="brand">
+        <a className="brand" href={HOME_URL} title="GrammarMe home page">
           <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
             <rect width="32" height="32" rx="8" fill="var(--brand)" />
             <path d="M21.5 11.2A7 7 0 1 0 23 17h-6.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
           </svg>
           <span>GrammarMe</span>
-        </div>
+        </a>
 
         <div className="modes" role="radiogroup" aria-label="Writing mode">
           {MODES.map((m) => (
@@ -324,9 +335,19 @@ export function App() {
           onAddWord={addWord}
           onDisableRule={disableRule}
           onAcceptAllSpelling={acceptAllSpelling}
-          ready={checker.status !== 'loading'}
+          status={checker.status}
         />
       </main>
+
+      {!listInView && visible.length > 0 && !toast && (
+        <button
+          type="button"
+          className="jump"
+          onClick={() => document.getElementById('suggestions')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        >
+          {visible.length} suggestion{visible.length === 1 ? '' : 's'} ↓
+        </button>
+      )}
 
       <div className="toast-region" aria-live="polite">
         {toast && (

@@ -5,8 +5,8 @@ A free, private, Grammarly-style writing assistant.
 **Try it:** [bachnguyennn.github.io/GrammarMe](https://bachnguyennn.github.io/GrammarMe/) (the
 editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
 
-- **Real-time spelling, grammar and punctuation checks** that run entirely on your device. Nothing
-  you type is sent anywhere.
+- **Real-time spelling, grammar and punctuation checks.** Spelling and grammar checks run on your
+  device. Optional cloud AI sends text only when you enable it and request a check.
 - **Underlines with explanations and one-click fixes**: accept, dismiss, undo (Cmd/Ctrl+Z), add to
   dictionary, or turn a rule off.
 - **Writing modes** (Standard, Academic, Professional, Casual) and five English dialects.
@@ -56,7 +56,7 @@ Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**,
 
 ### Optional: AI suggestions
 
-See [workers/ai-api/README.md](workers/ai-api/README.md) to deploy the free Cloudflare Worker. Then
+Follow [docs/ai-setup.md](docs/ai-setup.md) to deploy the free Cloudflare Worker. Then
 open **Settings → Cloud AI suggestions** in the editor, paste the Worker URL and your access token,
 and press **AI check**.
 

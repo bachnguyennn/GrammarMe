@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GrammarMe: free grammar checker that runs in your browser</title>
-<meta name="description" content="GrammarMe is a free, open-source grammar and spelling checker. It runs in your browser, so your writing never leaves your computer.">
+<title>GrammarMe: free grammar checker that runs on your device</title>
+<meta name="description" content="GrammarMe is a free, open-source spelling and grammar checker. Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.">
 <meta name="site-kind" content="software">
 <meta name="page-type" content="software">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -32,129 +32,80 @@
 }
 </style>
 <link rel="stylesheet" href="assets/ui/base.css">
-<link rel="stylesheet" href="assets/ui/window/fragment.css">
-<link rel="stylesheet" href="assets/ui/doc/fragment.css">
 <link rel="stylesheet" href="assets/ui/notify/fragment.css">
-<link rel="stylesheet" href="assets/ui/toggles/fragment.css">
-<link rel="stylesheet" href="assets/ui/chat/fragment.css">
 <link rel="stylesheet" href="assets/diagrams/diagram.css">
 <script src="assets/backgrounds/backgrounds.js"></script>
-<!-- page CSS: only inside visuals (the GrammarMe windows), the app-frame recipe and one --p-h per card group -->
+<!-- page CSS: only inside visuals (real screenshots of GrammarMe), one --p-h per card group, and the nav fit at 320px -->
 <style>
-  #features .panel { --p-h: 336px; }
-
-  /* app-frame (sections-library.md, the whole recipe) */
-  .app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
-  .app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
-  .app > .app__pane + .app__pane { border-left: 1px solid var(--u-line); }
-  .app > .app__pane > .ui-panel { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
-  .app > .app__pane::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, var(--u-bg)); pointer-events: none; }
-  @media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
-  @media (max-width: 1023px) {
-    .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-    .app > .app__pane--list { max-height: 252px; }
-    .app > .app__pane--list::after { display: none; }
-    .app .ui-win__side { display: none; }
-    .app .ui-win__body { grid-template-columns: minmax(0, 1fr); }
-    .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--u-line); }
-  }
-  @media (max-width: 639px) {
-    .app.ui { grid-template-rows: minmax(0, 1fr); }
-    .app > .app__pane--list { display: none; }
-    .app > .app__pane + .app__pane { border-top: 0; }
-  }
-
-  /* the GrammarMe editor window in the hero (the client's own UI as live HTML) */
-  .gm-win { background: #fff; color: #26282a; border-radius: 16px; overflow: hidden; font: 400 14px/1.5 var(--font-text);
+  /* real screenshots, taken by scripts/shots.mjs from the built editor and extension */
+  .gm-shot { display: block; overflow: hidden; border-radius: 14px; background: #f7f6f4;
     box-shadow: 0 0 0 1px rgb(0 0 0 / .08), 0 30px 70px -30px rgb(40 40 30 / .45); }
-  .gm-win__bar { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px; border-bottom: 1px solid rgb(0 0 0 / .07); font-size: 13px; color: #5d6268; }
-  .gm-win__bar b { font-weight: 500; color: #26282a; }
-  .gm-win__dots { display: flex; gap: 6px; } .gm-win__dots i { width: 10px; height: 10px; border-radius: 50%; background: #dcdfe2; }
-  .gm-win__sp { flex: 1; }
-  .gm-win__ok { display: inline-flex; align-items: center; gap: 6px; }
-  .gm-win__ok::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #5c6b54; }
-  .gm-win__body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; min-height: 360px; }
-  .gm-doc { padding: 28px 32px; font: 400 16px/1.75 Georgia, "Iowan Old Style", serif; color: #26282a; }
-  .gm-doc p { margin: 0 0 12px; }
-  .gm-u { text-decoration: underline 2px; text-underline-offset: 4px; text-decoration-skip-ink: none; }
-  .gm-u--c { text-decoration-color: #c8453d; }
-  .gm-u--b { text-decoration-color: #2d68c4; }
-  .gm-u.is-on { background: rgb(200 69 61 / .12); border-radius: 2px; }
-  .gm-side { border-left: 1px solid rgb(0 0 0 / .07); padding: 16px; background: #fafaf8; display: grid; align-content: start; gap: 8px; }
-  .gm-side__h { font-size: 13px; font-weight: 500; color: #26282a; margin: 0 0 4px; }
-  .gm-card { background: #fff; border: 1px solid rgb(0 0 0 / .09); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
-  .gm-card__row { display: flex; align-items: center; gap: 8px; }
-  .gm-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: #c8453d; }
-  .gm-dot--b { background: #2d68c4; }
-  .gm-from { color: #8a8f88; text-decoration: line-through; }
-  .gm-to { font-weight: 500; }
-  .gm-cat { margin-left: auto; color: #8a8f88; font-size: 12px; }
-  .gm-card__msg { margin: 6px 0 8px; color: #45484b; }
-  .gm-card__acts { display: flex; gap: 6px; align-items: center; }
-  .gm-btn { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 7px; font-size: 12px; font-weight: 500; background: #5c6b54; color: #fff; }
-  .gm-btn--ghost { background: none; color: #5d6268; padding: 0 4px; }
+  .gm-shot img { display: block; width: 100%; height: auto; }
+  /* hero: the editor screenshot always fits the window whole (container units), no fade over it */
+  .hero--centred .hero__window { container-type: size; -webkit-mask-image: none; mask-image: none;
+    background: linear-gradient(180deg, #dfe3d8, #c9d1c0); }
+  .hero--centred .hero__window > .gm-shot { width: min(920px, calc(100cqw - 48px), calc((100cqh - 40px) * 1200 / 360)); border-radius: 16px; }
+  @media (min-width: 640px) {
+    .hero__window .gm-shot { aspect-ratio: 1200 / 360; }
+    .hero__window .gm-shot img { height: auto; }
+    .hero__window .gm-shot::after { content: ""; position: absolute; inset: auto 0 0 0; height: 36px; background: linear-gradient(transparent, #f2f1ef); }
+  }
   @media (max-width: 639px) {
-    .gm-win__body { grid-template-columns: minmax(0, 1fr); }
-    .gm-side { display: none; }
-    .gm-doc { padding: 16px; font-size: 15px; }
-    .gm-win__ok { display: none; }
+    .hero--centred .hero__window > .gm-shot { width: calc(100cqw - 32px); }
   }
 
-  /* the extension shown on a website's text box (split frame) */
-  .gm-browser { width: 600px; background: #fff; color: #26282a; border-radius: 12px; overflow: hidden; font: 400 14px/1.5 var(--font-text);
-    box-shadow: 0 0 0 1px rgb(0 0 0 / .1), 0 24px 60px -24px rgb(0 0 0 / .5); }
-  .gm-browser__bar { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; background: #f1f1ef; border-bottom: 1px solid rgb(0 0 0 / .07); font-size: 13px; color: #5d6268; }
-  .gm-browser__url { flex: 1; height: 28px; border-radius: 99px; background: #fff; display: flex; align-items: center; padding: 0 12px; }
-  .gm-browser__ext { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .08); }
-  .gm-browser__ext img { width: 18px; height: 18px; }
-  .gm-page { padding: 24px 28px; }
-  .gm-page__h { font-weight: 500; font-size: 15px; margin: 0 0 4px; }
-  .gm-page__sub { margin: 0 0 16px; color: #6b6f73; font-size: 13px; }
-  .gm-field { position: relative; border: 1px solid rgb(0 0 0 / .18); border-radius: 8px; padding: 12px 14px 40px; font-size: 14px; line-height: 1.7; }
-  .gm-badge { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .12); font-size: 12px; font-weight: 500; }
-  .gm-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #c8453d; }
-  .gm-page__acts { display: flex; justify-content: flex-end; margin-top: 12px; }
-  .gm-page__post { height: 32px; padding: 0 14px; border-radius: 8px; background: #26282a; color: #fff; font-size: 13px; display: inline-flex; align-items: center; }
-  .gm-pop { width: 260px; }
-  .gm-pop.gm-card { padding: 12px 14px; box-shadow: 0 16px 40px -12px rgb(0 0 0 / .35); }
+  /* feature cards: the screenshot sits at the top of the panel; phones show it whole */
+  #features .panel { --p-h: 336px; }
+  #features .panel .gm-shot { position: absolute; z-index: 1; left: 50%; top: 32px; width: min(420px, calc(100% - 48px)); transform: translateX(-50%); }
+  @media (min-width: 1024px) and (max-width: 1279px) { #features .panel { --p-h: 270px; } }
+  @media (min-width: 768px) and (max-width: 1023px) { #features .panel { --p-h: 250px; } }
+  @media (min-width: 640px) and (max-width: 767px) { #features .card { grid-column: 1 / -1; } #features .panel { --p-h: 220px; } }
+  @media (max-width: 639px) {
+    #features .card > .panel:has(.gm-shot) { height: auto; min-height: 0; padding: 20px 16px 0; }
+    #features .panel:has(.gm-shot) > .stage { position: relative; inset: auto; }
+    #features .panel .gm-shot { position: relative; left: auto; top: auto; transform: none; width: 100%; max-height: 150px;
+      border-radius: 12px 12px 0 0; -webkit-mask-image: linear-gradient(#000 70%, transparent); mask-image: linear-gradient(#000 70%, transparent); }
+    #features .card > .panel:not(:has(.gm-shot)) { height: 220px; min-height: 0; }
+    #features .wrap > .grid { margin-top: var(--s-7); }
+    #features-h .muted { display: none; }
+    #features .panel .dg { min-height: 200px; }
+  }
+
+  /* the editor section: steps beside the phone screenshot */
+  .gm-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-4); counter-reset: s; }
+  .gm-steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; gap: var(--s-3); align-items: start; }
+  .gm-steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 500; font-size: 15px; }
+  .gm-steps b { font-weight: 500; }
+  .gm-phone { width: min(340px, 100%); margin-inline: auto; border-radius: 28px; }
+  @media (max-width: 639px) { .gm-phone { width: 100%; max-height: 300px; border-radius: 20px; } }
+
+  /* the extension: expectations sit beside the download */
+  .gm-note { border-top: 1px solid color-mix(in oklab, currentColor 25%, transparent); padding-top: var(--s-4); }
+  .gm-note p { margin: 0; }
+  .gm-note p + p { margin-top: var(--s-2); }
+  .frame .gm-shot.gm-ext { position: absolute; z-index: 1; left: 50%; top: 50%; width: min(560px, calc(100% - 48px)); transform: translate(-50%, -50%); }
+  @media (max-width: 1023px) { .frame .gm-shot.gm-ext { position: relative; left: auto; top: auto; transform: none; width: 100%; margin: 0; } }
+
+  /* the hero note under the buttons */
+  .hero__note { margin: 0; font-size: 15px; color: var(--muted); }
+  .hero--centred .hero__lead { color: var(--ink); }
 
   /* the skip link stays off screen until focused (system.md, Base) */
   .skip { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .skip:focus { position: static; width: auto; height: auto; clip-path: none; }
   /* one --p-h per group: the questions' privacy panel */
   .gm-q-frame { height: var(--p-h, 400px); --p-h: 400px; }
-  /* ticked items are facts here, not finished tasks: no strike line */
   .gm-q-frame .ui-check.is-done .ui-check__label { color: inherit; }
   .gm-q-frame .ui-check__label::after { display: none; }
-  @media (max-width: 1023px) { .faq .faq__item.gm-wide, .gm-page .gm-post { display: none; } }
-  @media (max-width: 1279px) { .gm-page .gm-pop { display: none; } }
-  #features .card > .panel { height: var(--p-h); flex: none; }
-  .app > .app__pane > .ui-doc { min-height: calc(100% + 72px); }
-  .gm-post { margin: 0 0 20px; padding: 0 0 20px; border-bottom: 1px solid rgb(0 0 0 / .08); color: #45484b; font-size: 14px; }
-  .gm-page .gm-pop { position: absolute; left: 150px; top: 262px; z-index: 2; }
-  .gm-page { position: relative; }
-  @media (min-width: 1024px) and (max-width: 1279px) { #features .panel { --p-h: 272px; } }
-  @media (min-width: 640px) and (max-width: 1023px) {
-    #features .card { grid-column: 1 / -1; }
-    #features .panel { --p-h: 200px; }
-    .gm-q-frame { --p-h: 220px; }
-    .gm-pop { display: none; }
-  }
+  @media (min-width: 640px) and (max-width: 1023px) { .gm-q-frame { --p-h: 260px; } }
+  @media (max-width: 639px) { .gm-q-frame { --p-h: 240px; } }
+  /* phones: a section grows past its screens rather than overlap the next one (very small screens,
+     larger text settings) */
   @media (max-width: 639px) {
-    #features .panel { --p-h: 116px; }
-    #features-h .muted { display: none; }
-    .gm-q-frame { --p-h: 180px; }
-    .gm-pop { display: none; }
+    main > :is(section, .section):not(.hero, .section--hero) { height: auto; min-height: calc(var(--hm, var(--h, 1)) * 100svh); }
   }
-  .gm-browser { width: 100%; }
-  /* the kit sets this lead grey (5.4:1 on this palette); body text reads in the ink */
-  .hero--centred .hero__lead { color: var(--ink); }
-  /* inside the AI check mock: its placeholder at 4.5:1 */
-  #features .ui-chat__ph { color: #5f5c58; }
-  /* the document's note gets its own column in the wide app pane, so it never covers the letter */
-  .app > .app__pane > .ui-doc { width: 100%; padding: 32px 268px 0 40px; }
-  .app .ui-doc__note { right: 24px; width: 220px; }
-  @media (max-width: 639px) { .app > .app__pane > .ui-doc { padding: 20px 16px 0; } .app .ui-doc__note { display: none; } }
+  /* very narrow phones: the hero carries the main button, so the bar keeps only logo and menu */
+  @media (max-width: 379px) { .nav__actions .btn { display: none; } }
 </style>
 </head>
 <body>
@@ -178,11 +129,11 @@
               <p class="t-label">Write</p>
               <a href="#editor">The editor<span>Fixes beside your text</span></a>
               <a href="#features">Spelling checks<span>Five kinds of English</span></a>
-              <a href="#features">AI check<span>Only when you click</span></a>
+              <a href="#features">Optional cloud AI<span>Needs your own server</span></a>
             </div>
             <div class="menu-col span-3">
               <p class="t-label">Install</p>
-              <a href="#extension">Extension<span>Text boxes on websites</span></a>
+              <a href="install.html">Extension<span>Desktop Chrome, Edge and Brave</span></a>
               <a href="https://github.com/bachnguyennn/GrammarMe">Source code<span>MIT licence on GitHub</span></a>
             </div>
             <a class="menu-card span-3 start-10" href="#extension">
@@ -196,7 +147,7 @@
                 </div></div>
               </div>
               <span class="t-card">Chrome extension</span>
-              <span class="t-small muted">Underlines on any website</span>
+              <span class="t-small muted">Checks supported text fields, including Gmail and Outlook</span>
             </a>
           </div>
         </div>
@@ -207,7 +158,7 @@
     </nav>
     <div class="nav__actions">
       <a class="nav__link" href="https://github.com/bachnguyennn/GrammarMe">Source code</a>
-      <a class="btn btn--primary" href="editor/">Try the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      <a class="btn btn--primary" href="editor/">Open the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
     </div>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -220,31 +171,19 @@
     <div class="wrap"><div class="hero-text">
       <div class="hero__c">
         <a class="pill" href="https://github.com/bachnguyennn/GrammarMe"><span>Free and open source</span><span class="muted">Read the code</span></a>
-        <h1 id="hero-h">Free, private grammar checker</h1>
-        <p class="hero__lead">GrammarMe underlines spelling, grammar and punctuation in 5 kinds of English and explains every fix. It runs in your browser, so your writing never leaves your computer.</p>
+        <h1 id="hero-h">Check your writing. Keep control of your text.</h1>
+        <p class="hero__lead">Free spelling, grammar, and punctuation checks that run on your device. Review explanations, accept individual fixes, and undo changes. No account required.</p>
         <div class="btn-row">
-          <a class="btn btn--primary" href="editor/">Try the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
-          <a class="btn btn--secondary" href="install.html">Get the extension</a>
+          <a class="btn btn--primary" href="editor/">Open the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+          <a class="btn btn--secondary" href="install.html">Install the desktop extension</a>
         </div>
+        <p class="hero__note">Supports American, British, Canadian, Australian, and Indian English</p>
       </div>
-      <div class="hero__window" data-fx="gradient-mesh" data-fx-seed="11" role="img" aria-label="The GrammarMe editor with two underlined mistakes in a cover letter and the suggested fix for the first">
-        <div class="ly-piece ui gm-win" aria-hidden="true">
-          <div class="gm-win__bar"><span class="gm-win__dots"><i></i><i></i><i></i></span><span><b>Cover letter</b> · 2 suggestions</span><span class="gm-win__sp"></span><span class="gm-win__ok">Checked on this device</span></div>
-          <div class="gm-win__body">
-            <div class="gm-doc">
-              <p>Dear hiring team,</p>
-              <p><span class="gm-u gm-u--c is-on">Its</span> a pleasure to apply for the junior analyst role. I <span class="gm-u gm-u--c">recieve</span> your newsletter every week.</p>
-            </div>
-            <div class="gm-side" data-ly-steps="900">
-              <div class="gm-card">
-                <div class="gm-card__row"><span class="gm-dot"></span><span class="gm-from">Its</span>→<span class="gm-to">It’s</span><span class="gm-cat">Punctuation</span></div>
-                <p class="gm-card__msg">Use “it’s” (short for “it is”) here, not the possessive “its”.</p>
-                <div class="gm-card__acts"><span class="gm-btn">Accept</span><span class="gm-btn gm-btn--ghost">Dismiss</span></div>
-              </div>
-              <div class="gm-card" data-step><div class="gm-card__row"><span class="gm-dot"></span><span class="gm-from">recieve</span>→<span class="gm-to">receive</span><span class="gm-cat">Spelling</span></div></div>
-            </div>
-          </div>
-        </div>
+      <div class="hero__window">
+        <picture class="ly-piece gm-shot">
+          <source media="(max-width: 639px)" srcset="assets/shots/editor-phone-fix.webp" width="585" height="340">
+          <img src="assets/shots/editor-inline.webp" width="1800" height="1050" alt="The GrammarMe editor: the misspelled word “recieve” is underlined and its card suggests “receive”, with the full list of five suggestions beside the text" fetchpriority="high">
+        </picture>
       </div>
     </div></div>
   </section>
@@ -252,61 +191,17 @@
   <section class="section" id="editor" aria-labelledby="editor-h">
     <div class="wrap">
       <div class="grid grid--top">
-        <h2 id="editor-h" class="span-6">The editor shows each fix beside your text</h2>
-        <p class="span-6 start-7">Open a document, read why each word is underlined, then accept or dismiss it. Undo works like any other edit. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/architecture.md">Read how checking works</a></p>
-      </div>
-      <div class="ui app fill" role="img" aria-label="The GrammarMe editor: a list of documents beside an open cover letter with two marked mistakes and the note for the first" data-ui-pause-host>
-        <div class="app__pane app__pane--list">
-          <div class="ui ui-panel ui-win" data-ui="window" data-ui-still data-open="Queued" data-work="Checking" data-done="Checked">
-            <div class="ui-win__bar">
-              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="ui-win__crumb">GrammarMe <i>/</i> <b>Documents</b></span>
-              <span class="ui-spacer"></span>
-              <span class="ui-win__search" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="ui-win__ph">Search</span><span class="ui-kbd">/</span></span>
-            </div>
-            <div class="ui-win__body">
-              <nav class="ui-win__side" aria-hidden="true">
-                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Drafts<em>9</em></span>
-                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Clean<em>4</em></span>
-                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M3 4h10M3 8h10M3 12h6"/></svg>Dictionary</span>
-                <span class="ui-win__label">Modes</span>
-                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Academic</span>
-                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Casual</span>
-              </nav>
-              <div class="ui-win__main">
-                <div class="ui-win__cols" aria-hidden="true"><span>Document</span><span>Detail</span><span>Status</span><span>Edited</span></div>
-                <ul class="ui-win__rows">
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">CL</span><span class="ui-win__who">Cover letter</span><span class="ui-win__sub">Junior analyst · 64 words</span><span class="ui-win__st" data-st>3 issues</span><span class="ui-win__age">now</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">LR</span><span class="ui-win__who">Lab report</span><span class="ui-win__sub">Titration results · 1,212 words</span><span class="ui-win__st" data-st>3 issues</span><span class="ui-win__age">8m</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">TC</span><span class="ui-win__who">Thesis chapter 2</span><span class="ui-win__sub">Literature review · 5,840 words</span><span class="ui-win__st is-you" data-st>12 issues</span><span class="ui-win__age">1h</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">EL</span><span class="ui-win__who">Email to landlord</span><span class="ui-win__sub">Heating repair · 141 words</span><span class="ui-win__st is-done" data-st>Clean</span><span class="ui-win__age">2h</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">MN</span><span class="ui-win__who">Meeting notes</span><span class="ui-win__sub">Club budget · 388 words</span><span class="ui-win__st is-done" data-st>Clean</span><span class="ui-win__age">3h</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">BD</span><span class="ui-win__who">Blog draft</span><span class="ui-win__sub">Learning SQL · 902 words</span><span class="ui-win__st is-you" data-st>7 issues</span><span class="ui-win__age">Mon</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">GS</span><span class="ui-win__who">Grant summary</span><span class="ui-win__sub">Community garden · 460 words</span><span class="ui-win__st is-done" data-st>Clean</span><span class="ui-win__age">Mon</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">RL</span><span class="ui-win__who">Reading log</span><span class="ui-win__sub">October books · 233 words</span><span class="ui-win__st is-you" data-st>2 issues</span><span class="ui-win__age">Sun</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">PS</span><span class="ui-win__who">Personal statement</span><span class="ui-win__sub">Data science MSc · 610 words</span><span class="ui-win__st is-done" data-st>Clean</span><span class="ui-win__age">Sat</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
+        <div class="span-6 stack-6">
+          <h2 id="editor-h">The editor explains each underlined word</h2>
+          <ol class="gm-steps">
+            <li><span><b>Type or paste your text.</b> It's checked a third of a second after you stop typing.</span></li>
+            <li><span><b>Click an underlined word</b> to see why it was flagged and the suggested fix.</span></li>
+            <li><span><b>Accept or dismiss it.</b> Undo works like any other edit, with Cmd or Ctrl+Z.</span></li>
+          </ol>
+          <p><a class="btn btn--primary" href="editor/">Open the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a></p>
         </div>
-        <div class="app__pane app__pane--open" data-ui-loop>
-          <div class="ui ui-doc" data-ui="doc">
-            <article class="ui-doc__page">
-              <div class="ui-doc__label">Cover letter, draft 2</div>
-              <div class="ui-doc__title">Junior analyst application</div>
-              <div class="ui-doc__text">Dear hiring team,</div>
-              <div class="ui-doc__text"><mark class="ui-doc__mark is-on">Its</mark> a pleasure to apply for the junior analyst role. I <mark class="ui-doc__mark" data-kind="Spelling" data-msg="Did you mean “receive”?" data-where="Fix: receive · checked on this device">recieve</mark> your newsletter every week and I could of applied sooner.</div>
-              <div class="ui-doc__text">At university I cleaned and joined survey data from three councils, then built the dashboard our team used to track response rates each week.</div>
-              <div class="ui-doc__text">I have attached a example of my work, and I look forward to hearing from you.</div>
-              <div class="ui-doc__text">Kind regards,</div>
-            </article>
-            <aside class="ui-doc__note ui-panel is-on" aria-live="polite">
-              <div class="ui-doc__kind"><span class="ui-doc__dot"></span><span data-doc-kind>Punctuation</span></div>
-              <div class="ui-doc__msg" data-doc-msg>Use “it’s” (it is) here, not “its”.</div>
-              <div class="ui-doc__where" data-doc-where>Fix: It’s · checked on this device</div>
-            </aside>
-          </div>
+        <div class="span-6 start-7">
+          <div class="gm-shot gm-phone"><img src="assets/shots/editor-phone.webp" width="585" height="1140" loading="lazy" decoding="async" alt="The GrammarMe editor on a phone: “Its” is underlined and its card explains to use “it's”, with It's and It has as fixes"></div>
         </div>
       </div>
     </div>
@@ -320,118 +215,67 @@
         </div>
         <div class="grid">
           <article class="card card--row card--open span-6 m-nolift">
-            <h3>Flags spelling errors as you type</h3>
-            <p>Spelling, grammar and punctuation are underlined a third of a second after you stop typing.</p>
+            <h3>Flags mistakes as you type</h3>
+            <p>Spelling, grammar and punctuation are underlined as you write, each with a reason and a fix you can accept.</p>
             <div class="panel" data-fx="painterly-landscape" data-fx-seed="21">
-              <div class="stage"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:calc(100% - 180px);--ay-sm:calc(100% - 180px)" data-ui-loop>
-                <div class="ui ui-notify" data-ui="notify">
-                  <ul class="ui-notify__list" data-notify-list>
-                    <li class="ui-note"><span class="ui-agent ui-note__av" aria-hidden="true"></span><span class="ui-note__text"><span class="ui-note__title">Its → It’s<time>now</time></span><span class="ui-note__body">Punctuation, in your cover letter</span></span><span class="ui-btn ui-btn--sm ui-note__btn">Accept</span></li>
-                    <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">a example → an example<time>1m</time></span><span class="ui-note__body">Grammar, accepted</span></span></li>
-                    <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">alot → a lot<time>4m</time></span><span class="ui-note__body">Grammar, accepted</span></span></li>
-                  </ul>
-                </div>
-              </div></div>
+              <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/editor-suggestions.webp" width="558" height="630" loading="lazy" decoding="async" alt="The suggestion list: five suggestions, a button to fix two spelling mistakes, and each change from the flagged word to its fix"></div></div>
             </div>
           </article>
           <article class="card card--row card--open span-6 m-nolift">
             <h3>Adjusts the checker to how you write</h3>
-            <p>Choose British or American spelling, hide style tips in casual mode, and add your own words.</p>
+            <p>Pick one of five kinds of English, choose a writing mode, and add your own words to the dictionary.</p>
             <div class="panel" data-fx="painterly-landscape" data-fx-seed="34">
-              <div class="stage stage--fade-b"><div class="at-right to-edge" style="--ax:32px;--ay:56px">
-                <div class="ui ui-panel ui-toggles" data-ui="toggles">
-                  <div class="ui-head">
-                    <svg class="ui-icon ui-toggles__ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg>
-                    <div class="ui-title">Writing settings</div>
-                    <span class="ui-spacer"></span>
-                    <div class="ui-meta" data-tg-count>3 of 5 on</div>
-                  </div>
-                  <ul class="ui-toggles__list">
-                    <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">British spelling</span><span class="ui-tg__sub">colour, organise, travelled</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="British spelling"><i></i></button></li>
-                    <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Casual mode</span><span class="ui-tg__sub">Hides style suggestions</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Casual mode"><i></i></button></li>
-                    <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Skip code and acronyms</span><span class="ui-tg__sub">getUserById, ETL, S3</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Skip code and acronyms"><i></i></button></li>
-                    <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Personal dictionary</span><span class="ui-tg__sub">Kubernetes, Nguyễn and 12 more</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Personal dictionary"><i></i></button></li>
-                    <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Long-sentence warnings</span><span class="ui-tg__sub">Off by default</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Long-sentence warnings"><i></i></button></li>
-                  </ul>
-                </div>
-              </div></div>
+              <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/editor-settings.webp" width="780" height="540" loading="lazy" decoding="async" alt="GrammarMe settings: the dialect menu set to American English, the personal dictionary, and the option to keep the draft in this browser"></div></div>
             </div>
           </article>
         </div>
       </div>
       <div class="grid">
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Runs the checker inside your browser</h3>
-          <p>Your writing stays on your computer. Nothing is uploaded, and it keeps working offline.</p>
+          <h3>Runs the checker on your device</h3>
+          <p>Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p>
           <div class="panel" data-fx="painterly-landscape" data-fx-seed="47">
-            <div class="dg" data-diagram data-dg-still><script type="application/json">{"layout":"lanes","size":"card","alt":"Your text goes to GrammarMe inside the browser, which checks spelling, grammar and punctuation at once. Nothing is uploaded.","input":{"label":"Your text","icon":"ui:pen-line","sub":"Never uploaded"},"core":{"label":"GrammarMe"},"lanes":[{"label":"Spelling","icon":"ui:spell-check","done":true,"sub":"recieve → receive"},{"label":"Grammar","icon":"ui:book-check","done":true,"sub":"a → an"},{"label":"Punctuation","icon":"ui:quote","done":true,"sub":"Its → It’s"}]}</script></div>
+            <div class="dg" data-diagram data-dg-still><script type="application/json">{"layout":"lanes","size":"card","alt":"Your text goes to GrammarMe on your device, which checks spelling, grammar and punctuation at once.","input":{"label":"Your text","icon":"ui:pen-line","sub":"On your device"},"core":{"label":"GrammarMe"},"lanes":[{"label":"Spelling","icon":"ui:spell-check","done":true,"sub":"recieve → receive"},{"label":"Grammar","icon":"ui:book-check","done":true,"sub":"a → an"},{"label":"Punctuation","icon":"ui:quote","done":true,"sub":"Its → It’s"}]}</script></div>
           </div>
         </article>
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Runs the AI check only when you click</h3>
-          <p>An optional check suggests clearer wording. Text is sent only when you press the button.</p>
+          <h3>Optional cloud AI — requires your own server</h3>
+          <p>Suggests clearer wording or a different tone. You set up a free server on your own Cloudflare account first. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/ai-setup.md">Read the setup guide</a></p>
           <div class="panel" data-fx="painterly-landscape" data-fx-seed="58">
-            <div class="stage stage--fade-b"><div class="at-rise fit to-edge" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:56px;--ay-sm:56px">
-              <div class="ui ui-panel ui-chat" data-ui="chat">
-                <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">AI check</div><span class="ui-chat__online">Your server</span><span class="ui-spacer"></span></div>
-                <div class="ui-chat__body">
-                  <div class="ui-chat__day">Clarity, professional mode</div>
-                  <div class="ui-msg ui-msg--me" data-chat-q><span class="ui-msg__text">In order to meet the deadline, we need to start at this point in time.</span></div>
-                  <div class="ui-msg ui-msg--bot" data-chat-a>
-                    <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
-                    <span class="ui-msg__col">
-                      <span class="ui-chat__typing" aria-hidden="true"><i></i><i></i><i></i></span>
-                      <span class="ui-chat__answer">Two edits: “In order to” → <b>“To”</b>, and “at this point in time” → <b>“now”</b>. Your meaning stays the same.</span>
-                      <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Accept or dismiss each</span></span>
-                    </span>
-                  </div>
-                </div>
-                <div class="ui-chat__input"><span class="ui-chat__ph">Pick text, then press AI check</span><span class="ui-chat__send" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3.5M3.8 7.5 8 3.3l4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              </div>
-            </div></div>
+            <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/editor-ai.webp" width="729" height="630" loading="lazy" decoding="async" alt="The cloud AI section of GrammarMe settings: off by default, with a link to the setup guide, and fields for your server address and access token"></div></div>
           </div>
         </article>
       </div>
+      </div>
     </div>
   </section>
 
-  <section class="section ground-inverse" id="extension" aria-labelledby="extension-h">
+  <section class="section ground-inverse" id="extension" aria-labelledby="extension-h" style="--hm: 2">
     <div class="wrap">
       <div class="grid fill">
         <div class="span-6 stack-6">
-          <h2 id="extension-h">The extension checks text boxes on websites</h2>
-          <p class="t-lead">The Chrome extension underlines mistakes in comment boxes and forms. One checker serves every tab and closes when idle.</p>
-          <p>Skips password and payment fields<br>Turns off for any site you choose</p>
-          <p><a class="link" href="GrammarMe-extension.zip" download>Download the extension</a> · <a class="link" href="install.html">Install in five steps</a></p>
+          <h2 id="extension-h">The extension checks text fields on websites</h2>
+          <p class="t-lead">Checks supported text fields, including Gmail and Outlook. One checker serves every tab and closes when idle.</p>
+          <p>Skips password and payment fields. Turns off for any site you choose.</p>
+          <div class="gm-note">
+            <p><b>Before you download:</b> for desktop Chrome, Edge and Brave. It installs in Developer mode, and updates are manual: you download each new version yourself.</p>
+            <p>Google Docs isn't supported by GrammarMe yet.</p>
+          </div>
+          <div class="btn-row">
+            <a class="btn btn--primary" href="GrammarMe-extension.zip" download>Download the extension (8 MB)<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+            <a class="link" href="install.html">Install in five steps</a>
+          </div>
         </div>
-        <div class="frame frame--split frame--lit span-6 start-7" data-visual role="img" aria-label="A reply box on a forum page with two words underlined by the GrammarMe extension and its suggestion card">
-          <div class="stage stage--fade-br">
-            <div class="at-rise fit to-edge" style="--fit-max:600px;--ax:max(32px, 50% - 300px);--ay:56px;--ay-sm:32px">
-              <div class="ui gm-browser" aria-hidden="true">
-                <div class="gm-browser__bar"><span class="gm-win__dots"><i></i><i></i><i></i></span><span class="gm-browser__url">New reply</span><span class="gm-browser__ext"><img data-icon="chrome" src="assets/icons/chrome.svg" alt=""></span></div>
-                <div class="gm-page">
-                  <p class="gm-page__h">Weekend volunteers for the food bank</p>
-                  <p class="gm-page__sub">Posted by the organisers · 14 replies</p>
-                  <p class="gm-post">We need six more people on Saturday from 9:00 to sort and pack donations. Reply here if you can help, and say how many hours you can stay.</p>
-                  <p class="gm-page__h">Your reply</p>
-                  <div class="gm-field">Count me in for Saturday. <span class="gm-u gm-u--c is-on">Their</span> are three of us from the running club and we can stay <span class="gm-u gm-u--c">alot</span> longer if you need help packing.<span class="gm-badge">2</span></div>
-                  <div class="gm-card gm-pop">
-                    <div class="gm-card__row"><span class="gm-dot"></span><span class="gm-from">Their</span>→<span class="gm-to">There</span><span class="gm-cat">Grammar</span></div>
-                    <p class="gm-card__msg">Did you mean “there”?</p>
-                    <div class="gm-card__acts"><span class="gm-btn">Accept</span><span class="gm-btn gm-btn--ghost">Dismiss</span></div>
-                  </div>
-                  <div class="gm-page__acts"><span class="gm-page__post">Post reply</span></div>
-                </div>
-              </div>
-            </div>
-            </div>
+        <div class="frame frame--split frame--lit span-6 start-7" data-visual>
+          <div class="stage stage--fade-b">
+            <div class="gm-shot gm-ext"><img src="assets/shots/extension-card.webp" width="960" height="690" loading="lazy" decoding="async" alt="The GrammarMe extension on a forum reply box: “Their” and “alot” are underlined, and the card for “Their” offers There and There's"></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="questions" aria-labelledby="questions-h">
+  <section class="section" id="questions" aria-labelledby="questions-h" style="--hm: 2">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-6 stack-6">
@@ -439,16 +283,16 @@
             <h2 id="questions-h">Questions</h2>
             <p><a class="link" href="https://github.com/bachnguyennn/GrammarMe/issues">Ask a question on GitHub</a></p>
           </div>
-          <div class="frame frame--lit gm-q-frame" role="img" aria-label="GrammarMe privacy settings: checked in this tab, no account, nothing uploaded, AI check off">
+          <div class="frame frame--lit gm-q-frame" role="img" aria-label="Where your text goes: spelling and grammar checked on this device, no account, draft kept in this browser, cloud AI off unless you set it up">
             <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:340px;--ax:max(24px, 50% - 170px);--ay:40px;--ay-sm:24px" data-ui-still>
               <div class="ui ui-panel ui-checks" data-ui="checklist">
                 <div class="ui-checks__head"><div class="ui-title">Where your text goes</div><span class="ui-spacer"></span><div class="ui-meta" data-checks-count>3 of 4</div></div>
                 <div class="ui-checks__bar"><i data-checks-bar style="--k:0.75"></i></div>
                 <ul class="ui-checks__list">
-                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Checked in this tab</span></li>
+                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Spelling and grammar checked on this device</span></li>
                   <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">No account needed</span></li>
-                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Nothing uploaded</span></li>
-                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">AI check, off until you turn it on</span></li>
+                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Your draft stays in this browser</span></li>
+                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Cloud AI off unless you set it up</span></li>
                 </ul>
               </div>
             </div></div>
@@ -457,9 +301,10 @@
         <div class="faq span-6 start-7">
           <div class="faq__item"><h3>Is GrammarMe really free?</h3><p>Yes. Open source under the MIT licence, with no account or paid plan.</p></div>
           <div class="faq__item"><h3>How accurate is the checker?</h3><p>On 171 test sentences it found 70% of mistakes, and 84% of its flags were real. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/evaluation.md">See the method</a></p></div>
-          <div class="faq__item gm-wide"><h3>Does GrammarMe upload my writing?</h3><p>No. Text leaves your computer only if you turn on the AI check and press it.</p></div>
-          <div class="faq__item gm-wide"><h3>Which English does the checker know?</h3><p>American, British, Canadian, Australian and Indian spelling.</p></div>
-          <div class="faq__item"><h3>Does the extension work in Gmail?</h3><p>Yes, in the compose box, and in Outlook on the web. It skips the quoted earlier messages. Google Docs isn't supported yet; paste into the editor.</p></div>
+          <div class="faq__item"><h3>Does GrammarMe upload my writing?</h3><p>Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p></div>
+          <div class="faq__item"><h3>Which English does the checker know?</h3><p>American, British, Canadian, Australian and Indian English.</p></div>
+          <div class="faq__item"><h3>Does the extension work in Gmail?</h3><p>Yes. It checks supported text fields, including Gmail and Outlook on the web, and skips quoted earlier messages. Google Docs isn't supported by GrammarMe yet.</p></div>
+          <div class="faq__item"><h3>Does it work offline?</h3><p>Once the checker has loaded, you can keep checking text without an internet connection.</p></div>
         </div>
       </div>
     </div>
@@ -471,15 +316,15 @@
     <div class="closing__cta close--type">
       <div class="section-head">
         <h2 id="close-h">Check your next draft for free</h2>
-        <p>No account and no upload. It keeps working offline after the first visit.</p>
+        <p>No account needed. Once the checker has loaded, you can keep checking text without an internet connection.</p>
       </div>
-      <a class="btn btn--primary btn--xl btn--wide" href="editor/">Try the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      <a class="btn btn--primary btn--xl btn--wide" href="editor/">Open the editor<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
     </div>
     <div class="closing__links">
       <div class="grid">
         <div class="span-4 stack-4">
           <a class="nav__logo" href="#top"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
-          <p class="footer__lede">A free grammar checker that runs in your browser.</p>
+          <p class="footer__lede">A free spelling and grammar checker. Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p>
         </div>
         <div class="span-2 footer__col"><h4>Editor</h4><ul><li><a href="#editor">How it looks</a></li><li><a href="#features">Features</a></li></ul></div>
         <div class="span-2 footer__col"><h4>Extension</h4><ul><li><a href="#extension">What it does</a></li><li><a href="install.html">Install steps</a></li></ul></div>

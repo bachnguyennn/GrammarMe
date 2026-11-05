@@ -81,7 +81,10 @@ export function useChecker(initialText: string, settings: Settings) {
     const words = dictKey ? dictKey.split('\n') : [];
     void getEngine()
       .setDictionary([...BUILTIN_WORDS, ...words])
-      .then(() => schedule(0));
+      .then(() => schedule(0))
+      .catch(() => {
+        /* a load failure is reported by the check itself (status "error") */
+      });
   }, [schedule, dictKey]);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
