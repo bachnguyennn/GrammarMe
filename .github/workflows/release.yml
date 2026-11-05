@@ -54,8 +54,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { runner: macos-14, target: darwin-arm64 }
-          - { runner: macos-13, target: darwin-x64 }
+          # Apple silicon; the Intel Mac build is cross-built on the same runner (step below),
+          # because GitHub's Intel macOS runner images are being retired.
+          - { runner: macos-latest, target: darwin-arm64 }
           - { runner: ubuntu-latest, target: linux-x64 }
           - { runner: ubuntu-24.04-arm, target: linux-arm64 }
     runs-on: ${{ matrix.runner }}
@@ -73,10 +74,34 @@ jobs:
       - run: npm run build:sea -w apps/companion
       - name: Check the target
         run: test -f "apps/companion/dist/grammarme-companion-${{ matrix.target }}.tar.gz"
+      # Node's single executable blob is platform-independent when snapshot and code cache are off
+      # (as in scripts/build-sea.mjs), so the Intel build injects the same program into Node's
+      # official darwin-x64 binary, verified against nodejs.org's SHASUMS256.txt.
+      - name: Cross-build the Intel Mac version
+        if: matrix.target == 'darwin-arm64'
+        working-directory: apps/companion/dist
+        run: |
+          set -eu
+          V="$(node -p process.version)"
+          curl -fsSLO "https://nodejs.org/dist/$V/node-$V-darwin-x64.tar.gz"
+          curl -fsSLO "https://nodejs.org/dist/$V/SHASUMS256.txt"
+          grep " node-$V-darwin-x64.tar.gz\$" SHASUMS256.txt | shasum -a 256 -c -
+          tar -xzf "node-$V-darwin-x64.tar.gz"
+          printf '{"main":"%s","output":"sea-x64.blob","disableExperimentalSEAWarning":true,"useSnapshot":false,"useCodeCache":false}' "$PWD/grammarme-companion.cjs" > sea-x64.json
+          node --experimental-sea-config sea-x64.json
+          cp "node-$V-darwin-x64/bin/node" grammarme-companion-darwin-x64
+          chmod 755 grammarme-companion-darwin-x64
+          codesign --remove-signature grammarme-companion-darwin-x64
+          node ../../../node_modules/postject/dist/cli.js grammarme-companion-darwin-x64 NODE_SEA_BLOB sea-x64.blob \
+            --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --macho-segment-name NODE_SEA
+          codesign --sign - grammarme-companion-darwin-x64
+          file grammarme-companion-darwin-x64 | grep -q x86_64
+          (arch -x86_64 ./grammarme-companion-darwin-x64 --version) || echo "Rosetta not available on this runner; skipped the run test"
+          tar -czf grammarme-companion-darwin-x64.tar.gz grammarme-companion-darwin-x64
       - uses: actions/upload-artifact@v4
         with:
           name: standalone-${{ matrix.target }}
-          path: apps/companion/dist/grammarme-companion-${{ matrix.target }}.tar.gz
+          path: apps/companion/dist/grammarme-companion-*.tar.gz
 
   publish:
     needs: [bundle, standalone]
