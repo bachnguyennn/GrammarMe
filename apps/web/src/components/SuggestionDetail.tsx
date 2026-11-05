@@ -23,7 +23,7 @@ export function SuggestionDetail({ suggestion: s, onAccept, onDismiss, onAddWord
           </span>
         )}
       </div>
-      <p className="detail-msg">{s.message}</p>
+      <p className="detail-msg">{renderMessage(s.message)}</p>
       {s.replacements.length > 0 ? (
         <div className="fixes">
           {s.replacements.slice(0, 3).map((r, i) => (
@@ -58,4 +58,9 @@ export function SuggestionDetail({ suggestion: s, onAccept, onDismiss, onAddWord
       </div>
     </div>
   );
+}
+
+/** Harper messages use `backticks` for quoted words; show those as inline code, never as HTML. */
+function renderMessage(message: string) {
+  return message.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
 }

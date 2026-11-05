@@ -7,6 +7,8 @@ import type { Settings } from './storage.ts';
 export type CheckStatus = 'loading' | 'checking' | 'ready' | 'error';
 
 const DEBOUNCE_MS = 300;
+/** Words that should never be flagged, on top of the user's dictionary. */
+const BUILTIN_WORDS = ['GrammarMe'];
 
 /**
  * Owns the document version counter and both suggestion sources.
@@ -78,7 +80,7 @@ export function useChecker(initialText: string, settings: Settings) {
   useEffect(() => {
     const words = dictKey ? dictKey.split('\n') : [];
     void getEngine()
-      .setDictionary(words)
+      .setDictionary([...BUILTIN_WORDS, ...words])
       .then(() => schedule(0));
   }, [schedule, dictKey]);
 
