@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GrammarMe</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon-32.png" width="24" height="24" alt="" />
+      <h1>GrammarMe</h1>
+    </header>
+    <main>
+      <label class="row">
+        <span>Check my writing</span>
+        <input id="enabled" type="checkbox" role="switch" />
+      </label>
+      <label class="row">
+        <span id="site-label">This page</span>
+        <input id="site" type="checkbox" role="switch" />
+      </label>
+      <p id="site-note" class="note" hidden>GrammarMe can’t run on this page (browser pages, the Web Store, or the page loaded before GrammarMe — reload it).</p>
+      <label class="row">
+        <span>Dialect</span>
+        <select id="dialect"></select>
+      </label>
+    </main>
+    <footer>
+      <a id="editor" href="#" target="_blank" rel="noopener">Open the web editor ↗</a>
+      <p class="note">Checks run on your device. Your text is never sent anywhere.</p>
+    </footer>
+    <script src="popup.js"></script>
+  </body>
+</html>
