@@ -1,6 +1,7 @@
 /** Toolbar popup: global on/off, per-site on/off, dialect, the optional ChatGPT connection, link to the web editor. */
 import type { Dialect } from '@grammarme/core';
 import type { GetSiteInfoRequest, SiteInfo } from './protocol.ts';
+import { BADGE_POS_KEY, normalizeBadgePositions, withBadgePosition } from './badge-position.ts';
 import { mountAi } from './popup-ai.ts';
 import { DIALECTS, SETTINGS_KEY, normalizeSettings, siteKey, withSiteEnabled, type Settings } from './settings.ts';
 
@@ -88,6 +89,18 @@ async function main(): Promise<void> {
     render();
     await save(settings);
   });
+  // "You moved the button on this site" + reset. Content scripts pick up the change themselves.
+  const badgeRow = $<HTMLElement>('badge-row');
+  if (host) {
+    const positions = normalizeBadgePositions((await chrome.storage.local.get(BADGE_POS_KEY))[BADGE_POS_KEY]);
+    badgeRow.hidden = !positions[siteKey(host)];
+    $<HTMLButtonElement>('badge-reset').addEventListener('click', async () => {
+      const latest = normalizeBadgePositions((await chrome.storage.local.get(BADGE_POS_KEY))[BADGE_POS_KEY]);
+      await chrome.storage.local.set({ [BADGE_POS_KEY]: withBadgePosition(latest, host, null) });
+      badgeRow.hidden = true;
+    });
+  }
+
   dialect.addEventListener('change', async () => {
     settings = { ...settings, dialect: dialect.value as Dialect };
     await save(settings);

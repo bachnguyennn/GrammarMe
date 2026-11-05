@@ -38,6 +38,8 @@ export const OVERLAY_CSS = `
   opacity: 0.92; transition: opacity 120ms;
 }
 .badge:hover { opacity: 1; }
+.badge { cursor: grab; touch-action: none; user-select: none; }
+.badge.dragging { cursor: grabbing; opacity: 1; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); transition: none; }
 .badge.issues { background: #c8453d; }
 .badge.muted { background: #6f6b67; }
 .badge:focus-visible { outline: 2px solid #5c6b54; outline-offset: 2px; }

@@ -10,6 +10,7 @@
  *   inserted into the editor itself.
  */
 import type { Suggestion } from '@grammarme/core';
+import { DRAG_THRESHOLD, clampToArea, fractionFromPoint, movableArea, placeFromFraction, type BadgePos, type Box } from './badge-position.ts';
 import type { Editable, RichEditable } from './editable.ts';
 import type { TextField } from './field-dom.ts';
 import { OVERLAY_CSS } from './overlay-css.ts';
@@ -57,6 +58,8 @@ export interface OverlayCallbacks {
   onFieldGone(): void;
   /** The in-page "AI" button was pressed (only shown when ChatGPT is connected). */
   onAiClick?(): void;
+  /** The user dragged the badge somewhere new (fractions of the field's movable area). */
+  onBadgeMoved?(pos: BadgePos): void;
 }
 
 /** Computed properties that affect text layout, copied from the field onto the mirror. */
@@ -131,6 +134,13 @@ export class Overlay {
   private readonly badge: HTMLButtonElement;
   private readonly aiButton: HTMLButtonElement;
   private aiAvailable = false;
+  /** Where the user put the badge on this site; null = default corner. */
+  private badgePos: BadgePos | null = null;
+  /** Where the badge may go in the current layout (top-left corners). */
+  private badgeArea: Box | null = null;
+  private drag: { id: number; x: number; y: number; left: number; top: number; moved: boolean } | null = null;
+  /** A drag ends with a click event on the badge; that click must not open a suggestion. */
+  private suppressClick = false;
   private panel: HTMLDivElement | null = null;
   private panelOnClose: (() => void) | null = null;
   private readonly field: TextField | HTMLElement;
@@ -170,7 +180,55 @@ export class Overlay {
     this.badge.style.pointerEvents = 'auto';
     // Keep the field focused (and its caret where it is) when the badge is clicked.
     this.badge.addEventListener('mousedown', (e) => e.preventDefault());
-    this.badge.addEventListener('click', () => this.cb.onBadgeClick());
+    this.badge.addEventListener('click', () => {
+      if (this.suppressClick) {
+        this.suppressClick = false;
+        return;
+      }
+      this.cb.onBadgeClick();
+    });
+    // Drag to move (like Grammarly's button). A press that moves less than DRAG_THRESHOLD is a click.
+    this.badge.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      this.drag = {
+        id: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+        left: parseFloat(this.badge.style.left) || 0,
+        top: parseFloat(this.badge.style.top) || 0,
+        moved: false,
+      };
+      this.badge.setPointerCapture(e.pointerId);
+    });
+    this.badge.addEventListener('pointermove', (e) => {
+      const d = this.drag;
+      if (!d || e.pointerId !== d.id) return;
+      const dx = e.clientX - d.x;
+      const dy = e.clientY - d.y;
+      if (!d.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+      d.moved = true;
+      this.badge.classList.add('dragging');
+      const p = this.badgeArea ? clampToArea(this.badgeArea, d.left + dx, d.top + dy) : { left: d.left + dx, top: d.top + dy };
+      this.badge.style.left = `${p.left}px`;
+      this.badge.style.top = `${p.top}px`;
+      this.placeAiButton(p.left, p.top, false, -Infinity);
+    });
+    const endDrag = (e: PointerEvent, cancelled: boolean) => {
+      const d = this.drag;
+      if (!d || e.pointerId !== d.id) return;
+      this.drag = null;
+      this.badge.classList.remove('dragging');
+      if (d.moved && !cancelled && this.badgeArea) {
+        this.suppressClick = true;
+        setTimeout(() => (this.suppressClick = false), 0); // in case no click follows
+        const pos = fractionFromPoint(this.badgeArea, parseFloat(this.badge.style.left), parseFloat(this.badge.style.top));
+        this.badgePos = pos;
+        this.cb.onBadgeMoved?.(pos);
+      }
+      this.scheduleLayout(false);
+    };
+    this.badge.addEventListener('pointerup', (e) => endDrag(e, false));
+    this.badge.addEventListener('pointercancel', (e) => endDrag(e, true));
 
     this.aiButton = document.createElement('button');
     this.aiButton.type = 'button';
@@ -224,7 +282,7 @@ export class Overlay {
     const { text, aria } = badgeLabel(count, state);
     this.badge.textContent = text;
     this.badge.setAttribute('aria-label', aria);
-    this.badge.title = aria;
+    this.badge.title = `${aria} · drag to move`;
     this.badge.className = `badge${count > 0 ? ' issues' : state === 'idle' ? '' : ' muted'}`;
   }
 
@@ -337,6 +395,12 @@ export class Overlay {
     this.host.remove();
   }
 
+  /** Put the badge where the user moved it on this site (null = default corner). */
+  setBadgePosition(pos: BadgePos | null): void {
+    this.badgePos = pos;
+    this.scheduleLayout(false);
+  }
+
   /** Show or hide the in-page AI button (shown only when ChatGPT is connected with plan usage). */
   setAiAvailable(available: boolean): void {
     this.aiAvailable = available;
@@ -427,6 +491,27 @@ export class Overlay {
     if (!this.card) document.removeEventListener('mousedown', this.onDocMouseDown, true);
   }
 
+  /**
+   * Place the badge (and the AI button beside it): the default corner, or the user's spot scaled
+   * to this field's visible area. While the user drags, the pointer owns the position.
+   */
+  private placeBadge(defLeft: number, defTop: number, clip: Box, defHidden: boolean): void {
+    const w = Math.max(BADGE_SIZE, this.badge.offsetWidth || BADGE_SIZE);
+    this.badgeArea = movableArea(clip, w, BADGE_SIZE, this.aiAvailable ? BADGE_SIZE + 10 : 0);
+    if (this.drag?.moved) return;
+    let left = defLeft;
+    let top = defTop;
+    let hidden = defHidden;
+    if (this.badgePos) {
+      ({ left, top } = placeFromFraction(this.badgeArea, this.badgePos));
+      hidden = clip.bottom - clip.top < BADGE_SIZE || clip.right - clip.left < w;
+    }
+    this.badge.style.left = `${left}px`;
+    this.badge.style.top = `${top}px`;
+    this.badge.hidden = hidden;
+    this.placeAiButton(left, top, hidden, clip.left);
+  }
+
   private placeAiButton(badgeLeft: number, top: number, badgeHidden: boolean, clipLeft: number): void {
     const left = badgeLeft - BADGE_SIZE - 10;
     this.aiButton.style.left = `${left}px`;
@@ -489,10 +574,7 @@ export class Overlay {
       ? rect.top + (rect.height - BADGE_SIZE) / 2
       : rect.bottom - m.borderBottom - m.scrollbarX - BADGE_SIZE - 4;
     const left = right - Math.max(BADGE_SIZE, this.badge.offsetWidth || BADGE_SIZE);
-    this.badge.style.left = `${left}px`;
-    this.badge.style.top = `${top}px`;
-    this.badge.hidden = top < clip.top || top + BADGE_SIZE > clip.bottom || left < clip.left || right > clip.right;
-    this.placeAiButton(left, top, this.badge.hidden, clip.left);
+    this.placeBadge(left, top, clip, top < clip.top || top + BADGE_SIZE > clip.bottom || left < clip.left || right > clip.right);
 
     if (this.card) this.positionCard();
     if (this.panel) this.positionPanel();
@@ -539,10 +621,7 @@ export class Overlay {
     const right = clip.right - 6;
     const top = clip.bottom - BADGE_SIZE - 6;
     const left = right - Math.max(BADGE_SIZE, this.badge.offsetWidth || BADGE_SIZE);
-    this.badge.style.left = `${left}px`;
-    this.badge.style.top = `${top}px`;
-    this.badge.hidden = top < clip.top || left < clip.left;
-    this.placeAiButton(left, top, this.badge.hidden, clip.left);
+    this.placeBadge(left, top, clip, top < clip.top || left < clip.left);
 
     if (this.card) this.positionCard();
     if (this.panel) this.positionPanel();

@@ -119,6 +119,62 @@ try {
     }
   }
 
+  // 2b. Drag the badge (like Grammarly's button): it moves, no card opens, the spot is remembered
+  //     after a reload, a plain click still opens a card, and the toolbar menu can reset it.
+  {
+    const badgeNode = async () => (await overlayNodes(sid)).find((n) => /\bbadge\b/.test(n.attrs.class || ''));
+    const badgeAt = async () => { const b = await badgeNode(); return b ? await boxOf(sid, b.backendNodeId) : null; };
+    await evalIn(sid, `document.getElementById('ta').focus()`);
+    await sleep(300);
+    const from = await badgeAt();
+    const to = { x: from.x - 380, y: from.y - 110 };
+    await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: from.x, y: from.y }, sid);
+    await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: from.x, y: from.y, button: 'left', clickCount: 1 }, sid);
+    for (let i = 1; i <= 8; i++) {
+      await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: from.x + ((to.x - from.x) * i) / 8, y: from.y + ((to.y - from.y) * i) / 8, button: 'left', buttons: 1 }, sid);
+    }
+    await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: to.x, y: to.y, button: 'left', clickCount: 1 }, sid);
+    await sleep(500);
+    const moved = await badgeAt();
+    report.badgeDrag = {
+      from: [Math.round(from.x), Math.round(from.y)],
+      to: moved ? [Math.round(moved.x), Math.round(moved.y)] : null,
+      cardOpenedByDrag: (await overlayNodes(sid)).some((n) => /^card\b/.test(n.attrs.class || '')),
+    };
+    await shot(sid, '2b-badge-moved.png');
+
+    // Remembered after reloading the page.
+    await send('Page.reload', {}, sid);
+    await sleep(1500);
+    await evalIn(sid, `document.getElementById('ta').focus()`);
+    await send('Input.insertText', { text: 'Teh badge stays put.' }, sid);
+    await sleep(1500);
+    const after = await badgeAt();
+    report.badgeAfterReload = after ? [Math.round(after.x), Math.round(after.y)] : null;
+
+    // A plain click (no movement) still opens the first suggestion.
+    await click(sid, after);
+    await sleep(500);
+    report.badgeClickOpensCard = (await overlayNodes(sid)).some((n) => /^card\b/.test(n.attrs.class || ''));
+
+    // The toolbar menu offers a reset for this site; using it puts the badge back.
+    const { targetId: popId } = await send('Target.createTarget', { url: `chrome-extension://${extId}/popup.html` });
+    const { sessionId: psid0 } = await send('Target.attachToTarget', { targetId: popId, flatten: true });
+    await send('Runtime.enable', {}, psid0);
+    await sleep(1000);
+    report.badgeStored = await evalIn(psid0, `chrome.storage.local.get('badgePositions').then((r) => r.badgePositions)`);
+    // (The popup opened as a tab can't see the page's host, so reset through storage, as the menu does.)
+    await evalIn(psid0, `chrome.storage.local.set({ badgePositions: {} })`);
+    await send('Target.closeTarget', { targetId: popId });
+    await sleep(800);
+    await evalIn(sid, `document.getElementById('ta').focus()`);
+    await sleep(500);
+    const reset = await badgeAt();
+    report.badgeAfterReset = reset ? [Math.round(reset.x), Math.round(reset.y)] : null;
+    await evalIn(sid, `(() => { const t = document.getElementById('ta'); t.value = 'I has a apple. This is a sentense with a eror.'; t.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await sleep(1200);
+  }
+
   // 3. password field must be ignored.
   await evalIn(sid, `document.getElementById('pw').focus()`);
   await send('Input.insertText', { text: 'teh pasword' }, sid);

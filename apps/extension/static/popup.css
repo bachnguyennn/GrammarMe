@@ -71,3 +71,4 @@ footer a:hover { text-decoration: underline; }
   font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace; overflow-wrap: anywhere; user-select: all;
 }
 .btn.copy { flex: none; }
+.linkbtn { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }

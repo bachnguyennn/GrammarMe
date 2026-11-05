@@ -16,6 +16,7 @@ import type { AiTask } from '@grammarme/core';
 import { MANAGE_USAGE_URL } from '@grammarme/core/companion';
 import { AI_READY_KEY, newRequestId, type AiCancelRequest, type AiCheckRequest, type AiCheckResponse, type AiErrorCode } from './ai-protocol.ts';
 import { SCOPE_LABEL, aiScope, placeAiEdits, type AiScope } from './ai-scope.ts';
+import { BADGE_POS_KEY, normalizeBadgePositions, withBadgePosition, type BadgePos } from './badge-position.ts';
 import { asEditable, type Editable } from './editable.ts';
 import { fieldEligibility } from './eligibility.ts';
 import { deepActiveElement } from './field-dom.ts';
@@ -36,6 +37,7 @@ import {
   DICTIONARY_KEY,
   SETTINGS_KEY,
   isActiveOn,
+  siteKey,
   normalizeDictionary,
   normalizeSettings,
   type Settings,
@@ -60,6 +62,9 @@ let active: FieldController | null = null;
 let shutDown = false;
 /** ChatGPT connected with plan usage (a non-secret flag the service worker maintains). */
 let aiReady = false;
+/** Where the user dragged the badge, per site (chrome.storage.local). */
+let badgePositions: Record<string, BadgePos> = {};
+const badgePosHere = (): BadgePos | null => badgePositions[siteKey(location.hostname)] ?? null;
 
 const NAV_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 
@@ -83,11 +88,12 @@ function ensureLoaded(): Promise<void> {
   loading ??= (async () => {
     const [sync, local] = await Promise.all([
       chrome.storage.sync.get(SETTINGS_KEY),
-      chrome.storage.local.get([DICTIONARY_KEY, AI_READY_KEY]),
+      chrome.storage.local.get([DICTIONARY_KEY, AI_READY_KEY, BADGE_POS_KEY]),
     ]);
     settings = normalizeSettings(sync[SETTINGS_KEY]);
     dictionaryLower = new Set(normalizeDictionary(local[DICTIONARY_KEY]).map((w) => w.toLowerCase()));
     aiReady = Boolean((local[AI_READY_KEY] as { ready?: boolean } | undefined)?.ready);
+    badgePositions = normalizeBadgePositions(local[BADGE_POS_KEY]);
     chrome.storage.onChanged.addListener(onStorageChanged);
   })();
   return loading;
@@ -103,6 +109,11 @@ function onStorageChanged(changes: Record<string, chrome.storage.StorageChange>,
     } else if (prev && prev.dialect !== settings.dialect) {
       active?.recheck();
     }
+  }
+  if (area === 'local' && changes[BADGE_POS_KEY]) {
+    // Moved or reset in another tab or from the toolbar menu.
+    badgePositions = normalizeBadgePositions(changes[BADGE_POS_KEY].newValue);
+    active?.setBadgePosition(badgePosHere());
   }
   if (area === 'local' && changes[AI_READY_KEY]) {
     aiReady = Boolean((changes[AI_READY_KEY].newValue as { ready?: boolean } | undefined)?.ready);
@@ -120,6 +131,18 @@ function onFocusIn(e: FocusEvent): void {
   if (!target) return;
   if (active?.field === target.el) return active.onRefocus();
   void activate(target);
+}
+
+/** Remember where the user dropped the badge, for every field on this site. */
+async function saveBadgePosition(pos: BadgePos): Promise<void> {
+  if (!extensionAlive()) return;
+  try {
+    const got = await chrome.storage.local.get(BADGE_POS_KEY);
+    badgePositions = withBadgePosition(normalizeBadgePositions(got[BADGE_POS_KEY]), location.hostname, pos);
+    await chrome.storage.local.set({ [BADGE_POS_KEY]: badgePositions });
+  } catch {
+    /* extension reloaded meanwhile */
+  }
 }
 
 async function activate(target: Editable): Promise<void> {
@@ -192,8 +215,10 @@ class FieldController {
       onDismiss: (returnFocus) => this.closeCard(returnFocus),
       onFieldGone: () => this.detach(),
       onAiClick: () => this.openAi(),
+      onBadgeMoved: (pos) => void saveBadgePosition(pos),
     });
     this.overlay.setAiAvailable(aiReady);
+    this.overlay.setBadgePosition(badgePosHere());
     this.scheduler = new CheckScheduler({
       delayMs: CHECK_DEBOUNCE_MS,
       current: () => ({ text: this.mem.text, version: this.mem.version }),
@@ -406,6 +431,10 @@ class FieldController {
   private aiTask: AiTask = 'grammar';
   private aiScope: AiScope | null = null;
   private aiRequestId: string | null = null;
+
+  setBadgePosition(pos: BadgePos | null): void {
+    if (!this.destroyed) this.overlay.setBadgePosition(pos);
+  }
 
   setAiAvailable(ready: boolean): void {
     if (this.destroyed) return;

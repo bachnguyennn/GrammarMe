@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Move GrammarMe's button** inside any text box by dragging it, like Grammarly's. The AI button
+  moves with it, and the spot is remembered for each website. To undo it, open the toolbar menu
+  and choose **Put it back in the corner**.
+- Setup no longer waits forever when the ChatGPT permission is granted after the extension
+  started. If it still can't reach the companion, the menu shows the real reason.
+
 ## 0.1.2 (2026-11-05)
 
 **Easier ChatGPT setup**

@@ -235,6 +235,19 @@ questions below.
 - Harper only. AI suggestions (clarity/tone) are not wired into the extension. Doing so would send text
   off the device and needs explicit per-request consent.
 
+## Moving the badge
+
+Users can drag the count badge anywhere inside a field, like Grammarly's button. The AI button
+moves with it.
+
+- **How it's stored:** as fractions of the field's movable area, per site, in
+  `chrome.storage.local` under `badgePositions` (`src/badge-position.ts`). The same spot then fits
+  every field on that site.
+- **Clicks still work:** a press that moves less than 4 px is a click and opens the first
+  suggestion.
+- **Reset:** "Put it back in the corner" in the toolbar menu clears the spot for the current site.
+- **Tested:** `e2e/fields.mjs` checks the drag, the reload, the click and the reset in Chrome.
+
 ## Optional ChatGPT check
 
 When ChatGPT is connected, a teal **AI** button appears beside GrammarMe's badge on supported
