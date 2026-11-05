@@ -2,8 +2,8 @@
  * Content script — injected into every page, but does nothing until an eligible text field is
  * focused. Top-level cost: one `focusin` listener and one runtime message listener.
  *
- * Phase 4 scope: <textarea> and <input type=text|search>. contenteditable / Google Docs are out
- * of scope (see docs/extension.md).
+ * Scope: <textarea>, <input type=text|search>, and rich-text editors (contenteditable, e.g. Gmail's
+ * compose body). Google Docs draws text on a canvas and is out of scope (see docs/extension.md).
  */
 import {
   StaleSuggestionError,
@@ -12,9 +12,9 @@ import {
   type DocumentSnapshot,
   type Suggestion,
 } from '@grammarme/core';
-import { applyToField } from './apply.ts';
+import { asEditable, type Editable } from './editable.ts';
 import { fieldEligibility } from './eligibility.ts';
-import { asTextField, deepActiveElement, describeField, type TextField } from './field-dom.ts';
+import { deepActiveElement } from './field-dom.ts';
 import { Overlay } from './overlay.ts';
 import {
   CHECK_DEBOUNCE_MS,
@@ -46,7 +46,7 @@ interface FieldMemory {
   ignored: Set<string>;
 }
 
-const memory = new WeakMap<TextField, FieldMemory>();
+const memory = new WeakMap<HTMLElement, FieldMemory>();
 let settings: Settings | null = null;
 let dictionaryLower = new Set<string>();
 let loading: Promise<void> | null = null;
@@ -103,13 +103,14 @@ function onStorageChanged(changes: Record<string, chrome.storage.StorageChange>,
 
 function onFocusIn(e: FocusEvent): void {
   if (!extensionAlive()) return shutdown();
-  const field = asTextField(e.composedPath()[0]);
-  if (!field) return;
-  if (active?.field === field) return active.onRefocus();
-  void activate(field);
+  const target = asEditable(e.composedPath()[0]);
+  if (!target) return;
+  if (active?.field === target.el) return active.onRefocus();
+  void activate(target);
 }
 
-async function activate(field: TextField): Promise<void> {
+async function activate(target: Editable): Promise<void> {
+  const field = target.el;
   try {
     await ensureLoaded();
   } catch {
@@ -117,14 +118,14 @@ async function activate(field: TextField): Promise<void> {
   }
   if (!settings || !isActiveOn(settings, location.hostname)) return;
   if (!field.isConnected || deepActiveElement() !== field || active?.field === field) return;
-  if (!fieldEligibility(describeField(field)).eligible) return;
+  if (!fieldEligibility(target.describe()).eligible) return;
   active?.destroy();
   let mem = memory.get(field);
   if (!mem) {
-    mem = { text: field.value, version: 0, suggestions: [], ignored: new Set() };
+    mem = { text: target.readText(), version: 0, suggestions: [], ignored: new Set() };
     memory.set(field, mem);
   }
-  active = new FieldController(field, mem);
+  active = new FieldController(target, mem);
 }
 
 type CheckOutcome = { suggestions: Suggestion[] } | { error: BadgeState };
@@ -152,15 +153,21 @@ class FieldController {
   private readonly overlay: Overlay;
   private readonly scheduler: CheckScheduler;
   private readonly resizeObserver: ResizeObserver;
+  /** Rich editors: catches text changes made by the page itself (no input event). */
+  private readonly mutationObserver: MutationObserver | null = null;
+  private mutationRaf = 0;
+  readonly field: HTMLElement;
   private visible: Suggestion[] = [];
   private state: BadgeState = 'idle';
   private destroyed = false;
 
   constructor(
-    readonly field: TextField,
+    private readonly target: Editable,
     private readonly mem: FieldMemory,
   ) {
-    this.overlay = new Overlay(field, {
+    const field = target.el;
+    this.field = field;
+    this.overlay = new Overlay(target, {
       onReplace: (s, i) => this.replace(s, i),
       onIgnore: (s) => {
         this.mem.ignored.add(ignoreKey(s));
@@ -180,7 +187,7 @@ class FieldController {
       check: async (snap) => {
         // Re-verify right before text leaves this script: pages flip fields to readonly, or a
         // "show password" toggle turns type=password into type=text while we're attached.
-        if (!fieldEligibility(describeField(this.field)).eligible) {
+        if (!fieldEligibility(this.target.describe()).eligible) {
           queueMicrotask(() => this.detach());
           return null;
         }
@@ -215,6 +222,10 @@ class FieldController {
     window.addEventListener('resize', this.onResize, { passive: true });
     this.resizeObserver = new ResizeObserver(this.onResize);
     this.resizeObserver.observe(field);
+    if (target.kind === 'rich') {
+      this.mutationObserver = new MutationObserver(this.onMutation);
+      this.mutationObserver.observe(field, { subtree: true, childList: true, characterData: true });
+    }
 
     this.syncText();
     this.refresh();
@@ -258,6 +269,8 @@ class FieldController {
     window.removeEventListener('scroll', this.onScroll, { capture: true });
     window.removeEventListener('resize', this.onResize);
     this.resizeObserver.disconnect();
+    this.mutationObserver?.disconnect();
+    if (this.mutationRaf) cancelAnimationFrame(this.mutationRaf);
     this.scheduler.dispose();
     this.overlay.destroy();
   }
@@ -271,7 +284,7 @@ class FieldController {
    * stay put while the user types (the next check result replaces them).
    */
   private syncText(): boolean {
-    const text = this.field.value;
+    const text = this.target.readText();
     if (text === this.mem.text) return false;
     const prev = this.mem.text;
     this.mem.version += 1;
@@ -290,23 +303,34 @@ class FieldController {
     if (this.syncText()) this.scheduler.schedule();
   };
 
+  /** Page-made edits in a rich editor: resync once per frame; layout-only changes just redraw. */
+  private onMutation = (): void => {
+    if (this.mutationRaf) return;
+    this.mutationRaf = requestAnimationFrame(() => {
+      this.mutationRaf = 0;
+      if (this.destroyed) return;
+      if (this.syncText()) this.scheduler.schedule();
+      else this.overlay.scheduleLayout(false);
+    });
+  };
+
   private onScroll = (): void => this.overlay.scheduleLayout(false);
   private onResize = (): void => this.overlay.scheduleLayout(true);
 
   private onMouseUp = (): void => {
     if (this.syncText()) this.scheduler.schedule();
-    const { selectionStart: a, selectionEnd: b } = this.field;
-    if (a === null || a !== b) return; // a real selection, not a click on a word
-    const hit = suggestionAt(this.visible, a, true);
+    const sel = this.target.selection();
+    if (!sel || sel.start !== sel.end) return; // a real selection, not a click on a word
+    const hit = suggestionAt(this.visible, sel.start, true);
     if (hit) this.openCard(hit, false);
     else this.closeCard(false);
   };
 
   private onKeyUp = (e: KeyboardEvent): void => {
     if (!NAV_KEYS.has(e.key)) return;
-    const { selectionStart: a, selectionEnd: b } = this.field;
-    if (a === null || a !== b) return;
-    const hit = suggestionAt(this.visible, a, false);
+    const sel = this.target.selection();
+    if (!sel || sel.start !== sel.end) return;
+    const hit = suggestionAt(this.visible, sel.start, false);
     if (hit) {
       if (hit.id !== this.overlay.cardSuggestionId) this.openCard(hit, false);
     } else {
@@ -340,8 +364,7 @@ class FieldController {
   private openFirst(): void {
     const first = this.visible[0];
     if (!first) return;
-    this.field.focus({ preventScroll: true });
-    this.field.setSelectionRange(first.start, first.start); // also scrolls the caret into view
+    this.target.setCaret(first.start);
     this.overlay.scheduleLayout(false);
     this.openCard(first, true);
   }
@@ -350,8 +373,8 @@ class FieldController {
     this.syncText();
     this.closeCard(false);
     try {
-      // applyToField re-verifies version + text; its input event then rebases the other underlines.
-      if (!applyToField(this.field, this.snapshot(), s, index)) this.syncText();
+      // apply() re-verifies version + text; its input event then rebases the other underlines.
+      if (!this.target.apply(this.snapshot(), s, index)) this.syncText();
     } catch (err) {
       if (!(err instanceof StaleSuggestionError)) throw err;
       this.refresh();
@@ -379,7 +402,7 @@ class FieldController {
 if (window.top === window && extensionAlive()) {
   document.addEventListener('focusin', onFocusIn, true);
   // A field may already have focus when we're injected (document_idle, or after an update).
-  const focused = asTextField(deepActiveElement());
+  const focused = asEditable(deepActiveElement());
   if (focused) void activate(focused);
   chrome.runtime.onMessage.addListener((msg: unknown, _sender, sendResponse) => {
     if (!isContentRequest(msg)) return false;

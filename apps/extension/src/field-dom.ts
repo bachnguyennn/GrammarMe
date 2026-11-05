@@ -26,7 +26,7 @@ export function deepActiveElement(): Element | null {
   return el;
 }
 
-export function describeField(el: TextField): FieldInfo {
+export function describeField(el: TextField | HTMLElement): FieldInfo {
   const rect = el.getBoundingClientRect();
   return {
     tagName: el.tagName,
@@ -34,8 +34,8 @@ export function describeField(el: TextField): FieldInfo {
     autocomplete: el.getAttribute('autocomplete'),
     name: el.getAttribute('name'),
     id: el.id || null,
-    readOnly: el.readOnly,
-    disabled: el.disabled || el.matches(':disabled'),
+    readOnly: 'readOnly' in el ? el.readOnly : false,
+    disabled: ('disabled' in el && el.disabled) || el.matches(':disabled'),
     ariaHidden: closestComposed(el, '[aria-hidden="true"]') !== null,
     optedOut: closestComposed(el, OPT_OUT_SELECTOR) !== null,
     spellcheck: el.getAttribute('spellcheck'),

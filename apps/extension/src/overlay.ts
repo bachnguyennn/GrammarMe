@@ -1,12 +1,16 @@
 /**
- * The on-page UI for ONE field: an underline mirror, a count badge and a suggestion card, all in
- * a closed Shadow DOM so page CSS can't break them and ours can't leak.
+ * The on-page UI for ONE field: underlines, a count badge and a suggestion card, all in a closed
+ * Shadow DOM so page CSS can't break them and ours can't leak.
  *
- * The mirror is a transparent copy of the field's text laid out with the field's computed font,
- * padding, borders, wrapping and scroll position, placed exactly over it with
- * `pointer-events: none`. Only underlines (text-decoration on transparent text) are visible.
+ * - <textarea>/<input>: a transparent "mirror" copy of the field's text laid out with the field's
+ *   computed font, padding, borders, wrapping and scroll position, placed exactly over it with
+ *   `pointer-events: none`. Only underlines (text-decoration on transparent text) are visible.
+ * - Rich editors (contenteditable, e.g. Gmail): the browser already lays the text out, so each
+ *   underline is a thin bar drawn at the screen rectangles of its DOM Range. Nothing is ever
+ *   inserted into the editor itself.
  */
 import type { Suggestion } from '@grammarme/core';
+import type { Editable, RichEditable } from './editable.ts';
 import type { TextField } from './field-dom.ts';
 import { OVERLAY_CSS } from './overlay-css.ts';
 import {
@@ -96,7 +100,13 @@ export class Overlay {
   private readonly host: HTMLElement;
   private readonly root: ShadowRoot;
   private readonly mirror: HTMLDivElement;
+  /** Rich mode: container for the drawn underline bars. */
+  private readonly lines: HTMLDivElement;
   private readonly badge: HTMLButtonElement;
+  private readonly field: TextField | HTMLElement;
+  private readonly rich: RichEditable | null;
+  private richSuggestions: readonly Suggestion[] = [];
+  private activeId: string | null = null;
   private card: HTMLDivElement | null = null;
   private cardFor: Suggestion | null = null;
   private spans = new Map<string, HTMLSpanElement>();
@@ -107,9 +117,11 @@ export class Overlay {
   private destroyed = false;
 
   constructor(
-    private readonly field: TextField,
+    target: Editable,
     private readonly cb: OverlayCallbacks,
   ) {
+    this.field = target.el;
+    this.rich = target.kind === 'rich' ? (target as RichEditable) : null;
     this.host = document.createElement('grammarme-overlay');
     this.host.style.cssText = HOST_STYLE;
     this.root = this.host.attachShadow({ mode: 'closed' });
@@ -118,6 +130,9 @@ export class Overlay {
     this.mirror = document.createElement('div');
     this.mirror.className = 'mirror';
     this.mirror.setAttribute('aria-hidden', 'true');
+    this.lines = document.createElement('div');
+    this.lines.className = 'lines';
+    this.lines.setAttribute('aria-hidden', 'true');
 
     this.badge = document.createElement('button');
     this.badge.type = 'button';
@@ -127,13 +142,19 @@ export class Overlay {
     this.badge.addEventListener('mousedown', (e) => e.preventDefault());
     this.badge.addEventListener('click', () => this.cb.onBadgeClick());
 
-    this.root.append(this.mirror, this.badge);
+    this.root.append(this.rich ? this.lines : this.mirror, this.badge);
     document.documentElement.append(this.host);
     this.layout(true);
   }
 
   /** Redraw underlines for `text` (must equal the field's current value). */
   render(text: string, suggestions: readonly Suggestion[], activeId: string | null): void {
+    if (this.rich) {
+      this.richSuggestions = suggestions;
+      this.activeId = activeId;
+      this.layout(false);
+      return;
+    }
     const frag = document.createDocumentFragment();
     const spans = new Map<string, HTMLSpanElement>();
     for (const seg of buildSegments(text, suggestions)) {
@@ -240,6 +261,10 @@ export class Overlay {
     this.card = card;
     this.cardFor = s;
     this.spans.get(s.id)?.classList.add('active');
+    if (this.rich) {
+      this.activeId = s.id;
+      this.layout(false);
+    }
     this.positionCard();
     document.addEventListener('mousedown', this.onDocMouseDown, true);
     if (focusFirst) this.focusCard();
@@ -255,6 +280,10 @@ export class Overlay {
     this.card.remove();
     this.card = null;
     this.cardFor = null;
+    if (this.rich) {
+      this.activeId = null;
+      this.scheduleLayout(false);
+    }
     document.removeEventListener('mousedown', this.onDocMouseDown, true);
   }
 
@@ -278,6 +307,7 @@ export class Overlay {
       this.cb.onFieldGone();
       return;
     }
+    if (this.rich) return this.layoutRich(full);
     if (full || !this.metrics) this.copyStyles();
     const m = this.metrics!;
     const rect = f.getBoundingClientRect();
@@ -311,8 +341,55 @@ export class Overlay {
     if (this.card) this.positionCard();
   }
 
+  /** Rich mode: draw one bar per line box of each suggestion, clipped to the visible editor. */
+  private layoutRich(full: boolean): void {
+    const rich = this.rich!;
+    if (full || !this.clipAncestors.length) this.clipAncestors = clippingAncestors(this.field);
+    const rect = this.field.getBoundingClientRect();
+    const clip = this.visibleRect(rect);
+    const shown = rect.width > 0 && rect.height > 0 && clip !== null;
+    this.lines.hidden = !shown;
+    this.badge.hidden = !shown;
+    if (!shown || !clip) return;
+
+    const frag = document.createDocumentFragment();
+    for (const s of this.richSuggestions) {
+      const group = categoryGroup(s.category);
+      const active = s.id === this.activeId;
+      for (const r of rich.rects(s.start, s.end)) {
+        const insert = s.start === s.end;
+        const left = Math.max(r.left - (insert ? 1 : 0), clip.left);
+        const right = Math.min(insert ? r.left + 1 : r.right, clip.right);
+        if (right <= left || r.bottom <= clip.top || r.top >= clip.bottom) continue;
+        if (active) {
+          const hl = document.createElement('div');
+          hl.className = `hl ${group}`;
+          place(hl, left, Math.max(r.top, clip.top), right - left, Math.min(r.bottom, clip.bottom) - Math.max(r.top, clip.top));
+          frag.append(hl);
+        }
+        const bar = document.createElement('div');
+        bar.className = `bar ${group}${insert ? ' insert' : ''}`;
+        if (insert) place(bar, left, Math.max(r.top, clip.top), 2, Math.min(r.bottom, clip.bottom) - Math.max(r.top, clip.top));
+        else if (r.bottom + 1 <= clip.bottom) place(bar, left, r.bottom - 1, right - left, 2);
+        else continue;
+        frag.append(bar);
+      }
+    }
+    this.lines.replaceChildren(frag);
+
+    // Badge: bottom-right of the visible part of the editor.
+    const right = clip.right - 6;
+    const top = clip.bottom - BADGE_SIZE - 6;
+    const left = right - Math.max(BADGE_SIZE, this.badge.offsetWidth || BADGE_SIZE);
+    this.badge.style.left = `${left}px`;
+    this.badge.style.top = `${top}px`;
+    this.badge.hidden = top < clip.top || left < clip.left;
+
+    if (this.card) this.positionCard();
+  }
+
   private copyStyles(): void {
-    const f = this.field;
+    const f = this.field as TextField;
     const cs = getComputedStyle(f);
     const ms = this.mirror.style;
     for (const prop of MIRRORED) ms.setProperty(prop, cs.getPropertyValue(prop));
@@ -367,6 +444,7 @@ export class Overlay {
   }
 
   private syncScroll(): void {
+    if (this.rich) return;
     this.mirror.scrollTop = this.field.scrollTop;
     this.mirror.scrollLeft = this.field.scrollLeft;
   }
@@ -377,7 +455,9 @@ export class Overlay {
     if (!card || !s) return;
     const span = this.spans.get(s.id);
     const fieldRect = this.field.getBoundingClientRect();
-    let anchor = span?.getClientRects()[0] ?? span?.getBoundingClientRect();
+    let anchor: DOMRect | undefined = this.rich
+      ? this.rich.rects(s.start, s.end)[0]
+      : (span?.getClientRects()[0] ?? span?.getBoundingClientRect());
     if (!anchor || anchor.bottom < fieldRect.top || anchor.top > fieldRect.bottom) anchor = fieldRect;
     const w = card.offsetWidth;
     const h = card.offsetHeight;
@@ -400,6 +480,14 @@ function clippingAncestors(field: Element): Element[] {
     node = parentComposed(node);
   }
   return out;
+}
+
+function place(node: HTMLElement, left: number, top: number, width: number, height: number): void {
+  const st = node.style;
+  st.left = `${left}px`;
+  st.top = `${top}px`;
+  st.width = `${Math.max(0, width)}px`;
+  st.height = `${Math.max(0, height)}px`;
 }
 
 function parentComposed(node: Element): Element | null {

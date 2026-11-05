@@ -16,12 +16,20 @@ export const OVERLAY_CSS = `
 .u.style { text-decoration-color: #a86b12; --gm-mark: #a86b12; }
 .u.active.correctness { background: rgba(217, 63, 63, 0.18); }
 .u.active.clarity { background: rgba(47, 111, 219, 0.18); }
-.u.active.style { background: rgba(123, 79, 208, 0.18); }
+.u.active.style { background: rgba(168, 107, 18, 0.18); }
 .u.insert { position: relative; }
 .u.insert::before {
   content: ""; position: absolute; left: -1px; top: 0.1em; height: 1.1em; width: 2px;
   background: var(--gm-mark);
 }
+.lines { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.bar, .hl { position: fixed; pointer-events: none; border-radius: 1px; }
+.bar.correctness { background: #c8453d; } .bar.clarity { background: #2d68c4; } .bar.style { background: #a86b12; }
+.bar:not(.insert) { opacity: 0.85; }
+.hl { border-radius: 2px; }
+.hl.correctness { background: rgba(217, 63, 63, 0.18); }
+.hl.clarity { background: rgba(47, 111, 219, 0.18); }
+.hl.style { background: rgba(168, 107, 18, 0.18); }
 .badge {
   position: fixed; z-index: 2; box-sizing: border-box; width: 20px; height: 20px; min-width: 20px;
   margin: 0; padding: 0 4px; border: 0; border-radius: 10px; cursor: pointer;

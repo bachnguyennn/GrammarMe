@@ -28,7 +28,7 @@ Cloud AI suggestions are optional, off by default, and only run when you press a
 | --- | --- |
 | `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), text statistics. No UI. |
 | `apps/web` | The editor (React + Vite). Runs Harper in a Web Worker. |
-| `apps/extension` | Chrome MV3 extension (textareas first). One shared Harper instance in an offscreen document. |
+| `apps/extension` | Chrome MV3 extension (text boxes and rich-text editors such as Gmail). One shared Harper instance in an offscreen document. |
 | `workers/ai-api` | Optional Cloudflare Worker that proxies AI checks with the provider key kept server-side. |
 | `tests/eval` | Labelled evaluation dataset + runner that measures precision/recall/latency. |
 

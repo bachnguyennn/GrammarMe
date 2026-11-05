@@ -13,7 +13,7 @@ editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
 - **Optional AI check** for clarity, fluency and tone. It is off by default, runs only when you press
   the button, and uses your own free Cloudflare Worker. Edits are kept small and must preserve your
   meaning and voice.
-- **Chrome extension** for text boxes on websites (prototype; textareas first).
+- **Chrome extension** for text boxes on websites, including Gmail and other rich-text editors.
 - **$0 to run.** No subscriptions, no paid APIs, light enough for an 8 GB laptop.
 
 The grammar engine is [Harper](https://writewithharper.com) (Apache-2.0), compiled to WebAssembly.

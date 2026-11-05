@@ -79,4 +79,30 @@ describe('fieldEligibility', () => {
     expect(check({ width: 1, height: 1 })).toMatchObject({ reason: 'too-small' });
     expect(check({ width: 0, height: 0 })).toMatchObject({ reason: 'too-small' });
   });
+
+  describe('rich-text editors (contenteditable)', () => {
+    const rich = (over: Partial<FieldInfo> = {}) =>
+      check({ tagName: 'DIV', contentEditable: true, name: 'Message Body', ...over });
+
+    it('accepts an editing host such as Gmail\'s compose body', () => {
+      expect(rich()).toEqual({ eligible: true });
+    });
+
+    it('ignores spellcheck="false" on rich editors (Gmail can set it) but skips code editors', () => {
+      expect(rich({ spellcheck: 'false' })).toEqual({ eligible: true });
+      expect(rich({ codeEditor: true })).toEqual({ eligible: false, reason: 'code-editor' });
+    });
+
+    it('still honours opt-outs, aria-hidden, read-only and tiny helpers', () => {
+      expect(rich({ optedOut: true })).toMatchObject({ reason: 'opted-out' });
+      expect(rich({ ariaHidden: true })).toMatchObject({ reason: 'aria-hidden' });
+      expect(rich({ readOnly: true })).toMatchObject({ reason: 'readonly' });
+      expect(rich({ width: 1, height: 1 })).toMatchObject({ reason: 'too-small' });
+      expect(rich({ id: 'otp-code' })).toMatchObject({ reason: 'sensitive-name' });
+    });
+
+    it('a plain div that is not editable is still unsupported', () => {
+      expect(check({ tagName: 'DIV', contentEditable: false })).toMatchObject({ reason: 'unsupported-element' });
+    });
+  });
 });

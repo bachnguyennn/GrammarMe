@@ -23,6 +23,10 @@ export interface FieldInfo {
   /** Rendered size in CSS px. */
   width: number;
   height: number;
+  /** A rich-text editing host (contenteditable / role=textbox), e.g. Gmail's compose body. */
+  contentEditable?: boolean;
+  /** Looks like a code editor (CodeMirror, Ace, Monaco) or sits inside <pre>/<code>. */
+  codeEditor?: boolean;
 }
 
 export type IneligibleReason =
@@ -36,7 +40,8 @@ export type IneligibleReason =
   | 'aria-hidden'
   | 'opted-out'
   | 'spellcheck-off'
-  | 'too-small';
+  | 'too-small'
+  | 'code-editor';
 
 export type Eligibility = { eligible: true } | { eligible: false; reason: IneligibleReason };
 
@@ -68,6 +73,18 @@ export const MIN_FIELD_HEIGHT = 14;
 
 export function fieldEligibility(f: FieldInfo): Eligibility {
   const tag = f.tagName.toLowerCase();
+  if (f.contentEditable) {
+    if (f.disabled) return no('disabled');
+    if (f.readOnly) return no('readonly');
+    if (f.ariaHidden) return no('aria-hidden');
+    if (f.optedOut) return no('opted-out');
+    // Rich editors often set spellcheck="false" only to hide the browser's own red lines (Gmail can
+    // follow its own spelling setting), so for them the code-editor test replaces the spellcheck rule.
+    if (f.codeEditor) return no('code-editor');
+    if ((f.id && SENSITIVE_NAME.test(f.id)) || (f.name && SENSITIVE_NAME.test(f.name))) return no('sensitive-name');
+    if (f.width < MIN_FIELD_WIDTH || f.height < MIN_FIELD_HEIGHT) return no('too-small');
+    return { eligible: true };
+  }
   if (tag === 'input') {
     const type = (f.type ?? '').trim().toLowerCase();
     if (type === 'password') return no('password');

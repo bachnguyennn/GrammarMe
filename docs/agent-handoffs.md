@@ -35,6 +35,9 @@ Test counts below are from actual runs on the date above.
 
 - Load the extension and run the manual test plan. Then add contenteditable support (Gmail etc.)
   using the CSS Custom Highlight API.
+  - Done 2026-11-05: loaded in headless Chrome 156 (`npm run e2e -w apps/extension`), and
+    contenteditable support added with drawn underlines instead of the Highlight API
+    (`src/rich-text.ts`, `src/editable.ts`). Real Gmail still needs a hand check by the owner.
 - Deploy the Worker on a free Cloudflare account and run `tests/eval` through the AI engine to
   compare Groq, Workers AI and (if accepted) Gemini on identical examples.
 - Measure Chrome memory for the web app and the extension's offscreen document.

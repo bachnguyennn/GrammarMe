@@ -15,8 +15,9 @@ Not yet checked by hand in a windowed Chrome: real typing speed, many tabs, idle
 [`install.html`](https://bachnguyennn.github.io/GrammarMe/install.html). The site build
 (`npm run build:site`) rebuilds the zip on every deploy.
 
-Scope: `<textarea>` and `<input type="text|search">` only. contenteditable (Gmail, etc.) and Google Docs
-are out of scope for this phase (see [Not in this phase](#not-in-this-phase-contenteditable-and-google-docs)).
+Scope: `<textarea>`, `<input type="text|search">`, and rich-text editors (`contenteditable`: Gmail,
+Outlook on the web, Quill and similar). Google Docs is out of scope (see
+[Rich-text editors and Google Docs](#rich-text-editors-contenteditable-and-google-docs)).
 
 ## Build, load, test
 
@@ -234,18 +235,32 @@ questions below.
 - Harper only. AI suggestions (clarity/tone) are not wired into the extension. Doing so would send text
   off the device and needs explicit per-request consent.
 
-## Not in this phase: contenteditable and Google Docs
+## Rich-text editors (contenteditable) and Google Docs
 
-- **contenteditable (Gmail, Notion, Slack, LinkedIn).** A mirror overlay doesn't work here: rich text
-  has nested inline elements, images and custom layout. Plan:
-  1. Flatten the editable root into plain text with a **text-node offset map** (UTF-16 offset to
-     `{node, offset}`), treating block elements and `<br>` as `\n`.
-  2. Draw underlines with the **CSS Custom Highlight API** (`CSS.highlights` + `::highlight()`).
-     This needs no DOM mutation, so it is safe with editor frameworks. Chrome 105+.
-  3. Apply fixes by building a DOM `Range` from the map, selecting it, and calling
-     `execCommand('insertText')` so the editor's own model updates.
-  4. Rebuild the map on `input` (`MutationObserver` as a fallback). Treat Gmail quotes and signatures
-     as opt-out zones.
+- **contenteditable (Gmail, Outlook on the web, Quill, …)** — supported since 2026-11-05.
+  1. `src/rich-text.ts` flattens the editing host into plain text with a **text-node offset map**
+     (string offset ↔ `{node, offset}`). `<br>` and block elements become `\n`; text characters map
+     1:1 (no-break spaces become spaces), so offsets never shift. Quoted replies (`.gmail_quote`,
+     Outlook's `#divRplyFwdMsg`, …), `contenteditable="false"` islands, hidden and opt-out subtrees
+     are skipped: they aren't the user's writing.
+  2. Underlines are **thin bars drawn in the overlay's Shadow DOM** at `Range.getClientRects()`,
+     clipped to the visible editor. Nothing is inserted into the editor. (The plan was the CSS Custom
+     Highlight API; it was dropped because `::highlight()` rules must live in a page-level stylesheet
+     that the page's CSS and CSP can interfere with, and its underline styling is limited.)
+  3. A fix builds a `Range` from the map, selects it and calls `execCommand('insertText')`, so the
+     editor's own model and undo stay correct. If the text afterwards isn't exactly what was
+     expected, GrammarMe does not touch the DOM; it re-reads the text and checks again.
+  4. The map is rebuilt on `input` and, through a `MutationObserver`, on edits the page makes itself.
+  5. For rich editors `spellcheck="false"` is ignored (Gmail can set it to follow its own setting);
+     code editors are skipped by class instead (CodeMirror, Ace, Monaco, `<pre>`/`<code>`).
+  - **Tested** (headless Chrome 156, `npm run e2e -w apps/extension`, which drives `e2e/rich.mjs`): a Gmail-style
+    compose box with a quoted reply and `spellcheck="false"`, and Quill 2.0.3. In both, typing two
+    lines with mistakes gave 5 underlines about 0.8 s later, the quoted reply's mistakes were not
+    flagged, "has → have" applied and Cmd+Z undid it, and underlines followed the text when the
+    editor scrolled and disappeared when their line scrolled out of view.
+  - **Not tested:** real Gmail (needs a signed-in account), Notion, Slack, LinkedIn, Lexical,
+    Draft.js, very long documents. Editors inside iframes (TinyMCE, CKEditor 4 classic) aren't
+    reached because the content script runs in the top frame only.
 - **Google Docs.** It renders to canvas, so there is no editable text DOM to read or underline. Options:
   the Docs "annotated canvas" accessibility mode, which Google offers to approved extensions (requires
   their allow-list), or a Docs add-on built on Apps Script (a separate product, and text goes to Google's
@@ -264,8 +279,7 @@ questions below.
 
 ## Open questions for the owner
 
-1. What is the URL of the web editor? `src/popup.ts` has a `WEB_EDITOR_URL` placeholder
-   (`http://localhost:5173/`).
+1. ~~What is the URL of the web editor?~~ Answered: `https://bachnguyennn.github.io/GrammarMe/editor/`.
 2. Keep `<all_urls>` with its install warning, or use the on-demand `activeTab` /
    optional-host-permission model described above?
 3. Should GrammarMe check `input[type=search]`? It currently does; search queries are short and rarely
