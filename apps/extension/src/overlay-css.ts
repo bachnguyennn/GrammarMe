@@ -80,5 +80,27 @@ export const OVERLAY_CSS = `
 }
 .action:hover { background: var(--btn-hover); }
 .repl:focus-visible, .action:focus-visible, .close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.aibtn {
+  position: fixed; z-index: 2; box-sizing: border-box; height: 20px; min-width: 26px; margin: 0; padding: 0 6px;
+  border: 0; border-radius: 10px; cursor: pointer; font: 600 10.5px/20px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #fff; background: #2c7f7a; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); opacity: 0.92;
+}
+.aibtn:hover { opacity: 1; }
+.aibtn:focus-visible { outline: 2px solid #2c7f7a; outline-offset: 2px; }
+.card.panel { width: min(380px, calc(100vw - 16px)); max-width: min(380px, calc(100vw - 16px)); }
+.title { font-weight: 600; font-size: 13px; flex: 1; }
+.seg { display: flex; gap: 4px; margin: 4px 0 8px; padding: 3px; border-radius: 8px; background: var(--btn); }
+.segbtn { all: unset; flex: 1; text-align: center; cursor: pointer; padding: 3px 6px; border-radius: 6px; font-size: 12px; }
+.segbtn.on { background: var(--bg); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
+.segbtn:focus-visible { outline: 2px solid var(--accent); }
+.preview {
+  max-height: 120px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 8px; padding: 6px 8px;
+  border: 1px solid var(--line); border-radius: 6px; font-size: 12px; background: var(--btn);
+}
+.notice { margin: 0 0 8px; font-size: 12px; color: var(--sub); }
+.errtext { color: #c8453d; }
+@media (prefers-color-scheme: dark) { .errtext { color: #ff8a80; } }
+.lnk { display: inline-block; margin: 0 0 8px; color: var(--accent); font-size: 12px; }
+.repl:disabled, .action:disabled { opacity: 0.5; cursor: default; }
 [hidden] { display: none !important; }
 `;

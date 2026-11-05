@@ -2,16 +2,27 @@
   "manifest_version": 3,
   "name": "GrammarMe",
   "version": "0.1.0",
-  "description": "Free, private grammar and spelling checks. Runs entirely on your device.",
+  "description": "Free grammar and spelling checks that run on your device. Optional ChatGPT suggestions with your own plan.",
   "minimum_chrome_version": "116",
-  "permissions": ["storage", "offscreen"],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA320daKi5b+2EBPa1DIoRoyB2mYxjBjWalgNDQpN/o7Fg1q1txdpIReBhLMYu1I7tY46E+ThQ6x9WTHeNjpaGYQ8MwEQDP0R2KTZ0u1iIcBMVySTix7y3J0P04/jFYbRux627JRLe92MtOAIwDMayUaZbhJzqkXLqDpMa72FHOuxxXB4Ww7yh5DTyi9mgKs9Gdpr3LCRn9kGj5gCBgDlpQwyI2QSKrLItK6GUKD7U972LsPAENbvRwEcrcR+S9vXznMfVgJ3unLscmx+endwBl3K2xKv5zWNwaTMlcyBQ3T2wVeNZFoz6HYYXZYVJB5MpSgGhyogb6yzinvA3MaGs5wIDAQAB",
+  "permissions": [
+    "storage",
+    "offscreen"
+  ],
+  "optional_permissions": [
+    "nativeMessaging"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }

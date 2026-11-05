@@ -1,4 +1,5 @@
-// Screenshots of the REAL editor and extension for the product site, so the site never shows a
+// Screenshots of the REAL editor and extension for the product site (assets/shots/extension-ai.webp
+// comes from `npm run e2e:chatgpt -w apps/extension`, cropped from e2e/out/ai-panel.png), so the site never shows a
 // feature that doesn't exist. Run after `npm run build:site` (it serves apps/site/dist and loads
 // apps/extension/build):
 //

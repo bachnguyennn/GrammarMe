@@ -8,7 +8,8 @@
     "watch": "node build.mjs --watch",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "e2e": "node build.mjs && node e2e/fields.mjs build e2e/out && node e2e/rich.mjs build e2e/out"
+    "e2e": "node build.mjs && node e2e/fields.mjs build e2e/out && node e2e/rich.mjs build e2e/out",
+    "e2e:chatgpt": "node build.mjs && (cd ../companion && node build.mjs) && node e2e/chatgpt.mjs build ../companion/dist/grammarme-companion.mjs e2e/out"
   },
   "dependencies": {
     "@grammarme/core": "*",

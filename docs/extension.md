@@ -235,6 +235,34 @@ questions below.
 - Harper only. AI suggestions (clarity/tone) are not wired into the extension. Doing so would send text
   off the device and needs explicit per-request consent.
 
+## Optional ChatGPT check
+
+When ChatGPT is connected, a teal **AI** button appears beside GrammarMe's badge on supported
+fields. It opens a panel where the user picks Grammar, Clarity or Tone and sees the exact text to
+be sent. It then sends that text through the local companion. The resulting edits are ordinary
+suggestions with `source: 'ai'`, marked "· ChatGPT" on their cards.
+
+- Code: `src/ai-scope.ts` (what is sent; placing edits), `src/ai-protocol.ts` (messages),
+  `src/companion-client.ts` (native messaging), `src/popup-ai.ts` (connection UI).
+- The manifest pins the extension ID with `key`, so the companion can allow exactly this ID.
+- `nativeMessaging` is an *optional* permission, requested only when the user chooses Continue
+  with ChatGPT.
+- User guide: [chatgpt.md](chatgpt.md). Design: [architecture](architecture.md#optional-chatgpt-companion).
+- **Tested (mock OpenAI):** `npm run e2e:chatgpt -w apps/extension` runs the real extension in an
+  isolated Chrome profile. Chrome launches the real companion over native messaging, and OpenAI's
+  auth and API are a local mock. It checks:
+  - Sign-in: PKCE and the 127.0.0.1 callback, with the credentials file at `0600`.
+  - Popup: the account, models and Test connection.
+  - Checking text: the AI button, the exact preview, and edits placed and accepted with undo. A
+    numeric rewrite is dropped by the guards.
+  - Failures: the usage-limit message with Manage usage, local checks still working, and cancel
+    aborting the upstream request.
+  - Disconnect: it revokes the session, deletes the tokens and hides the AI button.
+  - Every request to OpenAI has `store: false` and `stream: true`, with no unsupported fields.
+  - The test copy makes `nativeMessaging` a required permission, because automation can't click
+    Chrome's permission prompt.
+- **Not tested:** a real ChatGPT account, OpenAI's real consent screen, and real inference.
+
 ## Rich-text editors (contenteditable) and Google Docs
 
 - **contenteditable (Gmail, Outlook on the web, Quill, …)** — supported since 2026-11-05.

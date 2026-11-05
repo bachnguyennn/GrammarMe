@@ -63,7 +63,7 @@
   @media (max-width: 639px) {
     #features .card > .panel:has(.gm-shot) { height: auto; min-height: 0; padding: 20px 16px 0; }
     #features .panel:has(.gm-shot) > .stage { position: relative; inset: auto; }
-    #features .panel .gm-shot { position: relative; left: auto; top: auto; transform: none; width: 100%; max-height: 150px;
+    #features .panel .gm-shot { position: relative; left: auto; top: auto; transform: none; width: 100%; max-height: 130px;
       border-radius: 12px 12px 0 0; -webkit-mask-image: linear-gradient(#000 70%, transparent); mask-image: linear-gradient(#000 70%, transparent); }
     #features .card > .panel:not(:has(.gm-shot)) { height: 220px; min-height: 0; }
     #features .wrap > .grid { margin-top: var(--s-7); }
@@ -104,6 +104,12 @@
   @media (max-width: 639px) {
     main > :is(section, .section):not(.hero, .section--hero) { height: auto; min-height: calc(var(--hm, var(--h, 1)) * 100svh); }
   }
+  /* small laptops: the seven answers in two columns under the heading, so Questions fits one screen */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    #questions .gm-q-frame { display: none; }
+    /* two columns on the page grid's own lines: the second starts exactly at column 7 */
+    #questions .faq { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; margin-top: var(--s-6); }
+  }
   /* very narrow phones: the hero carries the main button, so the bar keeps only logo and menu */
   @media (max-width: 379px) { .nav__actions .btn { display: none; } }
 </style>
@@ -129,7 +135,7 @@
               <p class="t-label">Write</p>
               <a href="#editor">The editor<span>Fixes beside your text</span></a>
               <a href="#features">Spelling checks<span>Five kinds of English</span></a>
-              <a href="#features">Optional cloud AI<span>Needs your own server</span></a>
+              <a href="#features">Optional AI<span>Your ChatGPT plan or your own server</span></a>
             </div>
             <div class="menu-col span-3">
               <p class="t-label">Install</p>
@@ -239,10 +245,10 @@
           </div>
         </article>
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Optional cloud AI — requires your own server</h3>
-          <p>Suggests clearer wording or a different tone. You set up a free server on your own Cloudflare account first. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/ai-setup.md">Read the setup guide</a></p>
+          <h3>Optional AI: your ChatGPT plan or your own server</h3>
+          <p>In the extension, check text with your own ChatGPT Plus or Pro plan; it needs the free GrammarMe companion on your computer. In the web editor, use your own server. Text is sent only when you request a check. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">ChatGPT setup</a> · <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/ai-setup.md">Server setup</a></p>
           <div class="panel" data-fx="painterly-landscape" data-fx-seed="58">
-            <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/editor-ai.webp" width="729" height="630" loading="lazy" decoding="async" alt="The cloud AI section of GrammarMe settings: off by default, with a link to the setup guide, and fields for your server address and access token"></div></div>
+            <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/extension-ai.webp" width="1035" height="655" loading="lazy" decoding="async" alt="The extension's Check with ChatGPT panel on a text box: Grammar, Clarity and Tone, the exact text that will be sent, and a notice that pressing Send shares it with OpenAI using your ChatGPT plan's allowance"></div></div>
           </div>
         </article>
       </div>
@@ -260,6 +266,7 @@
           <div class="gm-note">
             <p><b>Before you download:</b> for desktop Chrome, Edge and Brave. It installs in Developer mode, and updates are manual: you download each new version yourself.</p>
             <p>Google Docs isn't supported by GrammarMe yet.</p>
+            <p><b>Optional ChatGPT check:</b> use your own ChatGPT Plus or Pro plan for grammar, clarity and tone edits. It needs the free GrammarMe companion on your computer (macOS or Linux). <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">Setup guide</a></p>
           </div>
           <div class="btn-row">
             <a class="btn btn--primary" href="GrammarMe-extension.zip" download>Download the extension (8 MB)<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
@@ -303,7 +310,8 @@
           <div class="faq__item"><h3>How accurate is the checker?</h3><p>On 171 test sentences it found 70% of mistakes, and 84% of its flags were real. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/evaluation.md">See the method</a></p></div>
           <div class="faq__item"><h3>Does GrammarMe upload my writing?</h3><p>Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p></div>
           <div class="faq__item"><h3>Which English does the checker know?</h3><p>American, British, Canadian, Australian and Indian English.</p></div>
-          <div class="faq__item"><h3>Does the extension work in Gmail?</h3><p>Yes. It checks supported text fields, including Gmail and Outlook on the web, and skips quoted earlier messages. Google Docs isn't supported by GrammarMe yet.</p></div>
+          <div class="faq__item"><h3>Does the extension work in Gmail?</h3><p>Yes, in the compose box and in Outlook on the web; quoted messages are skipped. Google Docs isn't supported by GrammarMe yet.</p></div>
+          <div class="faq__item"><h3>Can I use my ChatGPT plan?</h3><p>Yes, in the extension, with ChatGPT Plus or Pro and the free GrammarMe companion (macOS, Linux). Checks use your plan's allowance; no API key. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">Setup guide</a></p></div>
           <div class="faq__item"><h3>Does it work offline?</h3><p>Once the checker has loaded, you can keep checking text without an internet connection.</p></div>
         </div>
       </div>

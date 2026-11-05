@@ -2,7 +2,9 @@
 
 GrammarMe is a free, private writing assistant. Grammar, spelling and punctuation checks run
 **on your device** with [Harper](https://writewithharper.com) (Rust compiled to WebAssembly).
-Cloud AI suggestions are optional, off by default, and only run when you press a button.
+AI suggestions are optional, off by default, and only run when you press a button. There are two
+AI routes: the web editor can use your own Cloudflare Worker, and the Chrome extension can use your
+own ChatGPT plan through a local companion (see [below](#optional-chatgpt-companion)).
 
 ```
                        ┌──────────────────────────── your browser ────────────────────────────┐
@@ -26,9 +28,10 @@ Cloud AI suggestions are optional, off by default, and only run when you press a
 
 | Path | What it is |
 | --- | --- |
-| `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), text statistics. No UI. |
+| `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), AI prompts and output guards shared by every AI route (`@grammarme/core/ai`), the extension↔companion message contract (`@grammarme/core/companion`), text statistics. No UI. |
 | `apps/web` | The editor (React + Vite). Runs Harper in a Web Worker. |
 | `apps/extension` | Chrome MV3 extension (text boxes and rich-text editors such as Gmail). One shared Harper instance in an offscreen document. |
+| `apps/companion` | Optional local program for the extension's "Check with ChatGPT": Sign in with ChatGPT (OAuth on `127.0.0.1`), credential storage, and Responses API calls. Started by Chrome through native messaging. |
 | `workers/ai-api` | Optional Cloudflare Worker that proxies AI checks with the provider key kept server-side. |
 | `tests/eval` | Labelled evaluation dataset + runner that measures precision/recall/latency. |
 
@@ -91,3 +94,53 @@ textarea, and the backdrop never needs scroll syncing.
 - Measured in Node 24: setup ≈ 0.6 s, a sentence lints in 4–30 ms, process RSS ≈ 420 MB with Harper
   loaded. In-browser memory has **not** been measured yet; see `evaluation.md` for numbers we have.
 - No network requests while typing. AI requests happen only on a button press.
+
+## Optional ChatGPT companion
+
+The extension's "Check with ChatGPT" uses OpenAI's
+[Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source) token sharing
+for open-source local apps. Requests count against the user's ChatGPT plan, with no API key.
+User guide: [chatgpt.md](chatgpt.md).
+
+```
+ web page (content script)            extension service worker           apps/companion (local Node)              OpenAI
+ ┌──────────────────────────┐ aiCheck ┌────────────────────────┐ native  ┌──────────────────────────────┐ HTTPS  ┌─────────────────────┐
+ │ AI button → preview →    │────────▶│ one port per operation │ messag- │ fixed ops only: status,      │───────▶│ auth.openai.com     │
+ │ "Send to ChatGPT"        │◀────────│ (permission: optional  │ ing     │ signIn, signOut, models,     │        │ (OAuth, PKCE, JWKS) │
+ │ edits → underlines,      │ edits   │ nativeMessaging)       │◀───────▶│ setModel, test, check        │───────▶│ api.openai.com/v1/  │
+ │ accept = execCommand     │         │ no tokens, ever        │ stdio   │ tokens in ~/.config/grammarme│        │ responses, models   │
+ └──────────────────────────┘         └────────────────────────┘         │ (0600); prompts + guards     │        └─────────────────────┘
+                                                                          │ from @grammarme/core/ai      │
+                                                                          └──────────────────────────────┘
+```
+
+Why a companion is needed:
+
+- **OpenAI requires a loopback callback.** It documents only a loopback redirect,
+  `http://127.0.0.1:<port>/auth/callback`, with a listener started before the browser opens. It
+  doesn't mention browser extensions. An extension can't listen on a port, and capturing the
+  redirect inside Chrome would be an undocumented workaround.
+- **Credentials belong on disk.** OpenAI asks for owner-only files that are never committed or
+  logged. A local process fits that; extension storage doesn't.
+
+Design points:
+
+- **Native messaging:** the host manifest lists GrammarMe's fixed extension ID (pinned with
+  `manifest.json`'s `key`) in `allowed_origins`, and the companion re-checks the caller origin.
+  There's no listening port except the brief sign-in callback. Chrome starts the companion per
+  operation, and it exits when the port closes.
+- **The companion is not a proxy:** `@grammarme/core/companion` defines the only operations. No
+  request carries a URL, header or token. Text is capped at 4,000 characters, output at 24,000,
+  and a check times out at 90 s. A tab can run one check at a time, and cancelling aborts the
+  request.
+- **Plan permission, not just sign-in:** the companion checks that the grant includes
+  `chatgpt.tokens.use.direct`. A valid ID token alone isn't enough.
+- **No silent fallback:** usage-limit and eligibility errors are shown as they are. Nothing
+  switches to API billing or another provider.
+- **Untrusted output:** the model's JSON goes through the same guards as the Worker route
+  (`sanitizeEdits`). The extension then places each edit only inside the range that was sent
+  (`placeAiEdits`), drops overlaps and ambiguous quotes, and rebases onto newer text. Edits the
+  user has since changed are dropped. Accepting goes through `execCommand`, so native undo works.
+- **Service-worker suspension:** an open native port keeps the MV3 worker alive during a sign-in
+  or check. If it stops anyway, the port closes, the companion aborts, and the page shows
+  "interrupted".

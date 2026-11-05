@@ -112,3 +112,25 @@ actually ran it; anything else is labelled as reasoning or documentation.
   mock-ups advertised features that didn't exist (document list, saved drafts, settings switches,
   an AI chat), so they were replaced on 2026-11-05. The editor's example paragraph is pinned by a
   test (`apps/web/test/sample.test.ts`) to mistakes Harper really flags in all five dialects.
+## D11. ChatGPT in the extension — **local companion over native messaging** (2026-11-05)
+
+- **The owner's request:** let people use their own ChatGPT account for AI suggestions, without an
+  API key.
+- **Evidence:** OpenAI's Sign in with ChatGPT docs, read 2026-11-05, say:
+  - Plan usage is "available for open-source tools and personal projects that run locally", for
+    eligible Plus and Pro users.
+  - The OAuth redirect must be a loopback URL on 127.0.0.1, with a listener started first.
+  - Credentials should be stored in owner-only files.
+  - Browser extensions aren't mentioned.
+  - The official DevKit is under a noncommercial licence.
+- **Options considered:**
+  1. **Extension-only:** capture the 127.0.0.1 redirect inside Chrome. Rejected: undocumented, and
+     the tokens would sit in extension storage.
+  2. **Route through the Cloudflare Worker:** rejected. It's remote and would need OpenAI's
+     approval, and the tokens would leave the user's machine.
+  3. **Local companion:** chosen. Chrome starts it through native messaging.
+- **Implementation:** written from the published protocol, not the DevKit, which keeps the MIT
+  licence clean. It uses Node built-ins only, with no runtime dependencies.
+- **Not offered on the hosted web editor:** it isn't a local app.
+- **Open risk:** OpenAI's terms don't explicitly cover a browser extension plus companion
+  distributed to others. Confirm with OpenAI before promoting it widely.

@@ -10,6 +10,9 @@ editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
 - **Underlines with explanations and one-click fixes**: accept, dismiss, undo (Cmd/Ctrl+Z), add to
   dictionary, or turn a rule off.
 - **Writing modes** (Standard, Academic, Professional, Casual) and five English dialects.
+- **Optional ChatGPT check in the extension**: grammar, clarity and tone edits using **your own
+  ChatGPT Plus/Pro plan**, with no API key. It needs a small local companion program, and text is
+  sent only when you preview and confirm it ([guide](docs/chatgpt.md)).
 - **Optional AI check** for clarity, fluency and tone. It is off by default, runs only when you press
   the button, and uses your own free Cloudflare Worker. Edits are kept small and must preserve your
   meaning and voice.
@@ -54,6 +57,17 @@ npm run build -w apps/extension
 Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and choose
 `apps/extension/build`. See [docs/extension.md](docs/extension.md) for what works where.
 
+### Optional: ChatGPT in the extension
+
+Install the local companion (macOS or Linux, Node 22.6+), then choose **Continue with ChatGPT** in
+the extension's toolbar menu:
+
+```bash
+npm run install-host -w apps/companion
+```
+
+Full steps, eligibility, what is sent, and troubleshooting: [docs/chatgpt.md](docs/chatgpt.md).
+
 ### Optional: AI suggestions
 
 Follow [docs/ai-setup.md](docs/ai-setup.md) to deploy the free Cloudflare Worker. Then
@@ -71,10 +85,11 @@ and press **AI check**.
 ## Project layout
 
 ```
-packages/core     shared Suggestion contract, offset-safe edit helpers, Harper adapter
+packages/core     shared Suggestion contract, offset-safe edit helpers, Harper adapter, AI prompts + guards
 apps/web          React + Vite editor
 apps/site         product website (static HTML on the taste-skill design system)
 apps/extension    Chrome MV3 extension
+apps/companion    optional local companion for the extension's ChatGPT check
 workers/ai-api    optional Cloudflare Worker for AI suggestions
 tests/eval        labelled dataset + accuracy/latency runner
 docs/             architecture, decisions, evaluation, research

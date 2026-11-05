@@ -12,6 +12,10 @@ import {
   type DocumentSnapshot,
   type Suggestion,
 } from '@grammarme/core';
+import type { AiTask } from '@grammarme/core';
+import { MANAGE_USAGE_URL } from '@grammarme/core/companion';
+import { AI_READY_KEY, newRequestId, type AiCancelRequest, type AiCheckRequest, type AiCheckResponse, type AiErrorCode } from './ai-protocol.ts';
+import { SCOPE_LABEL, aiScope, placeAiEdits, type AiScope } from './ai-scope.ts';
 import { asEditable, type Editable } from './editable.ts';
 import { fieldEligibility } from './eligibility.ts';
 import { deepActiveElement } from './field-dom.ts';
@@ -44,6 +48,8 @@ interface FieldMemory {
   suggestions: Suggestion[];
   /** "Ignore" keys for this field, this page session only. */
   ignored: Set<string>;
+  /** Optional ChatGPT suggestions, kept apart from Harper's (which each check replaces). */
+  ai: Suggestion[];
 }
 
 const memory = new WeakMap<HTMLElement, FieldMemory>();
@@ -52,6 +58,8 @@ let dictionaryLower = new Set<string>();
 let loading: Promise<void> | null = null;
 let active: FieldController | null = null;
 let shutDown = false;
+/** ChatGPT connected with plan usage (a non-secret flag the service worker maintains). */
+let aiReady = false;
 
 const NAV_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 
@@ -75,10 +83,11 @@ function ensureLoaded(): Promise<void> {
   loading ??= (async () => {
     const [sync, local] = await Promise.all([
       chrome.storage.sync.get(SETTINGS_KEY),
-      chrome.storage.local.get(DICTIONARY_KEY),
+      chrome.storage.local.get([DICTIONARY_KEY, AI_READY_KEY]),
     ]);
     settings = normalizeSettings(sync[SETTINGS_KEY]);
     dictionaryLower = new Set(normalizeDictionary(local[DICTIONARY_KEY]).map((w) => w.toLowerCase()));
+    aiReady = Boolean((local[AI_READY_KEY] as { ready?: boolean } | undefined)?.ready);
     chrome.storage.onChanged.addListener(onStorageChanged);
   })();
   return loading;
@@ -94,6 +103,10 @@ function onStorageChanged(changes: Record<string, chrome.storage.StorageChange>,
     } else if (prev && prev.dialect !== settings.dialect) {
       active?.recheck();
     }
+  }
+  if (area === 'local' && changes[AI_READY_KEY]) {
+    aiReady = Boolean((changes[AI_READY_KEY].newValue as { ready?: boolean } | undefined)?.ready);
+    active?.setAiAvailable(aiReady);
   }
   if (area === 'local' && changes[DICTIONARY_KEY]) {
     dictionaryLower = new Set(normalizeDictionary(changes[DICTIONARY_KEY].newValue).map((w) => w.toLowerCase()));
@@ -122,7 +135,7 @@ async function activate(target: Editable): Promise<void> {
   active?.destroy();
   let mem = memory.get(field);
   if (!mem) {
-    mem = { text: target.readText(), version: 0, suggestions: [], ignored: new Set() };
+    mem = { text: target.readText(), version: 0, suggestions: [], ignored: new Set(), ai: [] };
     memory.set(field, mem);
   }
   active = new FieldController(target, mem);
@@ -178,7 +191,9 @@ class FieldController {
       onBadgeClick: () => this.openFirst(),
       onDismiss: (returnFocus) => this.closeCard(returnFocus),
       onFieldGone: () => this.detach(),
+      onAiClick: () => this.openAi(),
     });
+    this.overlay.setAiAvailable(aiReady);
     this.scheduler = new CheckScheduler({
       delayMs: CHECK_DEBOUNCE_MS,
       current: () => ({ text: this.mem.text, version: this.mem.version }),
@@ -235,7 +250,7 @@ class FieldController {
   /** Recompute what's shown from memory + ignore list + dictionary. */
   refresh(): void {
     if (this.destroyed) return;
-    this.visible = visibleSuggestions(this.mem.suggestions, this.mem.ignored, dictionaryLower);
+    this.visible = visibleSuggestions([...this.mem.suggestions, ...this.mem.ai], this.mem.ignored, dictionaryLower);
     const openId = this.overlay.cardSuggestionId;
     if (openId && !this.visible.some((s) => s.id === openId)) this.overlay.closeCard();
     this.overlay.render(this.mem.text, this.visible, this.overlay.cardSuggestionId);
@@ -259,6 +274,7 @@ class FieldController {
 
   destroy(): void {
     if (this.destroyed) return;
+    this.cancelAi();
     this.destroyed = true;
     const f: HTMLElement = this.field;
     f.removeEventListener('input', this.onInput);
@@ -290,6 +306,7 @@ class FieldController {
     this.mem.version += 1;
     this.mem.text = text;
     this.mem.suggestions = rebaseSuggestions(prev, { text, version: this.mem.version }, this.mem.suggestions);
+    this.mem.ai = rebaseSuggestions(prev, { text, version: this.mem.version }, this.mem.ai);
     this.refresh();
     return true;
   }
@@ -382,6 +399,165 @@ class FieldController {
     }
     this.syncText();
     this.scheduler.schedule();
+  }
+
+  /* ---------------- optional ChatGPT check (user-triggered only) ---------------- */
+
+  private aiTask: AiTask = 'grammar';
+  private aiScope: AiScope | null = null;
+  private aiRequestId: string | null = null;
+
+  setAiAvailable(ready: boolean): void {
+    if (this.destroyed) return;
+    this.overlay.setAiAvailable(ready);
+    if (!ready && !this.aiRequestId) this.overlay.closePanel();
+  }
+
+  /** Step 1: show exactly what would be sent, where, and let the user choose the check. */
+  private openAi(): void {
+    if (this.destroyed || this.aiRequestId) return;
+    this.syncText();
+    const sel = this.target.selection();
+    const picked = aiScope(this.mem.text, sel?.start ?? null, sel?.end ?? null);
+    if (!picked.ok) {
+      this.aiScope = null;
+      this.overlay.showPanel({
+        title: 'Check with ChatGPT',
+        lines: [
+          picked.reason === 'empty'
+            ? 'There’s no text to check yet.'
+            : 'That’s too much text for one check (4,000 characters at most). Select a shorter part and try again.',
+        ],
+        actions: [{ label: 'Close', onClick: () => this.closeAi() }],
+        onClose: () => this.closeAi(),
+      });
+      return;
+    }
+    this.aiScope = picked.scope;
+    this.renderCompose();
+    this.overlay.focusPanel();
+  }
+
+  private renderCompose(): void {
+    const scope = this.aiScope;
+    if (!scope) return;
+    this.overlay.showPanel({
+      title: 'Check with ChatGPT',
+      tasks: {
+        options: [
+          { id: 'grammar', label: 'Grammar' },
+          { id: 'clarity', label: 'Clarity' },
+          { id: 'tone', label: 'Tone' },
+        ],
+        current: this.aiTask,
+        onPick: (id) => {
+          this.aiTask = id as AiTask;
+          this.renderCompose();
+        },
+      },
+      lines: [`Checking ${SCOPE_LABEL[scope.kind]} (${scope.text.length.toLocaleString('en-US')} characters):`],
+      preview: scope.text,
+      notice:
+        'Pressing Send shares this text with OpenAI, using your ChatGPT plan’s allowance. Nothing is sent while you type, and only this text is sent.',
+      actions: [
+        { label: 'Send to ChatGPT', primary: true, onClick: () => void this.sendAi() },
+        { label: 'Cancel', onClick: () => this.closeAi() },
+      ],
+      onClose: () => this.closeAi(),
+    });
+  }
+
+  /** Step 2: send the previewed text once; refuse if the text changed under the preview. */
+  private async sendAi(): Promise<void> {
+    const scope = this.aiScope;
+    if (!scope || this.aiRequestId || this.destroyed) return;
+    this.syncText();
+    if (this.mem.text.slice(scope.start, scope.end) !== scope.text) {
+      // The user typed since the preview: show the new text instead of sending something unseen.
+      this.aiScope = null;
+      this.openAi();
+      return;
+    }
+    const sent: DocumentSnapshot = this.snapshot();
+    const requestId = newRequestId();
+    this.aiRequestId = requestId;
+    const task = this.aiTask;
+    this.overlay.showPanel({
+      title: 'Check with ChatGPT',
+      lines: ['Checking with ChatGPT…'],
+      actions: [{ label: 'Cancel', onClick: () => this.cancelAi() }],
+      onClose: () => this.cancelAi(),
+    });
+    const req: AiCheckRequest = { target: 'background', type: 'aiCheck', requestId, task, mode: 'standard', text: scope.text };
+    let res: AiCheckResponse;
+    try {
+      res = (await chrome.runtime.sendMessage(req)) as AiCheckResponse;
+      if (!res || typeof res !== 'object') throw new Error('no response');
+    } catch {
+      res = { ok: false, error: 'interrupted', message: 'The connection to GrammarMe’s companion was interrupted. Try again.' };
+    }
+    if (this.aiRequestId !== requestId || this.destroyed) return; // cancelled meanwhile
+    this.aiRequestId = null;
+    if (!res.ok) return this.showAiError(res.error, res.message);
+
+    this.syncText();
+    const placed = placeAiEdits(res.edits, scope, sent, this.snapshot());
+    // Replace earlier ChatGPT suggestions inside this range; keep ones elsewhere.
+    this.mem.ai = [
+      ...this.mem.ai.filter((s) => s.end <= scope.start || s.start >= scope.end),
+      ...placed.suggestions,
+    ];
+    this.refresh();
+    const skipped = placed.dropped + res.dropped;
+    const n = placed.suggestions.length;
+    this.overlay.showPanel({
+      title: 'Check with ChatGPT',
+      lines: [
+        n === 0 ? 'ChatGPT suggested no changes.' : `ChatGPT suggested ${n} edit${n === 1 ? '' : 's'}. They’re underlined; click one to accept or dismiss it.`,
+        ...(skipped > 0
+          ? [`${skipped} more ${skipped === 1 ? 'wasn’t' : 'weren’t'} shown because ${skipped === 1 ? 'it' : 'they'} couldn’t be placed safely or might change your meaning.`]
+          : []),
+      ],
+      actions: [{ label: 'Done', primary: true, onClick: () => this.closeAi() }],
+      onClose: () => this.closeAi(),
+    });
+    this.overlay.focusPanel();
+  }
+
+  private showAiError(code: AiErrorCode, message: string): void {
+    if (this.destroyed) return;
+    const reconnect = code === 'not_connected' || code === 'reauth_required' || code === 'permission_required';
+    this.overlay.showPanel({
+      title: 'Check with ChatGPT',
+      error: message,
+      lines: reconnect
+        ? ['Open the GrammarMe button in Chrome’s toolbar to connect again.']
+        : /local/i.test(message) || code === 'cancelled'
+          ? []
+          : ['Local spelling and grammar checks keep working.'],
+      link: code === 'usage_limit' || code === 'usage_unavailable' ? { text: 'Manage usage ↗', href: MANAGE_USAGE_URL } : undefined,
+      actions: [
+        ...(code === 'cancelled' || reconnect ? [] : [{ label: 'Try again', onClick: () => this.renderCompose() }]),
+        { label: 'Close', primary: code === 'cancelled', onClick: () => this.closeAi() },
+      ],
+      onClose: () => this.closeAi(),
+    });
+  }
+
+  private cancelAi(): void {
+    const id = this.aiRequestId;
+    if (!id) return;
+    this.aiRequestId = null;
+    const msg: AiCancelRequest = { target: 'background', type: 'aiCancel', requestId: id };
+    chrome.runtime.sendMessage(msg).catch(() => undefined);
+    if (!this.destroyed) this.showAiError('cancelled', 'AI check cancelled. Nothing more will be sent.');
+  }
+
+  private closeAi(): void {
+    if (this.aiRequestId) this.cancelAi();
+    this.aiScope = null;
+    this.overlay.closePanel();
+    if (!this.destroyed) this.field.focus({ preventScroll: true });
   }
 
   private addWord(s: Suggestion): void {

@@ -4,6 +4,21 @@
  * Holds no long-lived state of its own (Chrome may terminate it after ~30 s idle).
  */
 import type { CheckOptions } from '@grammarme/core';
+import { AI_CHECK_TIMEOUT_MS, SIGN_IN_TIMEOUT_MS } from '@grammarme/core/companion';
+import {
+  AI_READY_KEY,
+  AI_SIGNIN_KEY,
+  isAiRequest,
+  isContentAiRequest,
+  type AiCheckRequest,
+  type AiCheckResponse,
+  type AiModelsResponse,
+  type AiRequest,
+  type AiSimpleResponse,
+  type AiStatusResponse,
+  type SignInState,
+} from './ai-protocol.ts';
+import { callCompanion, failure, hasNativePermission, type CallHandle, type CallResult } from './companion-client.ts';
 import {
   isBackgroundRequest,
   normalizeWord,
@@ -131,8 +146,173 @@ async function handleAddWord(word: string): Promise<void> {
   }
 }
 
+/* ------------------------------------------------------------------ optional ChatGPT (companion) */
+
+const QUICK_TIMEOUT_MS = 20_000;
+let signIn: CallHandle | null = null;
+/** One AI check per tab at a time; keyed by tab id. */
+const checks = new Map<number, { requestId: string; handle: CallHandle }>();
+
+async function setReady(ready: boolean): Promise<void> {
+  await chrome.storage.local.set({ [AI_READY_KEY]: { ready } });
+}
+
+async function setSignIn(state: SignInState | null): Promise<void> {
+  if (state) await chrome.storage.session.set({ [AI_SIGNIN_KEY]: state });
+  else await chrome.storage.session.remove(AI_SIGNIN_KEY);
+}
+
+/** Losing the session or the plan permission means the in-page AI button should disappear. */
+async function noteResult(r: CallResult): Promise<void> {
+  if (!r.ok && (r.error === 'not_connected' || r.error === 'reauth_required' || r.error === 'permission_required')) {
+    await setReady(false);
+  }
+}
+
+async function quick(call: Parameters<typeof callCompanion>[0]): Promise<CallResult> {
+  if (!(await hasNativePermission())) return failure('permission_missing');
+  const r = await callCompanion(call, { timeoutMs: QUICK_TIMEOUT_MS }).result;
+  await noteResult(r);
+  return r;
+}
+
+async function aiStatus(): Promise<AiStatusResponse> {
+  const permission = await hasNativePermission();
+  const signingIn = signIn !== null;
+  if (!permission) return { ok: true, permission, companion: false, signingIn };
+  const r = await quick({ type: 'status' });
+  if (!r.ok) {
+    const companion = !['companion_missing', 'companion_forbidden', 'interrupted', 'permission_missing'].includes(r.error);
+    return { ok: true, permission, companion, signingIn, error: r.error, message: r.message };
+  }
+  const status = r.status;
+  await setReady(Boolean(status?.connected && status.account?.planUsage));
+  return { ok: true, permission, companion: true, status, signingIn };
+}
+
+async function aiConnect(): Promise<AiSimpleResponse> {
+  if (!(await hasNativePermission())) return failure('permission_missing');
+  if (signIn) return { ok: true };
+  await setSignIn({ state: 'waiting', at: Date.now() });
+  const handle = callCompanion(
+    { type: 'signIn' },
+    {
+      // A little longer than the companion's own 10-minute limit, so its answer wins.
+      timeoutMs: SIGN_IN_TIMEOUT_MS + 30_000,
+      // OpenAI's authorization page, opened in a normal tab. isCompanionReply() only accepts
+      // https://auth.openai.com/ URLs here.
+      onAuthUrl: (url) => void chrome.tabs.create({ url }),
+    },
+  );
+  signIn = handle;
+  void handle.result.then(async (r) => {
+    signIn = null;
+    if (r.ok) {
+      const planUsage = Boolean(r.status?.account?.planUsage);
+      await setReady(Boolean(r.status?.connected && planUsage));
+      await setSignIn(
+        planUsage
+          ? { state: 'done', at: Date.now() }
+          : { state: 'error', error: 'permission_required', message: failure('permission_required').message, at: Date.now() },
+      );
+    } else {
+      await noteResult(r);
+      await setSignIn({ state: 'error', error: r.error, message: r.message, at: Date.now() });
+    }
+  });
+  return { ok: true };
+}
+
+async function aiDisconnect(): Promise<AiSimpleResponse> {
+  signIn?.cancel();
+  const r = await quick({ type: 'signOut' });
+  await setReady(false);
+  await setSignIn(null);
+  return r.ok ? { ok: true, revoked: r.revoked } : r;
+}
+
+async function aiModels(): Promise<AiModelsResponse> {
+  const r = await quick({ type: 'models' });
+  if (!r.ok) return r;
+  const st = await quick({ type: 'status' });
+  return { ok: true, models: r.models ?? [], selected: st.ok ? st.status?.model : undefined };
+}
+
+async function aiCheck(req: AiCheckRequest, sender: chrome.runtime.MessageSender): Promise<AiCheckResponse> {
+  const tabId = sender.tab?.id;
+  if (tabId === undefined) return failure('bad_request');
+  const settings = normalizeSettings((await chrome.storage.sync.get(SETTINGS_KEY))[SETTINGS_KEY]);
+  let host = '';
+  try {
+    host = sender.url ? new URL(sender.url).hostname : '';
+  } catch {
+    host = '';
+  }
+  if (!isActiveOn(settings, host)) return failure('disabled');
+  if (checks.has(tabId)) return failure('busy');
+  if (!(await hasNativePermission())) return failure('permission_missing');
+
+  // The user pressed the button for this exact text; nothing is sent while typing.
+  const handle = callCompanion(
+    { type: 'check', task: req.task, mode: req.mode, text: req.text },
+    { timeoutMs: AI_CHECK_TIMEOUT_MS + 5_000 },
+  );
+  checks.set(tabId, { requestId: req.requestId, handle });
+  try {
+    const r = await handle.result;
+    await noteResult(r);
+    if (!r.ok) return r;
+    if (!r.check) return failure('provider_error');
+    return { ok: true, edits: r.check.edits, dropped: r.check.dropped, model: r.check.model };
+  } finally {
+    checks.delete(tabId);
+  }
+}
+
+function aiCancel(requestId: string, sender: chrome.runtime.MessageSender): void {
+  const tabId = sender.tab?.id;
+  if (tabId === undefined) return;
+  const running = checks.get(tabId);
+  if (running?.requestId === requestId) running.handle.cancel();
+}
+
+function handleAi(msg: AiRequest, sender: chrome.runtime.MessageSender): Promise<unknown> {
+  // Content scripts (which run inside web pages) may only check and cancel; account management is
+  // for the extension's own pages. Decide by the sender's URL, not by whether it has a tab: the
+  // popup can be opened in a tab too.
+  const fromExtensionPage = (sender.url ?? '').startsWith(chrome.runtime.getURL(''));
+  if (!fromExtensionPage && !isContentAiRequest(msg)) return Promise.resolve(failure('bad_request'));
+  switch (msg.type) {
+    case 'aiStatus':
+      return aiStatus();
+    case 'aiConnect':
+      return aiConnect();
+    case 'aiCancelConnect':
+      signIn?.cancel();
+      return Promise.resolve({ ok: true });
+    case 'aiDisconnect':
+      return aiDisconnect();
+    case 'aiModels':
+      return aiModels();
+    case 'aiSetModel':
+      return quick({ type: 'setModel', model: msg.model }).then((r) => (r.ok ? { ok: true } : r));
+    case 'aiTest':
+      return quick({ type: 'test' }).then((r) => (r.ok ? { ok: true, latencyMs: r.latencyMs } : r));
+    case 'aiCheck':
+      return aiCheck(msg, sender);
+    case 'aiCancel':
+      aiCancel(msg.requestId, sender);
+      return Promise.resolve({ ok: true });
+  }
+}
+
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
-  if (sender.id !== chrome.runtime.id || !isBackgroundRequest(msg)) return false;
+  if (sender.id !== chrome.runtime.id) return false;
+  if (isAiRequest(msg)) {
+    void handleAi(msg, sender).then(sendResponse, (err: unknown) => sendResponse(failure('internal', String(err))));
+    return true;
+  }
+  if (!isBackgroundRequest(msg)) return false;
   switch (msg.type) {
     case 'check':
       void handleCheck(msg, sender).then(sendResponse);

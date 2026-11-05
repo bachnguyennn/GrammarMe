@@ -1,6 +1,7 @@
-/** Toolbar popup: global on/off, per-site on/off, dialect, link to the web editor. */
+/** Toolbar popup: global on/off, per-site on/off, dialect, the optional ChatGPT connection, link to the web editor. */
 import type { Dialect } from '@grammarme/core';
 import type { GetSiteInfoRequest, SiteInfo } from './protocol.ts';
+import { mountAi } from './popup-ai.ts';
 import { DIALECTS, SETTINGS_KEY, normalizeSettings, siteKey, withSiteEnabled, type Settings } from './settings.ts';
 
 /** Where the full editor lives (GitHub Pages). */
@@ -94,3 +95,4 @@ async function main(): Promise<void> {
 }
 
 void main();
+void mountAi();

@@ -26,9 +26,22 @@
         <select id="dialect"></select>
       </label>
     </main>
+    <section id="ai" class="ai" aria-labelledby="ai-h">
+      <h2 id="ai-h">ChatGPT suggestions <span class="tag">Optional</span></h2>
+      <p class="note">Uses your own ChatGPT Plus or Pro plan through the GrammarMe companion, a small program you install on this computer. <a id="ai-guide" href="#" target="_blank" rel="noopener">Setup guide ↗</a></p>
+      <div id="ai-body" aria-live="polite"><p class="note">Checking the connection…</p></div>
+    </section>
+    <div id="ai-consent" class="modal" role="dialog" aria-modal="true" aria-labelledby="ai-consent-h" hidden>
+      <div class="modal-card">
+        <h2 id="ai-consent-h">You're using your ChatGPT plan</h2>
+        <p>Eligible usage in GrammarMe uses your ChatGPT plan. Manage usage in your ChatGPT settings.</p>
+        <p class="note">Text is sent to OpenAI only when you press Check with ChatGPT on a text box. Spelling and grammar checks still run on your device.</p>
+        <button id="ai-consent-ok" type="button" class="btn primary">Got it</button>
+      </div>
+    </div>
     <footer>
       <a id="editor" href="#" target="_blank" rel="noopener">Open the web editor ↗</a>
-      <p class="note">Checks run on your device. Your text is never sent anywhere.</p>
+      <p class="note">Spelling and grammar checks run on your device. Optional ChatGPT checks send text only when you request one.</p>
     </footer>
     <script src="popup.js"></script>
   </body>

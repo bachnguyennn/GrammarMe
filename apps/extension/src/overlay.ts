@@ -22,6 +22,30 @@ import {
   type BadgeState,
 } from './segments.ts';
 
+/** One action button in the AI panel. */
+export interface PanelAction {
+  label: string;
+  primary?: boolean;
+  disabled?: boolean;
+  onClick(): void;
+}
+
+/** What the AI panel shows. Plain strings only: rendered with textContent. */
+export interface AiPanelContent {
+  title: string;
+  /** Grammar / Clarity / Tone picker. */
+  tasks?: { options: { id: string; label: string }[]; current: string; onPick(id: string): void };
+  lines?: string[];
+  /** The exact text that will be sent. */
+  preview?: string;
+  /** Destination notice, shown emphasised. */
+  notice?: string;
+  error?: string;
+  link?: { text: string; href: string };
+  actions: PanelAction[];
+  onClose(): void;
+}
+
 export interface OverlayCallbacks {
   onReplace(s: Suggestion, index: number): void;
   onIgnore(s: Suggestion): void;
@@ -31,6 +55,8 @@ export interface OverlayCallbacks {
   onDismiss(returnFocus: boolean): void;
   /** The field left the DOM. */
   onFieldGone(): void;
+  /** The in-page "AI" button was pressed (only shown when ChatGPT is connected). */
+  onAiClick?(): void;
 }
 
 /** Computed properties that affect text layout, copied from the field onto the mirror. */
@@ -103,6 +129,10 @@ export class Overlay {
   /** Rich mode: container for the drawn underline bars. */
   private readonly lines: HTMLDivElement;
   private readonly badge: HTMLButtonElement;
+  private readonly aiButton: HTMLButtonElement;
+  private aiAvailable = false;
+  private panel: HTMLDivElement | null = null;
+  private panelOnClose: (() => void) | null = null;
   private readonly field: TextField | HTMLElement;
   private readonly rich: RichEditable | null;
   private richSuggestions: readonly Suggestion[] = [];
@@ -142,7 +172,19 @@ export class Overlay {
     this.badge.addEventListener('mousedown', (e) => e.preventDefault());
     this.badge.addEventListener('click', () => this.cb.onBadgeClick());
 
-    this.root.append(this.rich ? this.lines : this.mirror, this.badge);
+    this.aiButton = document.createElement('button');
+    this.aiButton.type = 'button';
+    this.aiButton.className = 'aibtn';
+    this.aiButton.textContent = 'AI';
+    this.aiButton.title = 'Check with ChatGPT (sends text only when you confirm)';
+    this.aiButton.setAttribute('aria-label', 'Check this text with ChatGPT');
+    this.aiButton.style.pointerEvents = 'auto';
+    this.aiButton.hidden = true;
+    // Keep the field's caret and selection: the selection decides what would be sent.
+    this.aiButton.addEventListener('mousedown', (e) => e.preventDefault());
+    this.aiButton.addEventListener('click', () => this.cb.onAiClick?.());
+
+    this.root.append(this.rich ? this.lines : this.mirror, this.badge, this.aiButton);
     document.documentElement.append(this.host);
     this.layout(true);
   }
@@ -219,7 +261,7 @@ export class Overlay {
 
     const head = el('div', 'head');
     const dot = el('span', `dot ${group}`);
-    const cat = el('span', 'cat', CATEGORY_LABEL[s.category]);
+    const cat = el('span', 'cat', s.source === 'ai' ? `${CATEGORY_LABEL[s.category]} · ChatGPT` : CATEGORY_LABEL[s.category]);
     const close = button('close', '×', 'Close suggestion');
     close.addEventListener('click', () => this.cb.onDismiss(true));
     head.append(dot, cat, close);
@@ -284,20 +326,132 @@ export class Overlay {
       this.activeId = null;
       this.scheduleLayout(false);
     }
-    document.removeEventListener('mousedown', this.onDocMouseDown, true);
+    if (!this.panel) document.removeEventListener('mousedown', this.onDocMouseDown, true);
   }
 
   destroy(): void {
     this.destroyed = true;
     if (this.raf) cancelAnimationFrame(this.raf);
     this.closeCard();
+    this.closePanel();
     this.host.remove();
+  }
+
+  /** Show or hide the in-page AI button (shown only when ChatGPT is connected with plan usage). */
+  setAiAvailable(available: boolean): void {
+    this.aiAvailable = available;
+    if (!available) this.aiButton.hidden = true;
+    this.scheduleLayout(false);
+  }
+
+  get panelOpen(): boolean {
+    return this.panel !== null;
+  }
+
+  /** Open (or redraw) the AI panel. Built with textContent only. */
+  showPanel(c: AiPanelContent): void {
+    const panel = this.panel ?? document.createElement('div');
+    panel.className = 'card panel';
+    panel.style.pointerEvents = 'auto';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', c.title);
+    const head = el('div', 'head');
+    const close = button('close', '×', 'Close');
+    close.addEventListener('click', () => c.onClose());
+    head.append(el('span', 'title', c.title), close);
+    const kids: Node[] = [head];
+    if (c.tasks) {
+      const row = el('div', 'seg');
+      row.setAttribute('role', 'radiogroup');
+      row.setAttribute('aria-label', 'What to check');
+      for (const o of c.tasks.options) {
+        const b = button(`segbtn${o.id === c.tasks.current ? ' on' : ''}`, o.label, o.label);
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', String(o.id === c.tasks.current));
+        b.addEventListener('click', () => c.tasks!.onPick(o.id));
+        row.append(b);
+      }
+      kids.push(row);
+    }
+    if (c.error) kids.push(el('p', 'msg errtext', c.error));
+    for (const line of c.lines ?? []) kids.push(el('p', 'msg', line));
+    if (c.preview !== undefined) {
+      const pre = el('div', 'preview', c.preview);
+      pre.tabIndex = 0;
+      pre.setAttribute('aria-label', 'Text that will be sent');
+      kids.push(pre);
+    }
+    if (c.notice) kids.push(el('p', 'notice', c.notice));
+    if (c.link) {
+      const a = el('a', 'lnk', c.link.text);
+      a.href = c.link.href;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      kids.push(a);
+    }
+    const foot = el('div', 'repls');
+    for (const a of c.actions) {
+      const b = button(a.primary ? 'repl' : 'action', a.label, a.label);
+      b.disabled = Boolean(a.disabled);
+      b.addEventListener('click', () => a.onClick());
+      foot.append(b);
+    }
+    kids.push(foot);
+    panel.replaceChildren(...kids);
+    panel.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        c.onClose();
+      }
+    };
+    this.panelOnClose = c.onClose;
+    if (!this.panel) {
+      this.closeCard();
+      this.root.append(panel);
+      this.panel = panel;
+      document.addEventListener('mousedown', this.onDocMouseDown, true);
+    }
+    this.positionPanel();
+  }
+
+  focusPanel(): void {
+    this.panel?.querySelector<HTMLButtonElement>('button.repl:not(:disabled), button.segbtn.on, button.action')?.focus();
+  }
+
+  closePanel(): void {
+    if (!this.panel) return;
+    this.panel.remove();
+    this.panel = null;
+    this.panelOnClose = null;
+    if (!this.card) document.removeEventListener('mousedown', this.onDocMouseDown, true);
+  }
+
+  private placeAiButton(badgeLeft: number, top: number, badgeHidden: boolean, clipLeft: number): void {
+    const left = badgeLeft - BADGE_SIZE - 10;
+    this.aiButton.style.left = `${left}px`;
+    this.aiButton.style.top = `${top}px`;
+    this.aiButton.hidden = !this.aiAvailable || badgeHidden || left < clipLeft;
+  }
+
+  private positionPanel(): void {
+    const panel = this.panel;
+    if (!panel) return;
+    const r = this.field.getBoundingClientRect();
+    const w = panel.offsetWidth;
+    const h = panel.offsetHeight;
+    let top = r.bottom + 6;
+    if (top + h > window.innerHeight - 8 && r.top - 6 - h >= 8) top = r.top - 6 - h;
+    const left = Math.min(Math.max(8, r.left), Math.max(8, window.innerWidth - w - 8));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${Math.max(8, Math.min(top, window.innerHeight - h - 8))}px`;
   }
 
   private onDocMouseDown = (e: MouseEvent): void => {
     const path = e.composedPath();
     if (path.includes(this.host) || path.includes(this.field)) return;
-    this.cb.onDismiss(false);
+    if (this.panel) this.panelOnClose?.();
+    if (this.card) this.cb.onDismiss(false);
   };
 
   private layout(full: boolean): void {
@@ -315,6 +469,7 @@ export class Overlay {
     const shown = rect.width > 0 && rect.height > 0 && clip !== null;
     this.mirror.hidden = !shown;
     this.badge.hidden = !shown;
+    if (!shown) this.aiButton.hidden = true;
     if (!shown || !clip) return;
 
     const ms = this.mirror.style;
@@ -337,8 +492,10 @@ export class Overlay {
     this.badge.style.left = `${left}px`;
     this.badge.style.top = `${top}px`;
     this.badge.hidden = top < clip.top || top + BADGE_SIZE > clip.bottom || left < clip.left || right > clip.right;
+    this.placeAiButton(left, top, this.badge.hidden, clip.left);
 
     if (this.card) this.positionCard();
+    if (this.panel) this.positionPanel();
   }
 
   /** Rich mode: draw one bar per line box of each suggestion, clipped to the visible editor. */
@@ -350,6 +507,7 @@ export class Overlay {
     const shown = rect.width > 0 && rect.height > 0 && clip !== null;
     this.lines.hidden = !shown;
     this.badge.hidden = !shown;
+    if (!shown) this.aiButton.hidden = true;
     if (!shown || !clip) return;
 
     const frag = document.createDocumentFragment();
@@ -384,8 +542,10 @@ export class Overlay {
     this.badge.style.left = `${left}px`;
     this.badge.style.top = `${top}px`;
     this.badge.hidden = top < clip.top || left < clip.left;
+    this.placeAiButton(left, top, this.badge.hidden, clip.left);
 
     if (this.card) this.positionCard();
+    if (this.panel) this.positionPanel();
   }
 
   private copyStyles(): void {
