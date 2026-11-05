@@ -3,8 +3,8 @@ import type { Dialect } from '@grammarme/core';
 import type { GetSiteInfoRequest, SiteInfo } from './protocol.ts';
 import { DIALECTS, SETTINGS_KEY, normalizeSettings, siteKey, withSiteEnabled, type Settings } from './settings.ts';
 
-/** Where the full editor lives. TODO(owner): set the deployed URL. */
-export const WEB_EDITOR_URL = 'http://localhost:5173/';
+/** Where the full editor lives (GitHub Pages). */
+export const WEB_EDITOR_URL = 'https://bachnguyennn.github.io/GrammarMe/editor/';
 
 const DIALECT_LABEL: Record<Dialect, string> = {
   american: 'English (US)',

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="round" data-buttons="arrow" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GrammarMe: install the Chrome extension</title>
+<meta name="description" content="Add the free GrammarMe extension to Chrome in five steps. No account and no coding needed.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400..700&family=JetBrains+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<style>
+:root {
+  --p-bg: #eeecea; --p-surface: #e4e1dd; --p-ink: #333231; --p-muted: #625f5b;
+  --p-accent: #5c6b54; --p-accent-ink: #ffffff; --p-action: #5c6b54; --p-action-ink: #ffffff;
+  --font-display: "Reddit Sans", system-ui, sans-serif;
+  --font-text: "Reddit Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.03em;
+}
+.doc-page { padding: calc(var(--nav) + var(--s-8)) 0 var(--s-9); }
+.nav__bar .nav__actions { margin-left: auto; }
+.doc-page .t-lead { margin-bottom: var(--s-5); }
+.doc-page h2 + p { margin-top: var(--s-3); }
+.doc-page h2 { font-size: var(--t-h3); margin-top: var(--s-8); }
+.doc-page p, .doc-page li { max-width: 62ch; }
+.steps { list-style: none; padding: 0; margin: var(--s-7) 0 0; counter-reset: step; display: grid; gap: var(--s-6); }
+.step { counter-increment: step; display: grid; grid-template-columns: 40px 1fr; gap: 0 var(--s-5); }
+.step::before {
+  content: counter(step); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--p-accent); color: #fff; font-weight: 500;
+}
+.step h3 { font-size: 20px; margin: 6px 0 var(--s-3); }
+.step > div > p { margin: 0 0 var(--s-3); }
+.step .btn { margin-top: var(--s-2); }
+.addr { display: inline-flex; align-items: center; gap: 8px; margin: var(--s-2) 0 var(--s-3); flex-wrap: wrap; }
+.addr code { font: 500 15px/1 var(--font-mono); background: #fff; border: 1px solid color-mix(in oklab, var(--p-ink) 18%, transparent); border-radius: 10px; padding: 10px 12px; user-select: all; }
+.copy { font: inherit; font-size: 14px; border: 1px solid color-mix(in oklab, var(--p-ink) 25%, transparent); background: transparent; color: var(--p-ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.copy:hover { background: color-mix(in oklab, var(--p-ink) 6%, transparent); }
+
+/* Small pictures of the Chrome screens, drawn in HTML */
+.shot { margin: var(--s-3) 0 var(--s-2); max-width: 520px; border-radius: 14px; background: #fff; border: 1px solid color-mix(in oklab, var(--p-ink) 14%, transparent); box-shadow: 0 1px 2px rgb(0 0 0 / .05); overflow: hidden; font-size: 14px; color: #202124; }
+.shot__bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #e8e8e8; }
+.shot__title { font-size: 16px; font-weight: 500; margin-right: auto; }
+.shot__toggle { display: inline-flex; align-items: center; gap: 8px; }
+.shot__switch { width: 32px; height: 18px; border-radius: 9px; background: #5c6b54; position: relative; }
+.shot__switch::after { content: ""; position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+.shot__row { display: flex; gap: 8px; padding: 12px 16px; }
+.shot__btn { white-space: nowrap; border: 1px solid #c7c7c7; border-radius: 8px; padding: 6px 12px; color: #444; }
+.shot__btn.is-hl { border-color: #5c6b54; box-shadow: 0 0 0 3px color-mix(in oklab, #5c6b54 30%, transparent); color: #202124; font-weight: 500; }
+.shot__hl { outline: 3px solid color-mix(in oklab, #5c6b54 45%, transparent); outline-offset: 4px; border-radius: 10px; }
+.shot__card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+.shot__icon { width: 32px; height: 32px; border-radius: 8px; background: #5c6b54; color: #fff; display: grid; place-items: center; font-weight: 600; }
+.shot__card small { display: block; color: #5f6368; }
+.note { margin-top: var(--s-8); padding: var(--s-5) var(--s-6); border-radius: 16px; background: var(--p-surface); }
+.note p { margin: 0 0 var(--s-3); }
+.note p:last-child { margin: 0; }
+.skip { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip:focus { position: static; width: auto; height: auto; clip-path: none; }
+@media (max-width: 600px) {
+  .shot__row { gap: 6px; padding: 12px; }
+  .shot__btn { padding: 6px 8px; font-size: 13px; }
+  .step { grid-template-columns: 1fr; }
+  .step::before { margin-bottom: var(--s-3); }
+  .shot__bar { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the steps</a>
+<header class="nav">
+  <div class="wrap measure nav__bar">
+    <a class="nav__logo" href="index.html"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
+    <div class="nav__actions"><a class="btn btn--primary" href="editor/">Try the editor</a></div>
+  </div>
+</header>
+<main class="doc-page" id="main">
+  <div class="wrap measure">
+    <h1>Install the Chrome extension</h1>
+    <p class="t-lead">Five steps, about two minutes. No account, no coding. Works in Google Chrome, Microsoft Edge and Brave on a computer.</p>
+    <p>Only want to check a piece of writing? You don't need the extension: <a class="link" href="editor/">open the editor</a> and paste it in.</p>
+
+    <ol class="steps">
+      <li class="step"><div>
+        <h3>Download GrammarMe</h3>
+        <p>It's one zip file, about 8 MB.</p>
+        <a class="btn btn--primary" href="GrammarMe-extension.zip" download>Download the extension</a>
+      </div></li>
+
+      <li class="step"><div>
+        <h3>Unzip it and keep the folder</h3>
+        <p>Open your <b>Downloads</b> and double-click <b>GrammarMe-extension.zip</b> (on Windows: right-click it, then <b>Extract All</b>). You get a folder called <b>GrammarMe-extension</b>.</p>
+        <p>Move that folder somewhere you won't tidy away, like <b>Documents</b>. Chrome runs GrammarMe from it, so if the folder is deleted the extension stops working.</p>
+      </div></li>
+
+      <li class="step"><div>
+        <h3>Open Chrome's extensions page</h3>
+        <p>Copy this address, paste it into Chrome's address bar and press Enter. Web pages aren't allowed to link to it, so it has to be pasted.</p>
+        <div class="addr"><code id="addr">chrome://extensions</code><button class="copy" type="button" data-copy="addr">Copy address</button></div>
+        <p>In Edge use <b>edge://extensions</b>, in Brave <b>brave://extensions</b>.</p>
+      </div></li>
+
+      <li class="step"><div>
+        <h3>Turn on Developer mode</h3>
+        <p>Flip the <b>Developer mode</b> switch in the top right corner. (In Edge it's in the left menu.)</p>
+        <div class="shot" aria-hidden="true">
+          <div class="shot__bar"><span class="shot__title">Extensions</span><span class="shot__toggle shot__hl">Developer mode <span class="shot__switch"></span></span></div>
+          <div class="shot__row"><span class="shot__btn">Load unpacked</span><span class="shot__btn">Pack extension</span><span class="shot__btn">Update</span></div>
+        </div>
+      </div></li>
+
+      <li class="step"><div>
+        <h3>Click Load unpacked and pick the folder</h3>
+        <p>Click <b>Load unpacked</b>, choose the <b>GrammarMe-extension</b> folder from step 2, and click <b>Select</b>. GrammarMe appears in your list of extensions.</p>
+        <div class="shot" aria-hidden="true">
+          <div class="shot__row"><span class="shot__btn is-hl">Load unpacked</span><span class="shot__btn">Pack extension</span><span class="shot__btn">Update</span></div>
+          <div class="shot__card"><span class="shot__icon">G</span><span>GrammarMe <small>Free, private grammar and spelling checks.</small></span></div>
+        </div>
+      </div></li>
+    </ol>
+
+    <h2>Try it</h2>
+    <p>Reload any tab that was already open, then type in a comment box or a form on any website. Mistakes get a red underline; click one to see the fix. To keep the GrammarMe button in view, click the puzzle-piece icon next to the address bar and pin it.</p>
+
+    <div class="note">
+      <p><b>"Disable developer mode extensions"?</b> Chrome sometimes shows this for any extension that isn't from the Chrome Web Store. It's expected. Click the X to keep GrammarMe on.</p>
+      <p><b>Is it safe?</b> GrammarMe reads text boxes on the pages you visit so it can check them, and it checks them on your computer. It skips password and payment fields and sends nothing anywhere. Read the <a class="link" href="privacy.html">privacy page</a> or the <a class="link" href="https://github.com/bachnguyennn/GrammarMe">source code</a>.</p>
+      <p><b>Getting a newer version:</b> download the zip again, replace the old folder with the new one, then click the round reload arrow on GrammarMe's card in the extensions page.</p>
+      <p><b>Where it doesn't work yet:</b> Gmail, Google Docs and other rich-text editors. Use the <a class="link" href="editor/">editor</a> for those.</p>
+    </div>
+
+    <p style="margin-top: var(--s-8)"><a class="link" href="index.html">Back to GrammarMe</a></p>
+  </div>
+</main>
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+<script>
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const text = document.getElementById(b.dataset.copy).textContent;
+  try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+  catch { getSelection().selectAllChildren(document.getElementById(b.dataset.copy)); b.textContent = 'Press Cmd/Ctrl+C'; }
+  setTimeout(() => { b.textContent = 'Copy address'; }, 2000);
+});
+</script>
+</body>
+</html>

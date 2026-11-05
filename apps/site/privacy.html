@@ -21,13 +21,16 @@
   --display-tracking: -0.03em;
 }
 .doc-page { padding: calc(var(--nav) + var(--s-8)) 0 var(--s-9); }
+.nav__bar .nav__actions { margin-left: auto; }
+.doc-page .t-lead { margin-bottom: var(--s-5); }
+.doc-page h2 + p { margin-top: var(--s-3); }
 .doc-page h2 { font-size: var(--t-h3); margin-top: var(--s-8); }
 .doc-page p, .doc-page li { max-width: 62ch; }
 </style>
 </head>
 <body>
 <header class="nav">
-  <div class="wrap nav__bar">
+  <div class="wrap measure nav__bar">
     <a class="nav__logo" href="index.html"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
     <div class="nav__actions"><a class="btn btn--primary" href="editor/">Try the editor</a></div>
   </div>

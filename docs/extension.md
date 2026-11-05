@@ -1,8 +1,19 @@
 # GrammarMe Chrome extension (Phase 4 prototype)
 
 Status: **prototype**. It builds, passes type checks and unit tests, and a Node harness drives the built
-`background.js` and `offscreen.js` with real Harper WASM. **It has not yet been loaded into Chrome**:
-use the manual test plan below before relying on it.
+`background.js` and `offscreen.js` with real Harper WASM.
+
+**Loaded in real Chrome (2026-11-05, Chrome 156, headless, fresh profile, the unzipped download):**
+the extension loads with no errors; the offscreen document starts Harper; typing
+"I has a apple. This is a sentense with a eror." into a `<textarea>` gave 5 underlines about 1 s
+later; clicking "has" opened the card and its "have" fix changed the text, and Cmd+Z undid it; an
+`<input type="text">` got its 2 spelling underlines; a password field got none; the popup renders.
+Not yet checked by hand in a windowed Chrome: real typing speed, many tabs, idle shutdown, memory.
+
+**For non-developers:** the site serves a ready-to-load zip at
+`https://bachnguyennn.github.io/GrammarMe/GrammarMe-extension.zip` with plain steps at
+[`install.html`](https://bachnguyennn.github.io/GrammarMe/install.html). The site build
+(`npm run build:site`) rebuilds the zip on every deploy.
 
 Scope: `<textarea>` and `<input type="text|search">` only. contenteditable (Gmail, etc.) and Google Docs
 are out of scope for this phase (see [Not in this phase](#not-in-this-phase-contenteditable-and-google-docs)).
@@ -28,7 +39,7 @@ Build output (about 19.7 MB, almost all of it the WASM):
 | `offscreen.js` | ~157 KB | harper.js glue + `HarperEngine` |
 | `content.js` | ~26 KB | injected into pages; contains no Harper code |
 | `background.js` / `popup.js` | ~3 KB / ~2 KB | |
-| `icons/icon-{16,32,48,128}.png` | <2 KB | drawn by `scripts/icons.mjs` at build time (white G on #1F7A5C) |
+| `icons/icon-{16,32,48,128}.png` | <2 KB | drawn by `scripts/icons.mjs` at build time (white G on #5c6b54) |
 | `licenses/harper.js-LICENSE.txt` | | Apache-2.0 notice for the bundled engine |
 
 ## Architecture

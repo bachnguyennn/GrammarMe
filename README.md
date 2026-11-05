@@ -32,7 +32,7 @@ npm run eval         # grammar accuracy + latency evaluation (tests/eval)
 ### Product website
 
 ```bash
-npm run build:site   # apps/site/dist: the product page at /, the editor at /editor/
+npm run build:site   # apps/site/dist: product page at /, editor at /editor/, extension zip, install page
 ```
 
 `apps/site/dist` is a static folder you can host for free anywhere. Every push to `main` runs the
@@ -40,6 +40,12 @@ tests and deploys it to GitHub Pages (`.github/workflows/pages.yml`). No server 
 involved; the optional AI Worker is not part of the site.
 
 ### Chrome extension
+
+**No building needed:** download
+[GrammarMe-extension.zip](https://bachnguyennn.github.io/GrammarMe/GrammarMe-extension.zip) and
+follow the [five install steps](https://bachnguyennn.github.io/GrammarMe/install.html).
+
+From source:
 
 ```bash
 npm run build -w apps/extension
