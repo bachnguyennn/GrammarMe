@@ -1,7 +1,7 @@
 {
   "name": "grammarme",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A free, private, Grammarly-style writing assistant. Local grammar checking with Harper, optional AI suggestions.",
   "type": "module",
   "workspaces": [
