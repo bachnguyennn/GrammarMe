@@ -104,9 +104,12 @@ export class HarperEngine implements SuggestionEngine {
   readonly source = 'harper' as const;
   private dialect: Dialect | undefined;
   private disabled = new Set<string>();
+  private words: string[] = [];
   private ready: Promise<void>;
+  private linter: Linter;
 
-  constructor(private linter: Linter) {
+  constructor(linter: Linter) {
+    this.linter = linter;
     this.ready = linter.setup();
   }
 
@@ -128,12 +131,14 @@ export class HarperEngine implements SuggestionEngine {
   /** Add words to the personal dictionary so they stop being flagged. */
   async addWords(words: string[]): Promise<void> {
     await this.ready;
+    this.words = [...new Set([...this.words, ...words])];
     await this.linter.importWords(words);
   }
 
   /** Replace the whole personal dictionary (so removed words get flagged again). */
   async setDictionary(words: string[]): Promise<void> {
     await this.ready;
+    this.words = [...new Set(words)];
     await this.linter.clearWords();
     if (words.length) await this.linter.importWords(words);
   }
@@ -148,11 +153,16 @@ export class HarperEngine implements SuggestionEngine {
   }
 
   private async configure(options: CheckOptions): Promise<void> {
+    let rebuilt = false;
     if (options.dialect && options.dialect !== this.dialect) {
+      // harper.js 3.0.0 rebuilds the linter on setDialect, dropping imported words and rule config.
       await this.linter.setDialect(DIALECTS[options.dialect]);
       this.dialect = options.dialect;
+      if (this.words.length) await this.linter.importWords(this.words);
+      rebuilt = true;
     }
     const next = new Set(options.disabledRules ?? []);
+    if (rebuilt) this.disabled = new Set(); // config is back to defaults; re-apply everything
     if (!sameSet(next, this.disabled)) {
       const config = await this.linter.getLintConfig();
       for (const key of Object.keys(config)) {
