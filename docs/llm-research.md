@@ -3,8 +3,8 @@
 *Researched 2026-11-04 by reading the official docs pages listed under each section (all accessed 2026-11-04).
 Free tiers change often. Re-check the linked pages before you rely on any number here.*
 
-**Scope.** This covers the opt-in cloud AI check (`workers/ai-api`). Local Harper checking does not depend
-on any of it. Constraints: $0/month, personal use, no stored text, no exposed keys.
+**Scope.** This covers the web editor's opt-in cloud AI check (`workers/ai-api`). Local Harper checking does
+not depend on any of it, and the extension's ChatGPT check is separate ([`chatgpt.md`](chatgpt.md)). Constraints: $0/month, personal use, no stored text, no exposed keys.
 
 **Labels used below:**
 - **Verified**: read on an official page today.

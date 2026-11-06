@@ -7,6 +7,10 @@
   and choose **Put it back in the corner**.
 - Setup no longer waits forever when the ChatGPT permission is granted after the extension
   started. If it still can't reach the companion, the menu shows the real reason.
+- The privacy page now lists what the extension stores: button positions stay on your device, and
+  extension settings follow your Chrome profile if Chrome sync is on.
+- Releases: the Intel Mac companion is now cross-built on the Apple silicon runner, because
+  GitHub's older macOS runners are gone.
 
 ## 0.1.2 (2026-11-05)
 

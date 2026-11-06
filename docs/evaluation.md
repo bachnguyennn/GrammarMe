@@ -4,6 +4,10 @@
 
 Every number below was copied from a real run: the eval output in `tests/eval/results/*.json` and the vitest/tsc output. Nothing is rounded up. Percentages carry one decimal, and the raw counts are given next to them.
 
+> **This is the baseline report.** Sections 3–8 describe Harper's stock rules on 2026-11-04. GrammarMe
+> now ships different defaults, and every bug in §6 has been fixed. For the current figures, see
+> [the update at the end](#update--shipped-defaults-2026-11-04).
+
 ---
 
 ## 1. How to reproduce
@@ -171,6 +175,10 @@ Of SpellCheck's 50 flags, 20 (40%) were false positives, and every one of them w
 
 ## 5. Recommendations
 
+**Status on 2026-11-06:** 1–4, 7, 9 and 10 are done. 6 is done for code-like tokens and acronyms, but
+not for foreign proper nouns. 8 is available as two opt-in AI routes, but their quality is unmeasured.
+5 isn't done: the dialect still defaults to American.
+
 **Default rule configuration** (`disabledRules`):
 1. **`LongSentences`: disable.** It hides real errors in long sentences (above) and offers no fix. Show sentence length from `stats.ts` instead.
 2. **`SplitWords`: disable.** All 3 of its detections had wrong top fixes; with it off, SpellCheck fixes the same words correctly (spelling fix-rate 80.0% → 90.0%).
@@ -189,23 +197,23 @@ Of SpellCheck's 50 flags, 20 (40%) were false positives, and every one of them w
 
 ## 6. Bugs found (core is read-only for QA, so each is pinned by a failing test)
 
-Each open bug is pinned by an `it.fails` test, so `vitest run` stays green. When a bug is fixed, its test starts *failing*: that is the signal to change it to a plain `it`. That is exactly what happened to bugs 1 and 2 after the lead's `harper.ts` change; both are now ordinary regression tests.
+**All nine are fixed.** Each open bug was pinned by an `it.fails` test, so `vitest run` stayed green. When a bug was fixed, its test started *failing*: that was the signal to change it to a plain `it`. No `it.fails` pins remain.
 
 | # | where | repro → expected vs actual | severity |
 |---|---|---|---|
 | 1 ✅ fixed | `harper.ts` `HarperEngine.configure` (root cause: harper.js `LocalLinter.setDialect` frees and recreates the inner linter) | `addWords(['Zorblaxian'])`, then `check(t,{dialect:'british'})` → expected no flag; **actual: SpellCheck flags it again** (personal dictionary lost) | high; **fixed** (words are re-imported after `setDialect`), regression test added |
 | 2 ✅ fixed | same | `check(t,{dialect:'american',disabledRules:['SpellCheck']})` → `[]`, then `check(t,{dialect:'british',disabledRules:['SpellCheck']})` → expected `[]`; **actual: `problm` flagged**. `sameSet` skipped re-applying the config that `setDialect` reset. | high; **fixed**, regression test added |
-| 3 | `harper.ts` `HarperEngine.check` (calls aren't serialised) | `Promise.all([check(t,{dialect:'british'}), check(t,{dialect:'american'})])` → **rejects with `Error: null pointer passed to rust`**. Concurrent checks with the *same* options are fine (25 in parallel tested). | medium; **still open** after the fix |
+| 3 ✅ fixed | `harper.ts` `HarperEngine.check` (calls aren't serialised) | `Promise.all([check(t,{dialect:'british'}), check(t,{dialect:'american'})])` → **rejects with `Error: null pointer passed to rust`**. Concurrent checks with the *same* options are fine (25 in parallel tested). | medium; **fixed** (checks are serialized) |
 | 4 ✅ fixed | `harper.ts:109` `constructor(private linter: Linter)` | `node --experimental-strip-types` → `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, which broke `npm run eval`. | medium (tooling); **fixed** by the lead (the harness guard is now inert) |
-| 5 | `suggestions.ts` `locateAiEdit` | text `"I saw a dog and a apple."`, edit `{original:"a", replacement:"an", contextBefore:"with "}` → expected `null`; **actual: placed at 3..4, the "a" inside "saw"**. When contextBefore is provided but not found, the ambiguity guard is skipped. | medium (AI safety) |
-| 6 | `suggestions.ts` `isWordChar` | rebase `"teh"` → `"teh́"` (combining accent typed after a flagged word) → expected dropped; **actual: kept at 0..3**. `\p{M}` is not treated as a word character. | low |
-| 7 | `suggestions.ts` `isWordChar` | rebase `"teh"` → `"teh\u{2000B}"` (astral letter) → expected dropped; **actual: kept**, because it checks a single UTF-16 unit | low |
-| 8 | `stats.ts` `WORD` regex | `textStats("résumé writers").words` → expected 2; **actual: 3** (NFD accents split words) | low–medium |
-| 9 | `stats.ts` sentence regex | `textStats('He said "Stop." Then he left.').sentences` → expected 2; **actual: 1** (a terminator before a closing quote or bracket is not counted) | low |
+| 5 ✅ fixed | `suggestions.ts` `locateAiEdit` | text `"I saw a dog and a apple."`, edit `{original:"a", replacement:"an", contextBefore:"with "}` → expected `null`; **actual: placed at 3..4, the "a" inside "saw"**. When contextBefore is provided but not found, the ambiguity guard is skipped. | medium (AI safety); **fixed** |
+| 6 ✅ fixed | `suggestions.ts` `isWordChar` | rebase `"teh"` → `"teh́"` (combining accent typed after a flagged word) → expected dropped; **actual: kept at 0..3**. `\p{M}` is not treated as a word character. | low; **fixed** |
+| 7 ✅ fixed | `suggestions.ts` `isWordChar` | rebase `"teh"` → `"teh\u{2000B}"` (astral letter) → expected dropped; **actual: kept**, because it checks a single UTF-16 unit | low; **fixed** |
+| 8 ✅ fixed | `stats.ts` `WORD` regex | `textStats("résumé writers").words` → expected 2; **actual: 3** (NFD accents split words) | low–medium; **fixed** |
+| 9 ✅ fixed | `stats.ts` sentence regex | `textStats('He said "Stop." Then he left.').sentences` → expected 2; **actual: 1** (a terminator before a closing quote or bracket is not counted) | low; **fixed** |
 
 **Upstream harper.js 3.0.0 issues (not ours, worth reporting):**
 - `fs.readFile(new URL(binary).pathname)` doesn't percent-decode, so the WASM fails to load (ENOENT) from any path containing a space. The fix is `fileURLToPath`.
-- `setDialect` discards dictionary and config; this was the root cause of bugs 1–3 (1–2 are now worked around in `HarperEngine`).
+- `setDialect` discards dictionary and config; this was the root cause of bugs 1–3, which are now worked around in `HarperEngine`.
 - LongSentences masks other lints.
 - `RegularIrregulars` returns suggestions in a non-deterministic order.
 
@@ -215,7 +223,19 @@ Open product questions (`it.todo`): should `textStats().characters` count graphe
 
 ## 7. Test suite summary
 
-`cd packages/core && npx vitest run` gives **5 files, 157 tests: 155 passed, 0 failed, 2 todo**. The 155 passes include the 6 `it.fails` pins for still-open bugs (3, 5, 6, 7, 8, 9). The suite runs in about 3.1 s, of which the Harper file takes about 2.9 s. `npx tsc -p tsconfig.json` passes with 0 errors.
+**Current (`npm test`, 2026-11-06): 34 files, 470 passed, 0 failed, 2 todo.**
+
+| package | tests |
+|---|---:|
+| `packages/core` | 163 passed, 2 todo |
+| `apps/companion` | 134 |
+| `apps/extension` | 83 |
+| `apps/web` | 11 |
+| `workers/ai-api` | 79 |
+
+The rest of this section is the 2026-11-04 baseline for `packages/core`.
+
+`cd packages/core && npx vitest run` gave **5 files, 157 tests: 155 passed, 0 failed, 2 todo**. The 155 passes include the 6 `it.fails` pins for still-open bugs (3, 5, 6, 7, 8, 9). The suite runs in about 3.1 s, of which the Harper file takes about 2.9 s. `npx tsc -p tsconfig.json` passes with 0 errors.
 
 | file | tests | focus |
 |---|---:|---|
@@ -262,3 +282,6 @@ Also fixed from the QA bug list: concurrent checks are now serialized (no WASM c
 dialects), `locateAiEdit` rejects ambiguous quotes when `contextBefore` doesn't match, rebasing treats
 combining marks and astral letters as part of a word, and word/sentence counts handle NFD accents and
 closing quotes. All previously pinned `it.fails` tests now pass as regular tests.
+
+**Re-run on 2026-11-06:** `npm run eval` on the same dataset gave the same accuracy: precision 89/106,
+recall 89/128, top replacement correct 83/89, and 10/46 correct sentences flagged.

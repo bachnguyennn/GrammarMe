@@ -5,12 +5,15 @@ GrammarMe's spelling and grammar checks run on your device and need no setup. Th
 Cloudflare account, so your text goes only to your server and the AI provider you pick, never to
 the GrammarMe project.
 
+This guide is for the **web editor**. The Chrome extension doesn't use this server. Its optional AI
+check uses [your ChatGPT plan](chatgpt.md) instead.
+
 You need to type a few commands in a terminal. You don't need to write any code.
 
 ## What you need
 
 - A free [Cloudflare account](https://dash.cloudflare.com/sign-up).
-- [Node.js](https://nodejs.org) 22 or newer.
+- [Node.js](https://nodejs.org) 22.6 or newer.
 - Optional: a free [Groq API key](https://console.groq.com/keys). Without one, the server uses
   Cloudflare's own Workers AI, which is included in the free account (10,000 "Neurons" a day).
 
@@ -53,11 +56,7 @@ Before choosing a provider, read [what each provider does with your text](llm-re
    npx wrangler secret put GROQ_API_KEY
    ```
 
-5. **Using the extension too?** Open `wrangler.toml` and replace `<extension-id>` in
-   `ALLOWED_ORIGINS` with GrammarMe's ID from `chrome://extensions`. The hosted editor
-   (`https://bachnguyennn.github.io`) is already allowed.
-
-6. **Deploy.**
+5. **Deploy.**
 
    ```sh
    npx wrangler deploy
@@ -67,9 +66,11 @@ Before choosing a provider, read [what each provider does with your text](llm-re
    complains about `[[ratelimits]]`, delete that block from `wrangler.toml` and deploy again. The
    server then uses a built-in limiter instead.
 
-7. **Connect the editor.** In GrammarMe, open **Settings → Optional cloud AI**, tick **Enable AI
+6. **Connect the editor.** In GrammarMe, open **Settings → Optional cloud AI**, tick **Enable AI
    check button**, paste the address and your access token, and press **Done**. An **AI check**
-   button appears at the top.
+   button appears at the top. The hosted editor (`https://bachnguyennn.github.io`) is already
+   allowed. If you host the editor yourself, add its address to `ALLOWED_ORIGINS` in `wrangler.toml`
+   and deploy again.
 
 ## What gets sent, and when
 

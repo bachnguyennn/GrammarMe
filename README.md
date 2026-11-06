@@ -14,11 +14,13 @@ editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
   ChatGPT Plus/Pro plan**, with no API key. It needs a small local companion program, installed
   with one pasted line. Text is sent only when you preview and confirm it
   ([guide](docs/chatgpt.md)).
-- **Optional AI check** for clarity, fluency and tone. It is off by default, runs only when you press
-  the button, and uses your own free Cloudflare Worker. Edits are kept small and must preserve your
-  meaning and voice.
-- **Chrome extension** for text boxes on websites, including Gmail and other rich-text editors.
-- **$0 to run.** No subscriptions, no paid APIs, light enough for an 8 GB laptop.
+- **Optional AI check in the web editor** for clarity, fluency and tone. It is off by default, runs
+  only when you press the button, and uses your own free Cloudflare Worker. Edits are kept small and
+  must preserve your meaning and voice.
+- **Chrome extension** for text boxes on websites, including Gmail and other rich-text editors. You
+  can drag its button anywhere in the box.
+- **$0 to run.** No subscriptions, no paid APIs, light enough for an 8 GB laptop. The optional ChatGPT
+  check uses a ChatGPT plan you already have.
 
 The grammar engine is [Harper](https://writewithharper.com) (Apache-2.0), compiled to WebAssembly.
 
@@ -30,6 +32,7 @@ Requires Node 22.6+.
 npm install
 npm run dev          # web editor at http://localhost:5173
 npm test             # all unit tests
+npm run typecheck    # TypeScript checks in every package
 npm run eval         # grammar accuracy + latency evaluation (tests/eval)
 ```
 
@@ -56,7 +59,8 @@ npm run build -w apps/extension
 ```
 
 Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and choose
-`apps/extension/build`. See [docs/extension.md](docs/extension.md) for what works where.
+`apps/extension/build`. `npm run e2e -w apps/extension` runs the end-to-end checks in headless
+Chrome. See [docs/extension.md](docs/extension.md) for what works where.
 
 ### Optional: ChatGPT in the extension
 
@@ -73,17 +77,18 @@ Full steps, eligibility, what is sent, and troubleshooting: [docs/chatgpt.md](do
 
 ### Optional: AI suggestions
 
-Follow [docs/ai-setup.md](docs/ai-setup.md) to deploy the free Cloudflare Worker. Then
-open **Settings → Cloud AI suggestions** in the editor, paste the Worker URL and your access token,
-and press **AI check**.
+This is for the web editor. Follow [docs/ai-setup.md](docs/ai-setup.md) to deploy the free Cloudflare
+Worker. Then open **Settings → Optional cloud AI** in the editor, tick **Enable AI check button**,
+paste the Worker URL and your access token, and press **AI check**.
 
 ## How it stays private
 
 | What | Where it goes |
 | --- | --- |
 | Text you type | Nowhere. Checked by Harper inside your browser. |
-| Personal dictionary, settings, draft | Your browser's local storage only (draft autosave can be turned off). |
+| Personal dictionary, settings, draft, button position | Your browser's storage, never a GrammarMe server (draft autosave can be turned off). The extension's settings use Chrome's sync storage, so they follow your Chrome profile if Chrome sync is on. |
 | AI check (opt-in, per click) | Your own Worker, then the model provider you configured. Up to 4,000 characters per request; never logged by the Worker. Check your provider's data terms (see [docs/llm-research.md](docs/llm-research.md)). |
+| ChatGPT check (extension, opt-in, per send) | The local companion, then OpenAI, using your plan. Up to 4,000 characters, only after you preview them and press **Send to ChatGPT**. Sign-in credentials stay in a private file on your computer ([details](docs/chatgpt.md#what-is-sent-where-it-goes-what-is-stored)). |
 
 ## Project layout
 
@@ -95,11 +100,13 @@ apps/extension    Chrome MV3 extension
 apps/companion    optional local companion for the extension's ChatGPT check
 workers/ai-api    optional Cloudflare Worker for AI suggestions
 tests/eval        labelled dataset + accuracy/latency runner
-docs/             architecture, decisions, evaluation, research
+docs/             architecture, decisions, evaluation, setup guides, research
 ```
 
 Read [docs/architecture.md](docs/architecture.md) and [docs/decisions.md](docs/decisions.md) for the
-reasoning behind each choice.
+reasoning behind each choice. What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and
+the steps for cutting a version are in
+[docs/architecture.md](docs/architecture.md#releases-and-deployment).
 
 ## License
 

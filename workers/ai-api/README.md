@@ -1,8 +1,10 @@
 # @grammarme/ai-api: opt-in AI check Worker
 
-This Cloudflare Worker gives GrammarMe its optional cloud AI suggestions. Local Harper checks never touch
-it. It runs on the Workers Free plan, stores no text, and logs metadata only. For provider choices,
-free-tier limits and the privacy caveats, see [`docs/llm-research.md`](../../docs/llm-research.md).
+This Cloudflare Worker gives GrammarMe's web editor its optional cloud AI suggestions. Local Harper
+checks never touch it, and neither does the Chrome extension, whose AI route is
+[ChatGPT through the local companion](../../docs/chatgpt.md). The Worker runs on the Workers Free plan,
+stores no text, and logs metadata only. For provider choices, free-tier limits and the privacy
+caveats, see [`docs/llm-research.md`](../../docs/llm-research.md).
 
 ## API
 
@@ -44,11 +46,12 @@ output, or is misconfigured, the Worker tries the next one.
 | `workers-ai` | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Workers AI JSON Mode |
 | `gemini` | `gemini-3.5-flash-lite` | `generateContent` + `responseJsonSchema` (stateless). **Opt-in:** the free tier may use prompts for training. Read the research doc first |
 
-Prompts live in `src/prompts.ts`. Bump `PROMPT_VERSION` whenever you change them.
+Prompts live in `packages/core/src/ai/prompts.ts`, shared with the ChatGPT companion; `src/prompts.ts`
+only re-exports them. Bump `PROMPT_VERSION` whenever you change them.
 
-## Meaning-preservation guards (`src/sanitize.ts`)
+## Meaning-preservation guards (`packages/core/src/ai/sanitize.ts`)
 
-Model output is untrusted. An edit is **dropped**, never repaired, when any of these holds:
+The ChatGPT companion uses the same guards. Model output is untrusted. An edit is **dropped**, never repaired, when any of these holds:
 
 - **Wrong shape or category**
   - The fields have the wrong shape.
@@ -83,7 +86,7 @@ in `tests/eval/`, not by guesswork.
 
 - **Auth:** shared bearer token, compared in constant time via SHA-256. If the secret is missing or
   shorter than 16 characters, the Worker returns 503 for every request.
-- **CORS:** exact `ALLOWED_ORIGINS` entries, such as `chrome-extension://<id>`. `http://localhost:*` and
+- **CORS:** exact `ALLOWED_ORIGINS` entries, such as `https://bachnguyennn.github.io`. `http://localhost:*` and
   `http://127.0.0.1:*` match any port. Requests that send an `Origin` not on the list get 403. Requests
   without an `Origin` (curl, server-side) still need the token.
 - **Per-client rate limit:**
@@ -118,7 +121,7 @@ npx wrangler login
 npx wrangler secret put GRAMMARME_CLIENT_TOKEN
 npx wrangler secret put GROQ_API_KEY            # optional
 npx wrangler secret put GEMINI_API_KEY          # optional, opt-in (see docs/llm-research.md)
-# edit ALLOWED_ORIGINS in wrangler.toml with your extension id, then:
+# add any self-hosted editor's address to ALLOWED_ORIGINS in wrangler.toml, then:
 npx wrangler deploy
 ```
 

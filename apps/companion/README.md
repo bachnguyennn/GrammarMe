@@ -25,7 +25,8 @@ only when GrammarMe needs it.
 
 - macOS or Linux. **Windows isn't supported yet**, because native messaging hosts there are
   registered in the Windows registry.
-- Node.js 22.6 or newer.
+- Node.js 22.6 or newer for the small version or a source install. The standalone version has Node
+  built in.
 - Chrome, Chromium, Microsoft Edge or Brave.
 - A ChatGPT plan that OpenAI allows to be used in other apps.
 
@@ -41,12 +42,14 @@ curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh | sh
 against `SHA256SUMS`. It uses `grammarme-companion.mjs` if Node.js 22.6+ is installed, otherwise a
 standalone executable with Node built in, `grammarme-companion-<os>-<arch>.tar.gz`. It then runs
 its `install` command, which is described below. Releases are built by
-[`.github/workflows/release.yml`](../../.github/workflows/release.yml) when a `v*` tag is pushed.
+[`.github/workflows/release.yml`](../../.github/workflows/release.yml) when a `v*` tag is pushed,
+or by hand for an existing tag.
 A standalone install is its own launcher: the browser manifest points straight at
 `~/.config/grammarme/bin/grammarme-companion`.
 
 To build the standalone version locally: `npm run build:sea -w apps/companion`. This uses Node's
-single executable application support and `postject`, and ad-hoc signs the result on macOS.
+single executable application support and `postject`, and ad-hoc signs the result on macOS. It
+builds for the machine it runs on; the release workflow cross-builds the Intel Mac version.
 
 **From source** (Node 22.6+), from the repository root:
 
@@ -97,21 +100,30 @@ grammarme-companion --version
 - `--manifest-dir` installs only into the given folder, for example a temporary Chrome profile's
   `NativeMessagingHosts`. Tests and the end-to-end harness use it.
 
+In this document, `grammarme-companion` means whichever one you have:
+
+| Install | Command |
+| --- | --- |
+| Standalone | `~/.config/grammarme/bin/grammarme-companion` |
+| Small version | `node ~/.config/grammarme/bin/grammarme-companion.mjs` |
+| Source checkout | `node apps/companion/dist/grammarme-companion.mjs` |
+
 ## Start and stop
 
 You don't start it yourself. When the extension calls `chrome.runtime.connectNative`, Chrome
-starts the launcher with the extension's origin as its argument. The companion exits when the
+starts the launcher or standalone executable with the extension's origin as its argument. The companion exits when the
 extension disconnects (stdin closes), and any check or sign-in still running is cancelled first.
 Chrome can start more than one copy. They share the credential file safely through a lock file.
 
 To remove the companion:
 
 ```sh
-node apps/companion/dist/grammarme-companion.mjs sign-out    # optional: revoke and delete tokens
-node apps/companion/dist/grammarme-companion.mjs uninstall
+grammarme-companion sign-out    # optional: revoke and delete tokens
+grammarme-companion uninstall
 ```
 
-`uninstall` removes the manifests, the launcher and host copy in `~/.config/grammarme/bin`, and
+`uninstall` removes the manifests, the launcher and the host copy or standalone executable in
+`~/.config/grammarme/bin`, and
 `allowed-origins.json`. With
 `--manifest-dir`, it removes only the manifest in that folder and leaves the rest of the install
 alone. It keeps your credentials, so run `sign-out` first if you want those gone. You can also delete the
@@ -132,7 +144,7 @@ On Windows (not yet supported) the profile's default permissions would apply.
 
 ## Troubleshooting
 
-Start with `node apps/companion/dist/grammarme-companion.mjs doctor`. It shows the Node version,
+Start with `grammarme-companion doctor`. It shows the Node version,
 the launcher and the Node binary it points to, each browser's manifest and allowed origins, the
 credential file's permissions, and whether `auth.openai.com` is reachable.
 
@@ -185,6 +197,8 @@ start with any other value. While the auth hook is set, discovered endpoints mus
 `GRAMMARME_COMPANION_HOME` moves the data folder.
 `GRAMMARME_COMPANION_OPEN_BROWSER=1` makes the host open the authorize URL itself. Normally the
 extension opens it.
+`GRAMMARME_DOWNLOAD_BASE` points `install.sh` at another download address. It must be `https://`,
+or `http://` on `127.0.0.1` or `localhost`.
 
 ## Development
 
@@ -192,10 +206,16 @@ extension opens it.
 npm run typecheck -w apps/companion
 npm run test -w apps/companion     # vitest; all network is mocked or on 127.0.0.1
 npm run build -w apps/companion    # esbuild → dist/grammarme-companion.mjs
+npm run build:sea -w apps/companion    # standalone build for this machine
 ```
 
-Source layout: `src/cli.ts` (entry point and CLI), `host.ts` (native messaging loop),
-`companion.ts` (operations), `oauth.ts` and `oidc.ts` (Sign in with ChatGPT), `loopback.ts`
-(callback listener), `openai.ts` and `sse.ts` (Responses API streaming and models), `store.ts`
-(credential file and lock), `install.ts` and `doctor.ts`. Prompts and output guards come from
-`@grammarme/core/ai`, the same ones the Cloudflare Worker uses.
+Source layout: `src/cli.ts` (entry point and CLI), `host.ts` and `framing.ts` (native messaging
+loop and frames), `origin.ts` (caller check), `companion.ts` (operations), `oauth.ts` and `oidc.ts`
+(Sign in with ChatGPT), `loopback.ts` (callback listener), `openai.ts` and `sse.ts` (Responses API
+streaming and models), `http.ts` (fetch helpers), `store.ts` (credential file and lock),
+`install.ts` and `doctor.ts`, `config.ts` (endpoints and paths), `errors.ts`, `log.ts` and
+`version.ts`. Prompts and output guards come from `@grammarme/core/ai`, the same ones the
+Cloudflare Worker uses.
+
+`src/version.ts` must match `package.json`. See
+[cutting a version](../../docs/architecture.md#releases-and-deployment).

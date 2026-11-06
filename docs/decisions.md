@@ -112,6 +112,7 @@ actually ran it; anything else is labelled as reasoning or documentation.
   mock-ups advertised features that didn't exist (document list, saved drafts, settings switches,
   an AI chat), so they were replaced on 2026-11-05. The editor's example paragraph is pinned by a
   test (`apps/web/test/sample.test.ts`) to mistakes Harper really flags in all five dialects.
+
 ## D11. ChatGPT in the extension — **local companion over native messaging** (2026-11-05)
 
 - **The owner's request:** let people use their own ChatGPT account for AI suggestions, without an
@@ -134,3 +135,20 @@ actually ran it; anything else is labelled as reasoning or documentation.
 - **Not offered on the hosted web editor:** it isn't a local app.
 - **Open risk:** OpenAI's terms don't explicitly cover a browser extension plus companion
   distributed to others. Confirm with OpenAI before promoting it widely.
+
+## D12. Installing the companion — **one pasted line, with a standalone build** (2026-11-05)
+
+- **Problem:** the first companion needed Node.js, Git and the source code, which is too much to ask
+  of someone who only wants ChatGPT suggestions. An extension can't install a program for them.
+- **Outcome:** a short `install.sh`, served by the site, that the popup shows with a Copy button. It
+  downloads from the latest GitHub release, checks `SHA256SUMS`, and runs the companion's own
+  `install` command. It needs no `sudo` and stays in the home folder.
+- **Two builds:** people with Node 22.6+ get the `.mjs` bundle (about 90 KB). Everyone else gets a
+  Node single executable application (about 40 MB to download).
+- **Built in public:** `release.yml` builds every asset from the tagged source. Intel Mac builds are
+  cross-built on the Apple silicon runner, using Node's official `darwin-x64` binary checked against
+  nodejs.org's `SHASUMS256.txt`, because GitHub's Intel macOS runners are being retired.
+- **Known trade-offs:**
+  - The standalone build is ad-hoc signed, not signed by Apple.
+  - `SHA256SUMS` comes from the same release as the files. It catches a corrupted download, not a
+    tampered release.

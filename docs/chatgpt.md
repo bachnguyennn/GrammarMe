@@ -91,8 +91,8 @@ version `node ~/.config/grammarme/bin/grammarme-companion.mjs doctor`.
 
 1. Click GrammarMe in Chrome's toolbar. If you don't see it, pin it from the puzzle-piece menu.
 2. Under **ChatGPT suggestions**, click **Continue with ChatGPT**.
-3. Chrome asks whether GrammarMe may "communicate with cooperating native applications". That
-   permission is for the companion. Allow it.
+3. If Chrome asks whether GrammarMe may "communicate with cooperating native applications", allow
+   it. That permission is for the companion, and you only give it once.
 4. A tab opens on **auth.openai.com**. Sign in and allow GrammarMe to **use your ChatGPT plan**.
    If you decline plan usage, GrammarMe shows "plan usage wasn't allowed" and sends nothing.
 5. The tab says you can close it. Open GrammarMe's toolbar menu again: it shows **Connected as
@@ -148,8 +148,10 @@ choose model, test and check. It won't fetch other URLs or forward arbitrary req
 
 | You see | Cause and fix |
 | --- | --- |
-| GrammarMe stays on "Step 1 · Install the companion" | The installer hasn't finished or failed. Run the line again and read its last message. If it says there's no published release yet, the project hasn't published one; install from source instead. |
-| "installed for a different extension ID" | The companion only allows `cflaepodgccnfddlhomomhbmhgkgikhf`. Check the ID on `chrome://extensions`. If you changed `manifest.json`'s `key`, re-run the installer with `--extension-id <id>`. |
+| GrammarMe stays on "Step 1 of 2 · Install the GrammarMe companion" | The installer hasn't finished or failed. Run the line again and read its last message. If it says there's no published release yet, the project hasn't published one; install from source instead. |
+| "Still not reachable: …" | After 15 seconds GrammarMe still can't reach the companion, and the text after the colon says why. If you haven't run the install line yet, run it. Otherwise run `doctor` (below), run the install line again, then reload GrammarMe on `chrome://extensions`. |
+| "Finishing setup: GrammarMe is restarting." | This is normal after you allow the permission. GrammarMe restarts once, which can close the menu. Open it again. |
+| "installed for a different extension ID" | The companion only allows `cflaepodgccnfddlhomomhbmhgkgikhf`. Check the ID on `chrome://extensions`. If you changed `manifest.json`'s `key`, add your ID to the install line: `curl -fsSL https://bachnguyennn.github.io/GrammarMe/companion/install.sh \| sh -s -- --extension-id <id>`. |
 | "The connection … was interrupted" | The companion exited. With the small version, this often means Node moved after an upgrade. Run the install line again, then `doctor`. |
 | Sign-in tab shows an error or never finishes | Something may block `127.0.0.1` callbacks (a firewall or VPN). Retry, or cancel and try again. Sign-in expires after 10 minutes. |
 | "plan usage wasn't allowed" | You declined the plan-usage permission. Connect again and allow it. |

@@ -30,6 +30,7 @@ own ChatGPT plan through a local companion (see [below](#optional-chatgpt-compan
 | --- | --- |
 | `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), AI prompts and output guards shared by every AI route (`@grammarme/core/ai`), the extension↔companion message contract (`@grammarme/core/companion`), text statistics. No UI. |
 | `apps/web` | The editor (React + Vite). Runs Harper in a Web Worker. |
+| `apps/site` | Static product site, install and privacy pages. Its build also packages the editor at `/editor/`, the extension zip and `companion/install.sh`. |
 | `apps/extension` | Chrome MV3 extension (text boxes and rich-text editors such as Gmail). One shared Harper instance in an offscreen document. |
 | `apps/companion` | Optional local program for the extension's "Check with ChatGPT": Sign in with ChatGPT (OAuth on `127.0.0.1`), credential storage, and Responses API calls. Started by Chrome through native messaging. |
 | `workers/ai-api` | Optional Cloudflare Worker that proxies AI checks with the provider key kept server-side. |
@@ -144,3 +145,30 @@ Design points:
 - **Service-worker suspension:** an open native port keeps the MV3 worker alive during a sign-in
   or check. If it stops anyway, the port closes, the companion aborts, and the page shows
   "interrupted".
+- **Installing it:** one pasted line runs `apps/companion/install.sh`, which downloads the
+  companion from the latest GitHub release and checks it against `SHA256SUMS`. People with
+  Node 22.6+ get the small `.mjs` build; everyone else gets a standalone build with Node inside
+  ([decision D12](decisions.md#d12-installing-the-companion--one-pasted-line-with-a-standalone-build-2026-11-05)).
+
+## Releases and deployment
+
+| Trigger | Workflow | What it does |
+| --- | --- | --- |
+| Push to `main` | `.github/workflows/pages.yml` | Runs the tests, builds `apps/site/dist` and deploys it to GitHub Pages. |
+| Push a `v*` tag, or run it by hand for an existing tag | `.github/workflows/release.yml` | Runs the tests, builds the extension zip and every companion build, and publishes them with `SHA256SUMS` to a GitHub Release. |
+
+The two are independent. The site's extension zip and `install.sh` come from `main`, so they can be
+ahead of the latest release. The companion itself always comes from the latest release.
+
+The release builds the standalone companion on macOS (Apple silicon) and Linux (x64, arm64). The
+Intel Mac build is cross-built on the Apple silicon runner. A failed standalone build doesn't block
+the release; `install.sh` then asks the person to install Node instead.
+
+To cut a version:
+
+1. Set the same version in every `package.json` (the root, `apps/*`, `packages/core`,
+   `workers/ai-api`) and in `apps/companion/src/version.ts`, then run `npm install` to update
+   `package-lock.json`. Leave `apps/extension/manifest.json` alone: its build overwrites the
+   version from `apps/extension/package.json`.
+2. Move the changelog's **Unreleased** notes under the new version and date.
+3. Commit, tag `vX.Y.Z`, and push the commit and the tag.

@@ -5,7 +5,7 @@
 #
 # What it does, and nothing else:
 #   1. Downloads the companion from the latest GrammarMe release on GitHub, built in public by
-#      .github/workflows/companion-release.yml from the tagged source:
+#      .github/workflows/release.yml from the tagged source:
 #        - grammarme-companion.mjs (~90 KB) if Node.js 22.6+ is installed, or
 #        - a standalone executable with Node built in (~40 MB download) if it isn't.
 #   2. Checks it against the release's SHA256SUMS and stops if it doesn't match.

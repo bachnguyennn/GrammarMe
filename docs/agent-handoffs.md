@@ -3,6 +3,10 @@
 Four workstreams ran in parallel, each in its own folder, coordinated by the Lead Architect.
 Test counts below are from actual runs on the date above.
 
+> **This is a record of milestone 1, not the current status.** For that, see
+> [`extension.md`](extension.md), [`evaluation.md`](evaluation.md) and the
+> [changelog](../CHANGELOG.md).
+
 | Workstream | Owner | Folder | Tests |
 | --- | --- | --- | --- |
 | Architecture, core contract, web editor | Lead + Frontend/Grammar (same agent) | `packages/core/src`, `apps/web`, `docs/architecture.md`, `docs/decisions.md` | web 6/6 |
@@ -26,7 +30,8 @@ Test counts below are from actual runs on the date above.
 ## Not yet verified
 
 - The extension has not been loaded into a real Chrome yet. It was tested only with unit tests and
-  a Node harness. There is a 13-step manual plan in `docs/extension.md`.
+  a Node harness. There is a manual plan in `docs/extension.md`.
+  - Done 2026-11-05: see the next section.
 - The AI Worker has not been called against a real provider (no keys were used), and AI correction
   quality is unmeasured.
 - In-browser memory use has not been measured. Node RSS with Harper loaded is about 370 MB.
