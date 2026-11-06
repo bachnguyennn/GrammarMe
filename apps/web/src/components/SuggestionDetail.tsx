@@ -17,11 +17,6 @@ export function SuggestionDetail({ suggestion: s, onAccept, onDismiss, onAddWord
       <div className="detail-head">
         <span className={`dot dot-${group}`} aria-hidden="true" />
         <span className="detail-cat">{CATEGORY_LABEL[s.category]}</span>
-        {s.source === 'ai' && (
-          <span className="chip" title="Suggested by the cloud AI model you enabled">
-            AI
-          </span>
-        )}
       </div>
       <p className="detail-msg">{renderMessage(s.message)}</p>
       {s.replacements.length > 0 ? (

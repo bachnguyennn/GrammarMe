@@ -19,7 +19,6 @@ export function useChecker(initialText: string, settings: Settings) {
   const [doc, setDoc] = useState<DocumentSnapshot>({ text: initialText, version: 0 });
   const docRef = useRef(doc);
   const [harper, setHarper] = useState<Suggestion[]>([]);
-  const [ai, setAi] = useState<Suggestion[]>([]);
   const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
   const [status, setStatus] = useState<CheckStatus>('loading');
   const [lastCheckMs, setLastCheckMs] = useState<number | null>(null);
@@ -64,7 +63,6 @@ export function useChecker(initialText: string, settings: Settings) {
       docRef.current = next;
       setDoc(next);
       setHarper((list) => rebaseSuggestions(prev.text, next, list));
-      setAi((list) => rebaseSuggestions(prev.text, next, list));
       schedule();
     },
     [schedule],
@@ -93,16 +91,9 @@ export function useChecker(initialText: string, settings: Settings) {
     setDismissed((d) => new Set(d).add(dismissKey(docRef.current.text, s)));
   }, []);
 
-  const addAi = useCallback((list: Suggestion[]) => {
-    const current = docRef.current;
-    setAi(list.filter((s) => s.documentVersion === current.version));
-  }, []);
-
-  const clearAi = useCallback(() => setAi([]), []);
-
   const visible = useMemo(() => {
     const dict = new Set(settings.dictionary.map((w) => w.toLowerCase()));
-    const filtered = [...harper, ...ai].filter((s) => {
+    const filtered = harper.filter((s) => {
       if (dismissed.has(dismissKey(doc.text, s))) return false;
       if (s.category === 'spelling' && dict.has(s.original.toLowerCase())) return false;
       // Casual mode: keep correctness, hide stylistic nitpicks.
@@ -110,7 +101,7 @@ export function useChecker(initialText: string, settings: Settings) {
       return true;
     });
     return resolveOverlaps(filtered).filter((s) => s.documentVersion === doc.version);
-  }, [harper, ai, dismissed, doc, settings.dictionary, settings.mode]);
+  }, [harper, dismissed, doc, settings.dictionary, settings.mode]);
 
-  return { doc, docRef, update, visible, status, lastCheckMs, dismiss, addAi, clearAi, aiCount: ai.length };
+  return { doc, docRef, update, visible, status, lastCheckMs, dismiss };
 }

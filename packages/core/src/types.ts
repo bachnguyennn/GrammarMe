@@ -57,23 +57,15 @@ export interface CheckOptions {
   disabledRules?: string[];
 }
 
-/** Anything that can turn text into suggestions. Harper and the AI client both implement this. */
+/** Anything that can turn text into suggestions. Harper implements this, and the eval harness scores any engine. */
 export interface SuggestionEngine {
   readonly source: Source;
   check(doc: DocumentSnapshot, options?: CheckOptions): Promise<Suggestion[]>;
 }
 
-/* ---------- AI API contract (workers/ai-api) ---------- */
+/* ---------- AI edits (the ChatGPT route) ---------- */
 
 export type AiTask = 'grammar' | 'clarity' | 'tone';
-
-export interface AiCheckRequest {
-  text: string;
-  task: AiTask;
-  mode: WritingMode;
-  /** Echoed back so the client can discard stale responses. */
-  documentVersion: number;
-}
 
 /** One edit the model proposes, located by quoting text rather than by offsets (models are bad at counting). */
 export interface AiEdit {
@@ -83,18 +75,4 @@ export interface AiEdit {
   contextBefore?: string;
   category: Category;
   message: string;
-}
-
-export interface AiCheckResponse {
-  documentVersion: number;
-  edits: AiEdit[];
-  model: string;
-  /** Requests left today for this client, if the server tracks it. */
-  remaining?: number;
-}
-
-export interface AiErrorResponse {
-  error: 'rate_limited' | 'quota_exhausted' | 'bad_request' | 'unauthorized' | 'upstream_error' | 'too_long';
-  message: string;
-  retryAfterSeconds?: number;
 }

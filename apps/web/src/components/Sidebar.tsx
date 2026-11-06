@@ -21,12 +21,11 @@ const FILTERS: { id: 'all' | Group; label: string }[] = [
   { id: 'correctness', label: 'Correctness' },
   { id: 'clarity', label: 'Clarity' },
   { id: 'style', label: 'Style' },
-  { id: 'ai', label: 'AI' },
 ];
 
 export function Sidebar(props: Props) {
   const [filter, setFilter] = useState<'all' | Group>('all');
-  const counts: Record<Group, number> = { correctness: 0, clarity: 0, style: 0, ai: 0 };
+  const counts: Record<Group, number> = { correctness: 0, clarity: 0, style: 0 };
   for (const s of props.suggestions) counts[groupOf(s)]++;
   const shown = props.suggestions.filter((s) => filter === 'all' || groupOf(s) === filter);
   const spellingFixable = props.suggestions.filter(
@@ -38,7 +37,7 @@ export function Sidebar(props: Props) {
       <div className="sidebar-head">
         <h2 aria-live="polite">{heading(props.status, props.suggestions.length)}</h2>
         <div className="filters" role="tablist" aria-label="Filter suggestions">
-          {FILTERS.filter((f) => f.id !== 'ai' || counts.ai > 0).map((f) => (
+          {FILTERS.map((f) => (
             <button
               key={f.id}
               type="button"

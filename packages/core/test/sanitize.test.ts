@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { locateAiEdit } from '@grammarme/core';
-import { sanitizeEdits, isSentenceInitial } from '../src/sanitize.ts';
-import { parseModelOutput } from '../src/index.ts';
+import { locateAiEdit } from '../src/suggestions.ts';
+import { sanitizeEdits, isSentenceInitial } from '../src/ai/sanitize.ts';
 
 const TEXT =
   'Their going to the park on 5 May. I has a apple. Visit https://exampel.com for more. ' +
@@ -143,19 +142,5 @@ describe('isSentenceInitial', () => {
     expect(isSentenceInitial(t, t.indexOf('Home'))).toBe(true);
     expect(isSentenceInitial(t, t.indexOf('Ann'))).toBe(false);
     expect(isSentenceInitial(t, t.indexOf('went'))).toBe(false);
-  });
-});
-
-describe('parseModelOutput', () => {
-  it('accepts {edits}, a bare array, code fences, and pre-parsed objects', () => {
-    expect(parseModelOutput('{"edits":[]}')).toEqual([]);
-    expect(parseModelOutput('[{"a":1}]')).toEqual([{ a: 1 }]);
-    expect(parseModelOutput('```json\n{"edits":[1]}\n```')).toEqual([1]);
-    expect(parseModelOutput({ edits: [2] })).toEqual([2]);
-  });
-  it('rejects unusable output', () => {
-    expect(parseModelOutput('not json')).toBeNull();
-    expect(parseModelOutput('{"foo":1}')).toBeNull();
-    expect(parseModelOutput(null)).toBeNull();
   });
 });

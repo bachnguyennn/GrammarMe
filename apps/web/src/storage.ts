@@ -5,10 +5,6 @@ export interface Settings {
   mode: WritingMode;
   dictionary: string[];
   disabledRules: string[];
-  /** Cloud AI is off unless the user turns it on AND configures an endpoint. */
-  aiEnabled: boolean;
-  aiEndpoint: string;
-  aiToken: string;
   /** Keep a draft in this browser's localStorage. Never sent anywhere. */
   saveDraft: boolean;
 }
@@ -18,14 +14,13 @@ export const DEFAULT_SETTINGS: Settings = {
   mode: 'standard',
   dictionary: [],
   disabledRules: [],
-  aiEnabled: false,
-  aiEndpoint: '',
-  aiToken: '',
   saveDraft: true,
 };
 
 const SETTINGS_KEY = 'grammarme:settings';
 const DRAFT_KEY = 'grammarme:draft';
+/** Saved by older versions for the removed cloud AI check, including an access token. */
+const REMOVED_KEYS = ['aiEnabled', 'aiEndpoint', 'aiToken'];
 
 function read(key: string): string | null {
   try {
@@ -48,7 +43,12 @@ export function loadSettings(): Settings {
   const raw = read(SETTINGS_KEY);
   if (!raw) return DEFAULT_SETTINGS;
   try {
-    return { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<Settings>) };
+    const saved = JSON.parse(raw) as Partial<Settings> & Record<string, unknown>;
+    const stale = REMOVED_KEYS.filter((k) => k in saved);
+    for (const k of stale) delete saved[k];
+    const settings = { ...DEFAULT_SETTINGS, ...saved };
+    if (stale.length) saveSettings(settings);
+    return settings;
   } catch {
     return DEFAULT_SETTINGS;
   }

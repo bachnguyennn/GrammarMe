@@ -8,7 +8,7 @@
  * (overall + per category), correct-fix rate, false-positive rate on correct sentences, per-rule
  * breakdown, latency percentiles, setup time and RSS. Writes tests/eval/results/<engine>-latest.json.
  *
- * Plugging in another engine (e.g. the AI worker client): add an entry to ENGINES that returns any
+ * Plugging in another engine (e.g. an AI client): add an entry to ENGINES that returns any
  * object implementing `SuggestionEngine` from packages/core/src/types.ts. Nothing else changes.
  *
  * This file must stay "strip-only" TypeScript (no enums, namespaces or constructor parameter

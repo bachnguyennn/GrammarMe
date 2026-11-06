@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { TASK_CATEGORIES, buildSystemPrompt, buildUserPrompt, editsJsonSchema } from '../src/prompts.ts';
-import { MODES, TASKS } from '../src/validate.ts';
+import { TASK_CATEGORIES, buildSystemPrompt, buildUserPrompt, editsJsonSchema } from '../src/ai/prompts.ts';
+import type { AiTask, WritingMode } from '../src/types.ts';
+
+const TASKS: readonly AiTask[] = ['grammar', 'clarity', 'tone'];
+const MODES: readonly WritingMode[] = ['standard', 'academic', 'professional', 'casual'];
 
 describe('prompts', () => {
   it('every task x mode prompt carries the hard rules', () => {

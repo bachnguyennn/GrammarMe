@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { isApplicable, readabilityLabel, textStats, type AiTask, type Suggestion, type WritingMode } from '@grammarme/core';
+import { isApplicable, readabilityLabel, textStats, type Suggestion, type WritingMode } from '@grammarme/core';
 import { Editor, type EditorHandle } from './components/Editor.tsx';
 import { Sidebar } from './components/Sidebar.tsx';
 import { SettingsDialog } from './components/SettingsDialog.tsx';
 import { useChecker } from './useChecker.ts';
-import { runAiCheck } from './ai.ts';
 import { loadDraft, loadSettings, saveDraft, saveSettings, type Settings } from './storage.ts';
 import { SAMPLE } from './sample.ts';
 
@@ -14,8 +13,8 @@ const HOME_URL = '../';
 
 const MODES: { id: WritingMode; label: string; hint: string }[] = [
   { id: 'standard', label: 'Standard', hint: 'All checks' },
-  { id: 'academic', label: 'Academic', hint: 'Formal; AI keeps citations and terms intact' },
-  { id: 'professional', label: 'Professional', hint: 'Clear and concise' },
+  { id: 'academic', label: 'Academic', hint: 'All checks' },
+  { id: 'professional', label: 'Professional', hint: 'All checks' },
   { id: 'casual', label: 'Casual', hint: 'Correctness only — hides style nitpicks' },
 ];
 
@@ -33,9 +32,6 @@ export function App() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
-  const [aiTask, setAiTask] = useState<AiTask>('grammar');
-  const [aiBusy, setAiBusy] = useState(false);
-  const aiAbort = useRef<AbortController | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const updateSettings = useCallback((next: Settings) => {
@@ -180,44 +176,6 @@ export function App() {
     [visible],
   );
 
-  const aiReady = settings.aiEnabled && settings.aiEndpoint !== '' && settings.aiToken !== '';
-
-  const runAi = async () => {
-    if (aiBusy) {
-      aiAbort.current?.abort();
-      return;
-    }
-    if (!aiReady) {
-      setSettingsOpen(true);
-      return;
-    }
-    const ctrl = new AbortController();
-    aiAbort.current = ctrl;
-    setAiBusy(true);
-    const result = await runAiCheck({
-      endpoint: settings.aiEndpoint,
-      token: settings.aiToken,
-      doc: docRef.current,
-      caret: editor.current?.textarea?.selectionStart ?? 0,
-      task: aiTask,
-      mode: settings.mode,
-      signal: ctrl.signal,
-    });
-    setAiBusy(false);
-    if (!result.ok) {
-      showToast({ message: result.message });
-      return;
-    }
-    checker.addAi(result.suggestions);
-    const extra = result.dropped ? ` (${result.dropped} unsafe edit${result.dropped === 1 ? '' : 's'} discarded)` : '';
-    showToast({
-      message:
-        result.suggestions.length === 0
-          ? `AI found nothing to change${extra}.`
-          : `AI suggested ${result.suggestions.length} edit${result.suggestions.length === 1 ? '' : 's'}${extra}.`,
-    });
-  };
-
   const stats = useMemo(() => textStats(doc.text), [doc.text]);
   const statusText =
     checker.status === 'loading'
@@ -256,23 +214,6 @@ export function App() {
         </div>
 
         <div className="topbar-actions">
-          {settings.aiEnabled && (
-            <div className="ai-run">
-              <select
-                aria-label="AI check type"
-                value={aiTask}
-                onChange={(e) => setAiTask(e.target.value as AiTask)}
-                disabled={aiBusy}
-              >
-                <option value="grammar">Grammar</option>
-                <option value="clarity">Clarity</option>
-                <option value="tone">Tone</option>
-              </select>
-              <button type="button" className="btn btn-ai" onClick={runAi} aria-busy={aiBusy}>
-                {aiBusy ? 'Cancel' : 'AI check'}
-              </button>
-            </div>
-          )}
           <button
             type="button"
             className="btn btn-quiet"

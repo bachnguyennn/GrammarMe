@@ -2,9 +2,9 @@
 
 GrammarMe is a free, private writing assistant. Grammar, spelling and punctuation checks run
 **on your device** with [Harper](https://writewithharper.com) (Rust compiled to WebAssembly).
-AI suggestions are optional, off by default, and only run when you press a button. There are two
-AI routes: the web editor can use your own Cloudflare Worker, and the Chrome extension can use your
-own ChatGPT plan through a local companion (see [below](#optional-chatgpt-companion)).
+AI suggestions are optional, off by default, and only run when you press a button. They're in the
+Chrome extension, which can use your own ChatGPT plan through a local companion (see
+[below](#optional-chatgpt-companion)).
 
 ```
                        ┌──────────────────────────── your browser ────────────────────────────┐
@@ -15,25 +15,18 @@ own ChatGPT plan through a local companion (see [below](#optional-chatgpt-compan
                        │    │ Suggestion[] for version N → rebased onto current version       │
                        │    ▼                                                                 │
                        │ backdrop underlines + popover + sidebar  ──► accept = execCommand    │
-                       └──────────────┬───────────────────────────────────────────────────────┘
-                                      │ only when you press "AI check" (opt-in)
-                                      ▼
-                  workers/ai-api (Cloudflare Worker, your account, free plan)
-                       │ auth token · CORS · length cap · rate + daily cap · no logging of text
-                       ▼
-                  LLM provider (Gemini / Groq / Workers AI — see llm-research.md)
+                       └──────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Packages
 
 | Path | What it is |
 | --- | --- |
-| `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), AI prompts and output guards shared by every AI route (`@grammarme/core/ai`), the extension↔companion message contract (`@grammarme/core/companion`), text statistics. No UI. |
+| `packages/core` | Shared contract (`Suggestion`, AI request/response types), offset-safe editing helpers, Harper adapter (`@grammarme/core/harper`), AI prompts and output guards for the ChatGPT route (`@grammarme/core/ai`), the extension↔companion message contract (`@grammarme/core/companion`), text statistics. No UI. |
 | `apps/web` | The editor (React + Vite). Runs Harper in a Web Worker. |
 | `apps/site` | Static product site, install and privacy pages. Its build also packages the editor at `/editor/`, the extension zip and `companion/install.sh`. |
 | `apps/extension` | Chrome MV3 extension (text boxes and rich-text editors such as Gmail). One shared Harper instance in an offscreen document. |
 | `apps/companion` | Optional local program for the extension's "Check with ChatGPT": Sign in with ChatGPT (OAuth on `127.0.0.1`), credential storage, and Responses API calls. Started by Chrome through native messaging. |
-| `workers/ai-api` | Optional Cloudflare Worker that proxies AI checks with the provider key kept server-side. |
 | `tests/eval` | Labelled evaluation dataset + runner that measures precision/recall/latency. |
 
 ## The suggestion contract
@@ -138,7 +131,7 @@ Design points:
   `chatgpt.tokens.use.direct`. A valid ID token alone isn't enough.
 - **No silent fallback:** usage-limit and eligibility errors are shown as they are. Nothing
   switches to API billing or another provider.
-- **Untrusted output:** the model's JSON goes through the same guards as the Worker route
+- **Untrusted output:** the model's JSON goes through the guards in `@grammarme/core/ai`
   (`sanitizeEdits`). The extension then places each edit only inside the range that was sent
   (`placeAiEdits`), drops overlaps and ambiguous quotes, and rebases onto newer text. Edits the
   user has since changed are dropped. Accepting goes through `execCommand`, so native undo works.
@@ -166,9 +159,8 @@ the release; `install.sh` then asks the person to install Node instead.
 
 To cut a version:
 
-1. Set the same version in every `package.json` (the root, `apps/*`, `packages/core`,
-   `workers/ai-api`) and in `apps/companion/src/version.ts`, then run `npm install` to update
-   `package-lock.json`. Leave `apps/extension/manifest.json` alone: its build overwrites the
+1. Set the same version in every `package.json` (the root, `apps/*`, `packages/core`) and in
+   `apps/companion/src/version.ts`, then run `npm install` to update `package-lock.json`. Leave `apps/extension/manifest.json` alone: its build overwrites the
    version from `apps/extension/package.json`.
 2. Move the changelog's **Unreleased** notes under the new version and date.
 3. Commit, tag `vX.Y.Z`, and push the commit and the tag.

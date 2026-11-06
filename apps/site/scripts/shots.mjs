@@ -92,15 +92,11 @@ try {
   const side = await rectOf(sid, '.sidebar');
   await shoot(sid, 'editor-suggestions', { x: side.x - 16, y: side.y - 8, width: side.width + 32, height: Math.min(side.height + 16, 420) });
 
-  // 4. Settings: language and dictionary, then the optional AI section (feature cards).
+  // 4. Settings: language and dictionary (feature cards).
   await js(sid, `[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Settings').click()`);
   await sleep(500);
   const dlg = await rectOf(sid, '.dialog');
   await shoot(sid, 'editor-settings', { x: dlg.x, y: dlg.y, width: dlg.width, height: Math.min(dlg.height, 360) });
-  await js(sid, `document.querySelector('.ai-group').scrollIntoView({ block: 'start' })`);
-  await sleep(300);
-  const ai = await rectOf(sid, '.ai-group');
-  await shoot(sid, 'editor-ai', { x: ai.x - 8, y: ai.y - 8, width: ai.width + 16, height: Math.min(ai.height + 16, 420) });
 
   // 5. Phone: the inline card on a word. A tight crop (the word and its whole card) for the hero on
   //    phones, and the full screen for the editor section.

@@ -169,8 +169,7 @@ permissions (it never prints tokens) and whether `auth.openai.com` is reachable.
   it's ad-hoc signed. That's fine when the install line downloads it, because `curl` doesn't
   mark files for Gatekeeper. Windows needs a registry-based install that isn't
   written yet.
-- **Not on the hosted web editor:** it doesn't offer ChatGPT. Its optional AI still works through
-  your own server ([AI setup](ai-setup.md)).
+- **Not in the web editor:** it offers local checks only.
 - **Chrome's built-in pages:** the extension, and so ChatGPT checks, can't run on the Chrome Web
   Store or browser pages, or in editors inside iframes and Google Docs.
 - **No guarantees from the guards:** they reject edits that look unsafe (ambiguous quotes,

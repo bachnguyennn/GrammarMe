@@ -45,7 +45,9 @@ actually ran it; anything else is labelled as reasoning or documentation.
 - Revisit with incremental (changed-paragraph) linting if evaluation shows latency over ~50 ms on
   long documents.
 
-## D5. AI provider — **Groq → Workers AI by default; Gemini supported but opt-in** (see `llm-research.md`)
+## D5. AI provider — **Groq → Workers AI by default; Gemini supported but opt-in**
+
+*Superseded by [D13](#d13-remove-the-cloudflare-worker-ai-route-2026-11-06).*
 
 - **The brief's starting point:** Gemini, for its generous free Flash / Flash-Lite models.
 - **LLM/security engineers:** keep Gemini out of the default chain.
@@ -63,6 +65,9 @@ actually ran it; anything else is labelled as reasoning or documentation.
   side-by-side quality comparison on `tests/eval` is the next benchmark to run once keys exist.
 
 ## D6. Browser-only vs minimal backend — **browser-only by default, optional tiny backend for AI**
+
+*Superseded by [D13](#d13-remove-the-cloudflare-worker-ai-route-2026-11-06). GrammarMe now has no
+backend.*
 
 - **Security engineer:** API keys must never ship in client code, hence the Worker proxy.
 - **Lead:** for a single-user personal tool, the proxy is the user's own free Cloudflare account,
@@ -87,7 +92,9 @@ actually ran it; anything else is labelled as reasoning or documentation.
 
 - Modes change local behaviour only where that is honest. *Casual* hides style-level suggestions;
   the others show everything.
-- The real tone and register differences come from the AI prompts, which receive the mode.
+- The real tone and register differences came from the web editor's AI prompts. Since
+  [D13](#d13-remove-the-cloudflare-worker-ai-route-2026-11-06), Academic and Professional behave
+  like Standard in the editor.
 
 ## D10. Design system — **taste-skill, dealt not chosen**
 
@@ -152,3 +159,17 @@ actually ran it; anything else is labelled as reasoning or documentation.
   - The standalone build is ad-hoc signed, not signed by Apple.
   - `SHA256SUMS` comes from the same release as the files. It catches a corrupted download, not a
     tampered release.
+
+## D13. Remove the Cloudflare Worker AI route (2026-11-06)
+
+- **Why:** the owner doesn't run a Worker, and the web editor's AI check did nothing until someone
+  deployed their own.
+- **Outcome:** deleted `workers/ai-api`, the editor's AI check and settings, the setup guide and the
+  provider research. Optional AI is now only in the extension, through ChatGPT. GrammarMe has no
+  backend.
+- **Kept:** the prompts and guards in `@grammarme/core/ai`, which the companion uses. Their tests
+  moved to `packages/core`.
+- **Saved settings:** the editor deletes any stored server address and token when it next loads.
+- **Trade-offs:** the web editor has no AI check, so its recall gap stays open. Academic and
+  Professional modes no longer differ from Standard there.
+- **Undoing it:** the code is in the Git history before this change.

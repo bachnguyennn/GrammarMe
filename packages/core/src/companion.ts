@@ -16,7 +16,7 @@ import type { AiEdit, AiTask, WritingMode } from './types.ts';
 export const COMPANION_HOST = 'com.grammarme.chatgpt';
 export const COMPANION_PROTOCOL = 1;
 
-/** Text sent per AI check (UTF-16 code units), same cap as the Cloudflare Worker route. */
+/** Text sent per AI check (UTF-16 code units). */
 export const AI_MAX_INPUT_CHARS = 4000;
 /** Model output the companion will read before giving up (characters of streamed text). */
 export const AI_MAX_OUTPUT_CHARS = 24_000;

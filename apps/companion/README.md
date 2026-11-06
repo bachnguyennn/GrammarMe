@@ -214,8 +214,7 @@ loop and frames), `origin.ts` (caller check), `companion.ts` (operations), `oaut
 (Sign in with ChatGPT), `loopback.ts` (callback listener), `openai.ts` and `sse.ts` (Responses API
 streaming and models), `http.ts` (fetch helpers), `store.ts` (credential file and lock),
 `install.ts` and `doctor.ts`, `config.ts` (endpoints and paths), `errors.ts`, `log.ts` and
-`version.ts`. Prompts and output guards come from `@grammarme/core/ai`, the same ones the
-Cloudflare Worker uses.
+`version.ts`. Prompts and output guards come from `@grammarme/core/ai`.
 
 `src/version.ts` must match `package.json`. See
 [cutting a version](../../docs/architecture.md#releases-and-deployment).

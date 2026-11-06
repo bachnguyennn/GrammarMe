@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GrammarMe: free grammar checker that runs on your device</title>
-<meta name="description" content="GrammarMe is a free, open-source spelling and grammar checker. Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.">
+<meta name="description" content="GrammarMe is a free, open-source spelling and grammar checker. Spelling and grammar checks run on your device. Optional ChatGPT checks send text only when you request one.">
 <meta name="site-kind" content="software">
 <meta name="page-type" content="software">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -135,7 +135,7 @@
               <p class="t-label">Write</p>
               <a href="#editor">The editor<span>Fixes beside your text</span></a>
               <a href="#features">Spelling checks<span>Five kinds of English</span></a>
-              <a href="#features">Optional AI<span>Your ChatGPT plan or your own server</span></a>
+              <a href="#features">Optional AI<span>Use your ChatGPT plan</span></a>
             </div>
             <div class="menu-col span-3">
               <p class="t-label">Install</p>
@@ -239,14 +239,14 @@
       <div class="grid">
         <article class="card card--row card--open span-6 m-nolift">
           <h3>Runs the checker on your device</h3>
-          <p>Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p>
+          <p>Spelling and grammar checks run on your device. Optional ChatGPT checks send text only when you request one.</p>
           <div class="panel" data-fx="painterly-landscape" data-fx-seed="47">
             <div class="dg" data-diagram data-dg-still><script type="application/json">{"layout":"lanes","size":"card","alt":"Your text goes to GrammarMe on your device, which checks spelling, grammar and punctuation at once.","input":{"label":"Your text","icon":"ui:pen-line","sub":"On your device"},"core":{"label":"GrammarMe"},"lanes":[{"label":"Spelling","icon":"ui:spell-check","done":true,"sub":"recieve → receive"},{"label":"Grammar","icon":"ui:book-check","done":true,"sub":"a → an"},{"label":"Punctuation","icon":"ui:quote","done":true,"sub":"Its → It’s"}]}</script></div>
           </div>
         </article>
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Optional AI: your ChatGPT plan or your own server</h3>
-          <p>In the extension, check text with your own ChatGPT Plus or Pro plan; it needs the free GrammarMe companion on your computer. In the web editor, use your own server. Text is sent only when you request a check. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">ChatGPT setup</a> · <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/ai-setup.md">Server setup</a></p>
+          <h3>Optional AI with your ChatGPT plan</h3>
+          <p>In the extension, check text with your own ChatGPT Plus or Pro plan; it needs the free GrammarMe companion on your computer. Text is sent only when you request a check. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">ChatGPT setup</a></p>
           <div class="panel" data-fx="painterly-landscape" data-fx-seed="58">
             <div class="stage stage--fade-b"><div class="gm-shot"><img src="assets/shots/extension-ai.webp" width="1035" height="655" loading="lazy" decoding="async" alt="The extension's Check with ChatGPT panel on a text box: Grammar, Clarity and Tone, the exact text that will be sent, and a notice that pressing Send shares it with OpenAI using your ChatGPT plan's allowance"></div></div>
           </div>
@@ -290,7 +290,7 @@
             <h2 id="questions-h">Questions</h2>
             <p><a class="link" href="https://github.com/bachnguyennn/GrammarMe/issues">Ask a question on GitHub</a></p>
           </div>
-          <div class="frame frame--lit gm-q-frame" role="img" aria-label="Where your text goes: spelling and grammar checked on this device, no account, draft kept in this browser, cloud AI off unless you set it up">
+          <div class="frame frame--lit gm-q-frame" role="img" aria-label="Where your text goes: spelling and grammar checked on this device, no account, draft kept in this browser, ChatGPT off unless you connect it">
             <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:340px;--ax:max(24px, 50% - 170px);--ay:40px;--ay-sm:24px" data-ui-still>
               <div class="ui ui-panel ui-checks" data-ui="checklist">
                 <div class="ui-checks__head"><div class="ui-title">Where your text goes</div><span class="ui-spacer"></span><div class="ui-meta" data-checks-count>3 of 4</div></div>
@@ -299,7 +299,7 @@
                   <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Spelling and grammar checked on this device</span></li>
                   <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">No account needed</span></li>
                   <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Your draft stays in this browser</span></li>
-                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Cloud AI off unless you set it up</span></li>
+                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">ChatGPT off unless you connect it</span></li>
                 </ul>
               </div>
             </div></div>
@@ -308,7 +308,7 @@
         <div class="faq span-6 start-7">
           <div class="faq__item"><h3>Is GrammarMe really free?</h3><p>Yes. Open source under the MIT licence, with no account or paid plan.</p></div>
           <div class="faq__item"><h3>How accurate is the checker?</h3><p>On 171 test sentences it found 70% of mistakes, and 84% of its flags were real. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/evaluation.md">See the method</a></p></div>
-          <div class="faq__item"><h3>Does GrammarMe upload my writing?</h3><p>Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p></div>
+          <div class="faq__item"><h3>Does GrammarMe upload my writing?</h3><p>Spelling and grammar checks run on your device. Optional ChatGPT checks send text only when you request one.</p></div>
           <div class="faq__item"><h3>Which English does the checker know?</h3><p>American, British, Canadian, Australian and Indian English.</p></div>
           <div class="faq__item"><h3>Does the extension work in Gmail?</h3><p>Yes, in the compose box and in Outlook on the web; quoted messages are skipped. Google Docs isn't supported by GrammarMe yet.</p></div>
           <div class="faq__item"><h3>Can I use my ChatGPT plan?</h3><p>Yes, in the extension, with ChatGPT Plus or Pro and the free GrammarMe companion (macOS, Linux). Checks use your plan's allowance; no API key. <a class="link" href="https://github.com/bachnguyennn/GrammarMe/blob/main/docs/chatgpt.md">Setup guide</a></p></div>
@@ -332,7 +332,7 @@
       <div class="grid">
         <div class="span-4 stack-4">
           <a class="nav__logo" href="#top"><span class="mark" data-mark="stack" aria-hidden="true"></span>GrammarMe</a>
-          <p class="footer__lede">A free spelling and grammar checker. Spelling and grammar checks run on your device. Optional cloud AI sends text only when you enable it and request a check.</p>
+          <p class="footer__lede">A free spelling and grammar checker. Spelling and grammar checks run on your device. Optional ChatGPT checks send text only when you request one.</p>
         </div>
         <div class="span-2 footer__col"><h4>Editor</h4><ul><li><a href="#editor">How it looks</a></li><li><a href="#features">Features</a></li></ul></div>
         <div class="span-2 footer__col"><h4>Extension</h4><ul><li><a href="#extension">What it does</a></li><li><a href="install.html">Install steps</a></li></ul></div>

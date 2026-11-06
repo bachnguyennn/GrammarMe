@@ -336,8 +336,7 @@ normal Chrome window.
   `Linter.clearWords()` and a re-import.
 - `document.execCommand` is deprecated but still the only way to keep native undo. The fallback breaks
   undo.
-- The only AI route here is ChatGPT through the companion, which runs on macOS and Linux. The
-  extension doesn't call the Cloudflare Worker; that route is for the web editor.
+- The only AI route is ChatGPT through the companion, which runs on macOS and Linux.
 
 ## Required core changes (requested from the core owner)
 

@@ -23,14 +23,13 @@ export function buildSegments(text: string, suggestions: Suggestion[]): Segment[
   return out;
 }
 
-export type Group = 'correctness' | 'clarity' | 'style' | 'ai';
+export type Group = 'correctness' | 'clarity' | 'style';
 
 export function groupOf(s: Suggestion): Group {
-  if (s.source === 'ai') return 'ai';
   return groupOfCategory(s.category);
 }
 
-export function groupOfCategory(c: Category): Exclude<Group, 'ai'> {
+export function groupOfCategory(c: Category): Group {
   if (c === 'spelling' || c === 'grammar' || c === 'punctuation') return 'correctness';
   if (c === 'clarity') return 'clarity';
   return 'style';

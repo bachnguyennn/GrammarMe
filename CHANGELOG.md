@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Removed the web editor's optional AI check** and the Cloudflare Worker behind it. Optional AI
+  is now only in the extension, with your ChatGPT plan. Any server address and token saved in the
+  editor are deleted from your browser the next time you open it.
 - **Move GrammarMe's button** inside any text box by dragging it, like Grammarly's. The AI button
   moves with it, and the spot is remembered for each website. To undo it, open the toolbar menu
   and choose **Put it back in the corner**.

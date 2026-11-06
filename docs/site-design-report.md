@@ -65,8 +65,8 @@ An outside review of the live site found claims the product didn't back up. What
 - **No offline promise.** The editor has no service worker, so reloading offline fails. The site
   now says "Once the checker has loaded, you can keep checking text without an internet
   connection."
-- **AI is labelled "Optional cloud AI — requires your own server"**, links to the new
-  `docs/ai-setup.md`, and describes what is really sent (the whole draft up to 4,000 characters,
+- **AI was labelled "Optional cloud AI — requires your own server"** (removed 2026-11-06 with the
+  Worker, decision D13), linked to a new setup guide, and describes what is really sent (the whole draft up to 4,000 characters,
   otherwise the paragraph around the cursor). The Worker's default `ALLOWED_ORIGINS` now includes
   the GitHub Pages origin; before this, the hosted editor's AI requests would have been refused.
 - **Extension expectations** (desktop only, Developer mode, manual updates, no Google Docs) sit

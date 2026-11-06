@@ -176,7 +176,7 @@ Of SpellCheck's 50 flags, 20 (40%) were false positives, and every one of them w
 ## 5. Recommendations
 
 **Status on 2026-11-06:** 1–4, 7, 9 and 10 are done. 6 is done for code-like tokens and acronyms, but
-not for foreign proper nouns. 8 is available as two opt-in AI routes, but their quality is unmeasured.
+not for foreign proper nouns. 8 is available as the extension's opt-in ChatGPT check, but its quality is unmeasured.
 5 isn't done: the dialect still defaults to American.
 
 **Default rule configuration** (`disabledRules`):
@@ -223,15 +223,14 @@ Open product questions (`it.todo`): should `textStats().characters` count graphe
 
 ## 7. Test suite summary
 
-**Current (`npm test`, 2026-11-06): 34 files, 470 passed, 0 failed, 2 todo.**
+**Current (`npm test`, 2026-11-06): 33 files, 422 passed, 0 failed, 2 todo.**
 
 | package | tests |
 |---|---:|
-| `packages/core` | 163 passed, 2 todo |
+| `packages/core` | 194 passed, 2 todo |
 | `apps/companion` | 134 |
 | `apps/extension` | 83 |
 | `apps/web` | 11 |
-| `workers/ai-api` | 79 |
 
 The rest of this section is the 2026-11-04 baseline for `packages/core`.
 

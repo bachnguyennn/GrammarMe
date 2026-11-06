@@ -1,6 +1,0 @@
-# Copy to .dev.vars (gitignored) for `wrangler dev`. Never commit real values.
-# Generate a token with: openssl rand -base64 32
-GRAMMARME_CLIENT_TOKEN=replace-with-a-long-random-string
-GROQ_API_KEY=
-# Only if you accept Gemini free-tier data terms (see docs/llm-research.md):
-GEMINI_API_KEY=

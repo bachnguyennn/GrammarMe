@@ -1,5 +1,5 @@
 # Builds the product site (/) and the editor (/editor/) and publishes them to GitHub Pages.
-# Static files only: no server, no AI Worker, no secrets.
+# Static files only: no server, no secrets.
 name: Deploy site to GitHub Pages
 
 on:

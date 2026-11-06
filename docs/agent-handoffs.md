@@ -45,4 +45,5 @@ Test counts below are from actual runs on the date above.
     (`src/rich-text.ts`, `src/editable.ts`). Real Gmail still needs a hand check by the owner.
 - Deploy the Worker on a free Cloudflare account and run `tests/eval` through the AI engine to
   compare Groq, Workers AI and (if accepted) Gemini on identical examples.
+  - Dropped 2026-11-06: the Worker was removed (decision D13).
 - Measure Chrome memory for the web app and the extension's offscreen document.

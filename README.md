@@ -6,17 +6,14 @@ A free, private, Grammarly-style writing assistant.
 editor is at [/editor/](https://bachnguyennn.github.io/GrammarMe/editor/)).
 
 - **Real-time spelling, grammar and punctuation checks.** Spelling and grammar checks run on your
-  device. Optional cloud AI sends text only when you enable it and request a check.
+  device. Optional ChatGPT checks send text only when you request one.
 - **Underlines with explanations and one-click fixes**: accept, dismiss, undo (Cmd/Ctrl+Z), add to
   dictionary, or turn a rule off.
-- **Writing modes** (Standard, Academic, Professional, Casual) and five English dialects.
+- **Five English dialects**, and a Casual mode that hides style suggestions.
 - **Optional ChatGPT check in the extension**: grammar, clarity and tone edits using **your own
   ChatGPT Plus/Pro plan**, with no API key. It needs a small local companion program, installed
   with one pasted line. Text is sent only when you preview and confirm it
   ([guide](docs/chatgpt.md)).
-- **Optional AI check in the web editor** for clarity, fluency and tone. It is off by default, runs
-  only when you press the button, and uses your own free Cloudflare Worker. Edits are kept small and
-  must preserve your meaning and voice.
 - **Chrome extension** for text boxes on websites, including Gmail and other rich-text editors. You
   can drag its button anywhere in the box.
 - **$0 to run.** No subscriptions, no paid APIs, light enough for an 8 GB laptop. The optional ChatGPT
@@ -44,7 +41,7 @@ npm run build:site   # apps/site/dist: product page at /, editor at /editor/, ex
 
 `apps/site/dist` is a static folder you can host for free anywhere. Every push to `main` runs the
 tests and deploys it to GitHub Pages (`.github/workflows/pages.yml`). No server or secrets are
-involved; the optional AI Worker is not part of the site.
+involved.
 
 ### Chrome extension
 
@@ -75,19 +72,12 @@ From source: `npm run install-host -w apps/companion`.
 
 Full steps, eligibility, what is sent, and troubleshooting: [docs/chatgpt.md](docs/chatgpt.md).
 
-### Optional: AI suggestions
-
-This is for the web editor. Follow [docs/ai-setup.md](docs/ai-setup.md) to deploy the free Cloudflare
-Worker. Then open **Settings → Optional cloud AI** in the editor, tick **Enable AI check button**,
-paste the Worker URL and your access token, and press **AI check**.
-
 ## How it stays private
 
 | What | Where it goes |
 | --- | --- |
 | Text you type | Nowhere. Checked by Harper inside your browser. |
 | Personal dictionary, settings, draft, button position | Your browser's storage, never a GrammarMe server (draft autosave can be turned off). The extension's settings use Chrome's sync storage, so they follow your Chrome profile if Chrome sync is on. |
-| AI check (opt-in, per click) | Your own Worker, then the model provider you configured. Up to 4,000 characters per request; never logged by the Worker. Check your provider's data terms (see [docs/llm-research.md](docs/llm-research.md)). |
 | ChatGPT check (extension, opt-in, per send) | The local companion, then OpenAI, using your plan. Up to 4,000 characters, only after you preview them and press **Send to ChatGPT**. Sign-in credentials stay in a private file on your computer ([details](docs/chatgpt.md#what-is-sent-where-it-goes-what-is-stored)). |
 
 ## Project layout
@@ -98,9 +88,8 @@ apps/web          React + Vite editor
 apps/site         product website (static HTML on the taste-skill design system)
 apps/extension    Chrome MV3 extension
 apps/companion    optional local companion for the extension's ChatGPT check
-workers/ai-api    optional Cloudflare Worker for AI suggestions
 tests/eval        labelled dataset + accuracy/latency runner
-docs/             architecture, decisions, evaluation, setup guides, research
+docs/             architecture, decisions, evaluation, setup guides
 ```
 
 Read [docs/architecture.md](docs/architecture.md) and [docs/decisions.md](docs/decisions.md) for the

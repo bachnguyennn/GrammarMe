@@ -6,8 +6,7 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "apps/*",
-    "workers/*"
+    "apps/*"
   ],
   "scripts": {
     "dev": "npm run dev -w apps/web",

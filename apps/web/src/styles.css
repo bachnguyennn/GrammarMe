@@ -15,11 +15,9 @@
   --u-correctness: #c8453d;
   --u-clarity: #2d68c4;
   --u-style: #a86b12;
-  --u-ai: #2c7f7a;
   --wash-correctness: rgba(200, 69, 61, 0.12);
   --wash-clarity: rgba(45, 104, 196, 0.12);
   --wash-style: rgba(168, 107, 18, 0.14);
-  --wash-ai: rgba(44, 127, 122, 0.13);
   --shadow: 0 1px 2px rgba(51, 50, 49, 0.06), 0 10px 30px -8px rgba(51, 50, 49, 0.14);
   --radius: 16px;
   --radius-lg: 24px;
@@ -45,11 +43,9 @@
     --u-correctness: #ef7d74;
     --u-clarity: #7ea7ec;
     --u-style: #e0ab55;
-    --u-ai: #6cc0b9;
     --wash-correctness: rgba(239, 125, 116, 0.16);
     --wash-clarity: rgba(126, 167, 236, 0.16);
     --wash-style: rgba(224, 171, 85, 0.16);
-    --wash-ai: rgba(108, 192, 185, 0.16);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 30px -8px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
   }
@@ -83,8 +79,6 @@ button { cursor: pointer; }
 .mode:hover { color: var(--ink); }
 .mode.is-on { background: var(--ink); color: var(--paper); }
 .topbar-actions { display: flex; align-items: center; gap: 8px; }
-.ai-run { display: flex; align-items: center; border: 1px solid var(--line-2); border-radius: var(--radius-sm); overflow: hidden; background: var(--paper); }
-.ai-run select { border: 0; background: none; padding: 6px 8px; font-size: 13px; color: var(--ink-2); }
 
 .btn { border: 1px solid transparent; border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 500; background: none; }
 .btn-primary { background: var(--brand); color: var(--brand-ink); }
@@ -92,8 +86,6 @@ button { cursor: pointer; }
 .btn-quiet { border-color: var(--line-2); background: var(--paper); }
 .btn-quiet:hover { border-color: var(--ink-3); }
 .btn-quiet:disabled { opacity: 0.45; cursor: default; border-color: var(--line-2); }
-.btn-ai { border-radius: 0; border-left: 1px solid var(--line-2); color: var(--u-ai); }
-.btn-ai[aria-busy='true'] { color: var(--ink-2); }
 .btn-block { width: 100%; margin-top: 12px; }
 .icon-btn { border: 0; background: none; font-size: 22px; line-height: 1; color: var(--ink-3); padding: 2px 6px; border-radius: 6px; }
 .icon-btn:hover { color: var(--ink); background: var(--bg); }
@@ -140,11 +132,9 @@ button { cursor: pointer; }
 .u-correctness { text-decoration-color: var(--u-correctness); }
 .u-clarity { text-decoration-color: var(--u-clarity); }
 .u-style { text-decoration-color: var(--u-style); text-decoration-style: dotted; }
-.u-ai { text-decoration-color: var(--u-ai); text-decoration-style: dashed; }
 .u.is-active.u-correctness { background: var(--wash-correctness); }
 .u.is-active.u-clarity { background: var(--wash-clarity); }
 .u.is-active.u-style { background: var(--wash-style); }
-.u.is-active.u-ai { background: var(--wash-ai); }
 
 .popover {
   position: absolute; z-index: 5; width: min(340px, 100%);
@@ -164,12 +154,10 @@ button { cursor: pointer; }
 .fix-primary:hover { filter: brightness(1.08); }
 .fix-note { font-weight: 400; opacity: 0.8; }
 .detail-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; }
-.chip { margin-left: auto; padding: 1px 7px; border-radius: 999px; background: var(--wash-ai); color: var(--u-ai); letter-spacing: 0.02em; }
 .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .dot-correctness { background: var(--u-correctness); }
 .dot-clarity { background: var(--u-clarity); }
 .dot-style { background: var(--u-style); }
-.dot-ai { background: var(--u-ai); }
 
 /* ---------- Sidebar ---------- */
 .sidebar { position: sticky; top: 76px; max-height: calc(100vh - 100px); overflow: auto; padding-bottom: 12px; }
@@ -214,7 +202,7 @@ button { cursor: pointer; }
 .check { display: flex; gap: 8px; align-items: center; }
 .check input { accent-color: var(--brand); width: 16px; height: 16px; }
 .hint { margin: 0; font-size: 12.5px; color: var(--ink-3); }
-.ai-group { border-bottom: 0; }
+.field-group:last-of-type { border-bottom: 0; }
 .tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .tags li { display: inline-flex; align-items: center; gap: 4px; padding: 2px 4px 2px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); font-size: 13px; }
 .tags button { border: 0; background: none; color: var(--ink-3); border-radius: 50%; width: 20px; height: 20px; }
